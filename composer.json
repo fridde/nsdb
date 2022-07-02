@@ -14,6 +14,8 @@
         "stof/doctrine-extensions-bundle": "^1.7",
         "symfony/all-my-sms-notifier": "^6.0",
         "symfony/apache-pack": "^1.0",
+        "symfony/console": "^6.0",
+        "symfony/dotenv": "^6.0",
         "symfony/flex": "^2.2",
         "symfony/framework-bundle": "^6.0",
         "symfony/mailer": "^6.0",
@@ -26,7 +28,8 @@
         "symfony/webpack-encore-bundle": "^1.14",
         "symfony/yaml": "^6.0",
         "thenetworg/oauth2-azure": "^2.1",
-        "twig/extra-bundle": "^3.4"
+        "twig/extra-bundle": "^3.4",
+        "twig/twig": "^3.4"
     },
     "config": {
 		"optimize-autoloader": false,
@@ -48,7 +51,7 @@
     },
     "scripts": {
         "auto-scripts": {
-            
+
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
         "post-install-cmd": [
