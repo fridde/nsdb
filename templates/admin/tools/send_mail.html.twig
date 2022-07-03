@@ -1,0 +1,17 @@
+{# available: either orphaned or messages #}
+
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title 'Mejlutskick' %}
+
+{% block page_content %}
+        <table>
+        {% for message in messages %}
+            <tr>
+                <td>{{ message.Subject }}</td>
+                <td>{{ message.To[0].Address }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+{% endblock %}
+

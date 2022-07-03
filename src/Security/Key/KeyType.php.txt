@@ -1,0 +1,22 @@
+<?php
+/*
+namespace App\Security\Key;
+
+enum KeyType: string
+{
+    case ANON = 'a';
+    case COOKIE = 'c';
+    case CRON = 't';
+    case URL = 'u';
+
+    public function getHashLength(): int
+    {
+        return match($this){
+            self::ANON, self::COOKIE => 64,
+            self::CRON => 16,
+            self::URL => 8
+        };
+    }
+}*/
+
+

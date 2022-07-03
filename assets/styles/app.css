@@ -1,3 +1,50 @@
-body {
-    background-color: lightgray;
+@import "~jqueryui/jquery-ui.css";
+@import "~bootstrap/dist/css/bootstrap.css";
+@import "~@fortawesome/fontawesome-free/css/all.css";
+
+:root {
+    --border-radius: 4px;
+    --border-width: 1px;
+    --sidebar-menu-items-padding-left: 6px;
+    --blue-gray-500: #64748b;
+    --gray-500: var(--blue-gray-500);
+    --sidebar-menu-icon-color: var(--gray-500);
+    --font-size-lg: 16px;
+    --sidebar-padding-left: 10px;
+}
+
+.group-container {
+    margin: 50px;
+}
+
+.ui-slider {
+    width: 30%;
+    margin: 20px;
+}
+
+.menu-item {
+    border-radius: var(--border-radius);
+    padding-left: var(--sidebar-menu-items-padding-left);
+    padding-right: 5px;
+    position: relative;
+}
+
+.menu-icon {
+    color: var(--sidebar-menu-icon-color);
+    font-size: var(--font-size-lg);
+    margin-right: 10px;
+    vertical-align: middle;
+    height: 16px;
+    width: 20px;
+}
+
+span.anchor {
+    display: block;
+    position: relative;
+    top: -100px;
+    visibility: hidden;
+}
+
+input:invalid {
+    box-shadow: 0 0 5px 1px red;
 }

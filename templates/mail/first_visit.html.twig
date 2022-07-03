@@ -1,0 +1,20 @@
+{% extends "mail/base_mail.html.twig" %}
+{% import "mail/mail_macros.html.twig" as NDB %}
+
+{% block body_text %}
+    <p>
+        Kommande {{ snippet(user.Segment, "when") }} är du och {{ NDB.group_formulation(user.Groups) }} inbokade på ett flertal besök hos Sigtuna Naturskola. Välkommen!
+    </p>
+    <p>
+        Nästa dag (och kanske första dag för dig) heter {{ user.NextVisit.Topic.LongestName }} och är på {{ user.NextVisit.DateString }}. All information om dagen finns på <a href="{{ user.NextVisit.Topic.Url }}">temadagens informationssida</a>.<br>
+        Där ser du också om du och klassen blir hämtade av en buss (som vi beställer) och om du behöver ta med mat eller inte.
+    </p>
+    <p>
+        Temat för samtliga dagar är {{ snippet(user.Segment, "theme") }} Du hittar all information på <a href="https://www.sigtunanaturskola.se/aventyren/">Naturskolans hemsida</a>. Kolla gärna igenom innehållet i dagarna, så du vet hur de kan passa in i din undervisning. Det slutliga målet med all vår undervisning är att eleven ska bli en miljömedveten "planetskötare".
+    </p>
+    <p>Ett första steg kan vara att titta på vår <a href="https://www.youtube.com/watch?v=R6CZifxXnMQ">introduktionsfilm för dig som pedagog</a>!</p>
+    <h2>Här är dina första besöksdatum:</h2>
+    {{ NDB.list_visits(user, visits) }}
+
+    <p>Anteckna dessa datum i din almanacka och kolla i <a href="{{ url('school_overview', {school: user.School.id}) }}">vår besöksportal</a> om ditt mobilnummer och uppgifterna om din klass stämmer. Du får gärna även fylla i info åt dina kollegor.</p>
+{% endblock %}

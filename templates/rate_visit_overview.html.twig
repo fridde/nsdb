@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <ul>
+        {% for visit in visits %}
+            <li><a href="{{ path('rate_visit', {'visit': visit.id}) }}">
+                    {{ visit.topic.shortName }} med {{ visit.group.Name }} från {{ visit.group.school.name }}
+                    ({{ visit.group.user.fullName }})
+                </a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

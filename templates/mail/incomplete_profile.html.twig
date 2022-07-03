@@ -1,0 +1,18 @@
+{# available: user #}
+{% extends "mail/base_mail.html.twig" %}
+{% import "mail/mail_macros.html.twig" as NDB %}
+
+{% block body_header %}{% endblock %}
+
+{% block body_text %}
+    <p>Du får detta mejl för att vi på Naturskolan har antecknat dig som lärare eller ansvarig för {{ NDB.group_formulation(user.Groups) }}. </p>
+    <p>Tyvärr har vi inget mobilnummer till dig. Ibland kan det vara nödvändigt att nå dig i sista minuten, till exempel om bussen blir försenat eller om vi behöver göra någon ändring med kort varsel. Trots mejl och Teams funkar ett mobilnummer bäst för detta ändamål.</p>
+    <p>
+        Ange ditt nummer via <a href="{{ url('school_overview', {school: user.School.id}) }}">vår besöksportal</a> där du även kan kontrollera andra uppgifter om klassen eller hjälpa oss med mobilnummer till dina kollegor.
+    </p>
+    <p>Vi kommer förstås inte lämna ditt nummer till någon obehörig.</p>
+{% endblock %}
+
+{% block after_body_text %}
+    <p>Tack på förhand!</p>
+{% endblock %}

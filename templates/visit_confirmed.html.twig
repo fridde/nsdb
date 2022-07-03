@@ -1,0 +1,7 @@
+{% extends "school_page.html.twig" %}
+{# available: visit #}
+
+{% block message_content %}
+    Tack! Besöket på {{ visit.dateString }} med klass {{ visit.group.name }} från {{ visit.group.school.name }}
+    har blivit bekräftad.
+{% endblock %}

@@ -1,0 +1,9 @@
+@import "~bootstrap/dist/css/bootstrap.css";
+@import '~bootstrap-star-rating/css/star-rating.css';
+@import "~bootstrap-star-rating/themes/krajee-svg/theme.css";
+
+
+.theme-krajee-svg.rating-xl .krajee-icon {
+    height: 200px;
+    width: 200px;
+}

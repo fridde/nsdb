@@ -1,0 +1,43 @@
+{% extends "base.html.twig" %}
+{# available: users, groups, pending_users, pending_users_ids #}
+
+{% block content %}
+    <span id="requested-school" data-school="{{ requested_school.id }}" class="d-none"></span>
+    {% if pending_users|length > 0 %}
+        {% include 'approve_user_modal.html.twig' %}
+    {% endif %}
+    <main>
+        {% include "header.html.twig" %}
+        <div class="container mt-5">
+            {% block message_content %}
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-dismissible alert-{{ label }} fade show">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            {% endblock %}
+            {% block staff_list %}
+                {% include 'staff_list.html.twig' %}
+                {% include 'edit_user_modal.html.twig' %}
+            {% endblock %}
+            {% block group_settings %}
+                {% include 'group_settings.html.twig' %}
+            {% endblock %}
+
+        </div>
+    </main>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

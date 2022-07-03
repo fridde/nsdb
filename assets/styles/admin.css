@@ -1,0 +1,165 @@
+@import "~jqueryui/jquery-ui.css";
+
+:root {
+    --kelly-0: #0067A5;
+    --kelly-1: #F3C300;
+    --kelly-2: #875692;
+    --kelly-3: #F38400;
+    --kelly-4: #A1CAF1;
+    --kelly-5: #BE0032;
+    --kelly-6: #C2B280;
+    --kelly-7: #848482;
+    --kelly-8: #008856;
+    --kelly-9: #E68FAC;
+}
+
+/*#schedule-colleagues*/
+div#schedule-colleagues td {
+    border-style: solid;
+    border-width: 1px;
+    padding: 5px;
+    margin: 1px;
+    font-weight: bold;
+}
+
+*[data-color-index="0"] {
+    background-color: var(--kelly-0);
+}
+
+*[data-color-index="1"] {
+    background-color: var(--kelly-1);
+}
+
+*[data-color-index="2"] {
+    background-color: var(--kelly-2);
+}
+
+*[data-color-index="3"] {
+    background-color: var(--kelly-3);
+}
+
+*[data-color-index="4"] {
+    background-color: var(--kelly-4);
+}
+
+*[data-color-index="5"] {
+    background-color: var(--kelly-5);
+}
+
+*[data-color-index="6"] {
+    background-color: var(--kelly-6);
+}
+
+*[data-color-index="7"] {
+    background-color: var(--kelly-7);
+}
+
+*[data-color-index="8"] {
+    background-color: var(--kelly-8);
+}
+
+*[data-color-index="9"] {
+    background-color: var(--kelly-9);
+}
+
+td.toggle-label {
+    cursor: crosshair;
+    min-width: 2rem;
+    text-align: center;
+    user-select: none;
+}
+
+td.toggle-label.off-duty {
+    background-color: white;
+}
+
+table#bus-settings {
+    table-layout: fixed;
+    width: 70%;
+}
+
+table#bus-settings th {
+    text-align: center;
+    font-size: 0.8rem;
+    padding: 3px;
+}
+
+table#bus-settings td:hover {
+    background-color: yellow;
+}
+
+
+.fa-check {
+    color: lightgreen;
+}
+
+.fa-question {
+    color: red;
+}
+
+table#distribute-visits-groups td {
+    min-width: 90px;
+    height: 30px;
+    padding: 5px;
+    border: 1px solid black;
+}
+
+#distribute-visits-dates td {
+    padding: 5px;
+}
+
+#distribute-visits-dates span {
+    padding: 2px;
+    margin: 2px;
+    cursor: move;
+}
+
+td.fixed-visits {
+    cursor: not-allowed;
+}
+
+table#plan-year td {
+    border: 1px solid black;
+    user-select: none;
+    text-align: center;
+}
+
+span.plan-year-week {
+    font-weight: bold;
+    font-size: 150%;
+}
+
+.plan-year-date span {
+    writing-mode: vertical-lr;
+}
+
+table#plan-year td.plan-year-active {
+    border: 3px solid red;
+}
+
+.plan-year-choices {
+    min-width: 30px;
+    min-height: 30px;
+
+}
+
+#plan-year td[data-week="0"]:not(.chosen)
+{
+    background-color: lightgray;
+}
+
+td.segment-2 {
+    font-weight: bold;
+    background-color: lightsalmon;
+}
+
+td.segment-5 {
+    font-weight: bold;
+    background-color: lightgreen;
+}
+
+
+
+
+
+

@@ -1,0 +1,33 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title 'Arbetsfördelning' %}
+
+{% block page_content %}
+
+    {% set days_swedish = ['Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör', 'Sön'] %}
+    <div id="schedule-colleagues">
+        <table>
+            {% for visit in visits %}
+                {% set week = visit.Date|date('W') %}
+                {% set day = visit.Date|date('N') %}
+
+                <tr class="visit-row" data-id="{{ visit.id }}" data-color-index="{{ colors[visit.id] }}">
+                    <td>v{{ week }}</td>
+                    <td>{{ days_swedish[(day - 1)] }}</td>
+                    <td>{{ visit.DateString }}</td>
+                    <td>{{ visit.Label }}</td>
+                    {% for c in colleagues %}
+                        {% set td_class = 'toggle-label' %}
+                        {% if c not in visit.Colleagues %}
+                            {% set td_class = td_class ~ ' off-duty' %}
+                        {% endif %}
+                        <td data-colleague-id="{{ c.id }}" class="{{ td_class }}">{{ c.Acronym }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+
+{% endblock %}
+

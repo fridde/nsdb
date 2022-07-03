@@ -1,0 +1,38 @@
+{% import "macros.html.twig" as helper %}
+
+{% set school = requested_school ?? app.user.School %}
+
+<header class="sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid me-auto">
+            <a class="navbar-brand" href="#">Sigtuna Naturskola</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ helper.school_fragment_link(school.id, "staff-table-anchor")}}">
+                            <i class="fas fa-users mx-auto mb-1 bi"></i>
+                            Pedagoger</a>
+                    </li>
+                    {% for segment_key in segments|keys %}
+                        {{ helper.segment_link(school.id, segment_key) }}
+                    {% endfor %}
+                    {% if is_granted('ROLE_SUPER_ADMIN') %}
+                        <li class="nav-item">
+                            <a class="nav-link active text-danger" href="{{ path('admin_index') }}">
+                                <i class="fas fa-user-cog"></i>
+                                Admin</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+            <a href="{{ path('app_logout') }}" class="nav-link">
+                <i class="fas fa-sign-out-alt mx-auto mb-1 bi"></i>
+                Logga ut</a>
+        </div>
+
+    </nav>
+</header>

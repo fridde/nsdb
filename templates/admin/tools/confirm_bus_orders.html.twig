@@ -1,0 +1,24 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title 'Bekräfta buss' %}
+
+{% block page_content %}
+<div id="confirm-bus-orders">
+    <table>
+        {% for visit in visits %}
+            {% set color_index = colors[visit.id] %}
+            <tr data-color-index="{{ colors[visit.id] }}">
+                <td>{{ visit.DateString }}</td>
+                <td>{{ visit.Label }}</td>
+                <td>{{ visit.Group.NumberStudents }} pax</td>
+                {% set td_class, icon_class = 'toggle-label', 'fas fa-question' %}
+                {% if visit.BusStatus %}
+                    {% set td_class, icon_class = 'toggle-label active', 'fas fa-check' %}
+                {% endif %}
+                <td data-visit-id="{{ visit.id }}" class="{{ td_class }}"><i class="{{ icon_class }}"></i></td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
+

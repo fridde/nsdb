@@ -1,0 +1,19 @@
+{% macro group_formulation(groups) %}
+    {% if groups|length > 1 -%}
+        dina grupper {{ groups|map(g => g.Name)|join(', ', ' och ') }}
+    {%- else -%}
+        din grupp {{ attribute(groups|first, "Name") }}
+    {%- endif %}
+{% endmacro %}
+
+{% macro list_visits(user, visits) %}
+    <ul>
+        {% for visit in visits %}
+            <li>{{ visit.DateString }}: <a href="{{ visit.Topic.Url }}">{{ visit.Topic.LongestName }}</a>
+                {%- if user.Groups|length > 1 %} [{{ visit.Group.Name }}]{%- endif -%}
+            </li>
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
+

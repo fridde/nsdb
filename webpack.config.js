@@ -21,12 +21,15 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
+    .addEntry('rating', './assets/rating.js')
+    .addEntry('admin', './assets/admin.js')
+    .addEntry('planyear', './assets/planyear.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
-    .enableStimulusBridge('./assets/controllers.json')
+    // .enableStimulusBridge('./assets/controllers.json')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
-    .splitEntryChunks()
+    // .splitEntryChunks()
 
     // will require an extra script tag for runtime.js
     // but, you probably want this, unless you're building a single-page app
@@ -47,6 +50,7 @@ Encore
 
     .configureBabel((config) => {
         config.plugins.push('@babel/plugin-proposal-class-properties');
+        config.plugins.push("@babel/plugin-proposal-nullish-coalescing-operator");
     })
 
     // enables @babel/preset-env polyfills

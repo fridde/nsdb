@@ -1,0 +1,73 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title 'Planera nästa termin' %}
+
+{% block page_content %}
+    <div id="valid-keys" data-valid-keys="{{ topics|json_encode }}" hidden></div>
+    <div>
+        <button class="btn btn-primary m-3" id="save-planned-year">Spara permanent</button>
+    </div>
+    <table id="plan-year">
+        <tr>
+            <td class="not-choosable"></td>
+
+            {% for d in dates %}
+                {% if d|date("N") == 1 %}
+                    {% set week = d|date('W') % 2 %}
+                    <td class="not-choosable" data-week="{{ week }}" colspan="5">
+                        <span class="plan-year-week">{{ d|date('W') }}</span>
+                        ({{d|date("Y")}})
+                    </td>
+                {% endif %}
+
+            {% endfor %}
+        </tr>
+        <tr>
+            <td></td>
+            {% for d in dates %}
+                {% set week = d|date('W') % 2 %}
+                <td class="plan-year-date not-choosables" data-week="{{ week }}">{{ d.minDayName }}</td>
+            {% endfor %}
+        </tr>
+        <tr>
+            <td class="not-choosable"></td>
+            {% for d in dates %}
+                {% set week = d|date('W') % 2 %}
+                <td class="plan-year-date not-choosable" data-week="{{ week }}"><span>{{ d.day }} {{ d.shortMonthName }}</span></td>
+            {% endfor %}
+        </tr>
+        {% for colleague in colleagues %}
+            <tr>
+                <td class="not-choosable fw-bold p-1">{{ colleague.Acronym }}</td>
+                {% for d in dates %}
+                    {% set week = d|date('W') % 2 %}
+                    <td
+                            {% if dates|first == d and colleagues|first == colleague %}
+                                id="start-cell"
+                            {% endif %}
+                            class="plan-year-choices"
+                            data-colleague="{{ colleague.id }}"
+                            data-date="{{ d|date("Y-m-d") }}"
+                            data-letter=""
+                            data-week="{{ week }}"
+                    >
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+    <div class="container float-start mt-5">
+        {% for topic_row in topics|batch(3, {'': ['','']}, true) %}
+            <div class="row">
+                {% for symbol, cpg in topic_row %}
+                    <div class="col-sm-4 p-1 font-monospace fs-4">
+                        <span>{{ symbol|upper }}:</span>
+                        <span id="topic-counter-{{ symbol }}" data-value="0">0</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+
+    {{ encore_entry_script_tags('planyear') }}
+{% endblock %}

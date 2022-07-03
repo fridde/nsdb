@@ -1,0 +1,20 @@
+{# available: user, schools, api_code #}
+
+
+
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <h1>Hej {{ user.FirstName }}!</h1>
+    <div id="register-user" data-user="{{ user|json_encode }}">
+        <label for="register-school-selector">Vilken skola tillhör du?</label>
+        <select id="register-school-selector">
+            {% for school in schools %}
+                <option value="{{ school.id }}">{{ school.Name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Registrera</button>
+
+    </div>
+
+{% endblock %}

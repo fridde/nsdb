@@ -1,0 +1,57 @@
+{# available: users #}
+
+{% macro staff_row(user_id, user_data, hidden = false) %}
+    <tr data-id="{{ user_id }}"{% if hidden %} class="d-none"{% endif %}>
+        <td data-field="FirstName">{{- user_data[0] -}}</td>
+        <td data-field="LastName">{{- user_data[1] -}}</td>
+        <td data-field="Mobil">{{ user_data[2] }}</td>
+        <td data-field="Mail">{{ user_data[3] }}</td>
+        <td>
+            <button class="btn btn-outline-primary edit-staff-row-btn" type="button">
+                <i class="fas fa-user-edit"></i>
+            </button>
+        </td>
+    </tr>
+{% endmacro %}
+
+<span id="staff-table-anchor" class="anchor"></span>
+<h1>Pedagoger</h1>
+<div class="position-relative">
+    <div class="position-absolute top-0 end-0">
+        <button class="btn btn-primary" id="add-staff-member-btn">
+            <i class="fas fa-user-plus"></i>
+            Lägg till pedagog
+        </button>
+    </div>
+</div>
+
+<div class="mt-5">
+    <table class="table table-sm table-hover" id="staff-table">
+        <thead>
+        <tr>
+            <th>Förnamn</th>
+            <th>Efternamn</th>
+            <th>Mobil</th>
+            <th>Mejl</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users -%}
+            {% set user_data = [user.FirstName, user.LastName, user.Mobil, user.Mail] %}
+            {{ _self.staff_row(user.id, user_data) }}
+        {%- endfor %}
+        {{ _self.staff_row("new", ["", "", "", ""], true) }}
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+
+
+
+
+
+

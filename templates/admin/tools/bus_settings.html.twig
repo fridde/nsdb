@@ -1,0 +1,32 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title 'Bussinställningar' %}
+
+{% block page_content %}
+    <table id="bus-settings">
+        <thead>
+        <tr>
+            <th></th>
+            {% for location in locations %}
+                <th>{{ location.Name }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for school in schools %}
+            <tr class="bus-school-row" data-school-id="{{ school.id }}">
+                <th>{{ school.id|upper }}</th>
+                {% for location in locations %}
+                    {% set class, icon = '', 'minus' %}
+                    {% if attribute(school, 'needsBus', [location]) %}
+                        {% set class, icon = 'active', 'bus' %}
+                    {% endif %}
+                    <td data-location-id="{{ location.id }}" class="toggle-label {{ class }}"><i class="fas fa-{{ icon }}"></i></td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
+

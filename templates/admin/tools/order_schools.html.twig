@@ -1,0 +1,15 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title 'Besöksordning skolorna' %}
+
+{% block page_content %}
+    <div class="container-sm w-50">
+        <ol id="school-visit-order" class="list-group list-group-numbered sortable">
+            {% for school in schools %}
+                <li class="list-group-item" data-id="{{ school.id }}">{{ school.Name }}</li>
+            {% endfor %}
+        </ol>
+    </div>
+
+{% endblock %}
+

@@ -1,0 +1,26 @@
+{# available: user
+ visits = [visit_id => visit_object], e.g. [32 => Visit()]  #}
+{% extends "mail/base_mail.html.twig" %}
+{% import "mail/mail_macros.html.twig" as NDB %}
+
+{% set key = user|url_key %}
+
+{% block body_header %}{% endblock %}
+
+{% block body_text %}
+    <p>Snart är det dags för att du, {{ NDB.group_formulation(user.Groups) }} och vi från Naturskolan ska ses. Vi vill
+        gärna veta att du vet om det.</p>
+    <ul>
+        {% for visit in visits %}
+            {% set url = url('confirm_visit', {"visit": visit.id, "key": key}) %}
+            <li>{{ visit.DateString }}: {{ visit.Topic.LongName ~ " "}}
+                {%- if user.Groups|length > 1 %} [{{ visit.Group.Name }}]{%- endif -%}
+                <a href="{{ url }}"> → Bekräfta detta besök!</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block after_body_text %}
+<p>Tack på förhand!</p>
+{% endblock %}
+

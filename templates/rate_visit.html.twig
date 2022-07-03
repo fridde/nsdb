@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets  %}
+    {{ encore_entry_link_tags('rating') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('rating') }}
+{% endblock %}
+
+
+
+{% block content %}
+    {% if not visit %}
+        <h1>Idag fanns det inga besök.</h1>
+
+
+        {% elseif visit.hasRating %}
+            <h1>Detta besök har redan fått en bedömning.</h1>
+            {% else %}
+                <div id="rate-visit-container" data-visit-id="{{ visit.id }}" data-rating-value="-1">
+                    <div id="rate-visit"></div>
+                    <div>
+                        <button id="rate-visit-button">Skicka</button>
+                    </div>
+                </div>
+    {% endif %}
+{% endblock %}

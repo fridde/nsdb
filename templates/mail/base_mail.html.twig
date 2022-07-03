@@ -1,0 +1,40 @@
+{# available: user #}
+<html>
+
+
+{% block body_header %}
+    Sigtuna Naturskola informerar...
+{% endblock %}
+
+{% block greetings %}
+    <h1>Hej {{ user.FirstName }}!</h1>
+{% endblock %}
+
+{% block body_text %}{% endblock %}
+
+{% block after_body_text %}{% endblock %}
+
+{% block signature %}
+    <h3>Hälsningar, vi från Naturskolan!</h3>
+{% endblock %}
+
+<hr><hr>
+{% block links %}
+    <ul>
+        {% block school_link %}
+            <li><a href="{{ url('school_overview', {school: user.School.id}) }}" target="_blank">Din skolas besöksportal</a><br>
+                Här kan du ange information om klassen, lägga till kollegor, se dina besöksdatum och annat.</li>
+        {% endblock %}
+        <li><a href="https://www.sigtunanaturskola.se/vanliga-fragor" target="_blank">Vanliga frågor</a><br>
+            Om du undrar nåt över besöken, administration eller annat.</li>
+        <li><a href="https://www.sigtunanaturskola.se/kontakta-oss" target="_blank">Kontakta oss!</a><br>
+            Tveka inte att höra av dig via mejl, mobil eller fast telefon.</li>
+    </ul>
+{% endblock %}
+
+{% block footer %}
+    <p>Sigtuna Naturskola är Sigtuna kommuns satsning på naturvetenskap, friluftsliv och hållbar utveckling. På uppdrag av BUN möter vi alla kommunens elever med temadagar för åk 2/3, åk 5 och åk 9.</p>
+{% endblock %}
+
+
+</html>

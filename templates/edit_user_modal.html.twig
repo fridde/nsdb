@@ -1,0 +1,44 @@
+{% set fields =     [
+    {"name": "FirstName", "label": "Förnamn"},
+    {"name": "LastName", "label": "Efternamn"},
+    {"name": "Mobil", "label": "Mobil"},
+    {"name": "Mail", "label": "Mejl", "required": "true", "type": "email"}
+] %}
+
+<div id="edit-user-modal" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ändra uppgifter</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input id="modal-user-id-field" type="hidden" name="id" value="">
+                {% for field in fields %}
+                    <div class="form-floating">
+                        <input
+                                type="{{ field.type|default("text") }}"
+                                class="form-control"
+                                name="{{ field.name }}"
+                                id="{{ field.name ~ "-id" }}"
+                                required="{{ field.required|default("false") }}"
+                        >
+                        <label for="{{ field.name ~ "-id" }}">{{ field.label }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="modal-footer hstack">
+                {% set classes = "btn bt-sm btn-secondary" %}
+                {% if not is_granted("ROLE_SCHOOL_ADMIN") %}{% set classes = classes ~ " dont-show-to-users d-none" %}{% endif %}
+                    <button id="delete-user" type="button" class="{{ classes }}">
+                        <i class="fas fa-trash"></i> Ta bort
+                    </button>
+
+                <button id="save-user-data" type="button" class="btn btn-primary ms-auto" disabled>
+                    <i class="fas fa-save"></i>
+                    Spara
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

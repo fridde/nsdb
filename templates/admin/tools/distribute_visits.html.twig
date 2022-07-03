@@ -1,0 +1,66 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title 'Fördela besöksdatum på klasser' %}
+
+{% block page_content %}
+
+
+    {% if this_topic is defined %}
+
+        <h1>{{ this_topic.ShortName }}</h1>
+        <div>
+            <a href="{{ ea_url().setRoute("tools_distribute_visits") }}">Tillbaka till översikt</a>
+        </div>
+        <div>
+            <button id="send-distribute-visits">Spara</button>
+        </div>
+
+        <div class="distribute-visits-container" data-topic-id="{{ this_topic.id }}">
+            <table id="distribute-visits-groups" class="float-start">
+                {% for group in groups %}
+                    <tr>
+                        <td data-color-index="{{ group_colors[group.id] }}">{{ group }}</td>
+                        {% if visits_for_groups[group.id] is defined %}
+                            {% set visit = visits_for_groups[group.id] %}
+                            <td class="fixed-visits"><span data-color-index="{{ visit_colors[visit.id] }}">
+                                    {{ attribute(visit, "DateString") }}
+                                </span></td>
+                        {% else %}
+                            <td class="date-target" data-group-id="{{ group.id }}"></td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </table>
+            <table id="distribute-visits-dates">
+                {% for visit in orphaned_visits %}
+                    <tr>
+                        <td>
+                            <span class="choosable-date"
+                                  data-visit-id="{{ visit.id }}"
+                                  data-color-index="{{ visit_colors[visit.id] }}"
+                            >
+                                {{ visit.DateString }}
+                            </span>
+                        </td>
+                    </tr>
+
+                {% endfor %}
+            </table>
+        </div>
+
+    {% else %}
+        <ul>
+            {% for topic_obj in topics %}
+                {% if topic_obj.hasFutureVisits %}
+                    <li>
+                        <a href="{{ ea_url().setRoute("tools_distribute_visits", {"topic": topic_obj.id}) }}">{{ topic_obj.ShortName }}</a>
+                    </li>
+                {% endif %}
+
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+
+{% endblock %}
+

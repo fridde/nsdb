@@ -1,0 +1,79 @@
+{# available:
+ users,
+ segments: {'2': [...], '5': [...], ...},
+ segment_labels,
+earliest_confirmable_date
+#}
+
+{% for segment, groups in segments %}
+    <span class="anchor" id="groups-{{ segment }}"></span>
+    <h1>{{ segment_labels[segment] }}</h1>
+    <div class="container-md">
+        {% for row in groups|batch(2) %}
+            <div class="row">
+                {% for group in row %}
+                    <div class="col col-md">
+                        <div class="card group-container"
+                             data-edit-type="group-attribute"
+                             data-group-id="{{ group.id }}">
+                            <div class="card-body">
+                                <h4 class="card-title">{{ group.Name }}</h4>
+                                <div>
+                                    {% set selector_id = "select_user_" ~ group.id %}
+                                    <label for="{{ selector_id }}" class="form-label">Ansvarig pedagog</label>
+                                    <select class="editable form-control user-selector" data-attribute="User"
+                                            id="{{ selector_id }}">
+                                        {% for user in users %}
+                                            <option value="{{ user.id }}"{% if user.id == group.user.id %} selected{% endif %}>{{ user.fullname }}</option>
+                                        {% endfor %}
+                                        {% if not group.user %}
+                                            <option value="" selected>--- Ingen ---</option>
+                                        {% endif %}
+                                    </select>
+
+                                    {% set slider_id = "nrstudents_" ~ group.id %}
+                                    {% set slider_indicator_id = slider_id ~ "_indicator" %}
+                                    <label for="{{ slider_id }}" class="form-label">Antal elever: <span
+                                                id="{{ slider_indicator_id }}">{{ group.numberstudents }}</span></label>
+                                    <input type="range" class="form-range" id="{{ slider_id }}"
+                                           value="{{ group.numberstudents }}" min="5" max="35"
+                                           data-indicator="{{ slider_indicator_id }}"
+                                           data-attribute="NumberStudents">
+
+                                    {% set info_id = "info_" ~ group.id %}
+                                    <label class="form-label" for="{{ info_id }}">Information om gruppen</label>
+                                    <textarea class="editable form-control" data-attribute="Info" id="{{ info_id }}"
+                                              rows="4"></textarea>
+                                </div>
+                            </div>
+                            {% if group.visits %}
+                                <ul class="list-group list-group-flush">
+                                    {% for visit in group.visits %}
+                                        {% set li_classes = "list-group-item" %}
+                                        {% if visit.Date < today %}{% set li_classes = li_classes ~ " text-muted text-decoration-line-through fw-light" %}{% endif %}
+                                        <li class="{{ li_classes }}">{{ visit.DateString }}: <a
+                                                    href="{{ visit.Topic.Url }}">{{ visit.Topic.ShortName }}</a>
+                                            {% if visit.Date >= today %}
+                                                {% if visit.isConfirmed %}
+                                                    <span class="bg-success fw-light ms-3 px-2 rounded text-light">
+                                                        <i class="fas fa-check"></i>
+                                                        Bekräftad!</span>
+                                                {% elseif visit.Date < latest_confirmable_date %}
+                                                    <a href="{{ path('confirm_visit', {'visit': visit.id}) }}" class="btn btn-warning btn-sm ms-3" role="button">
+                                                        <i class="fas fa-hand-point-right"></i>
+                                                        Bekräfta</a>
+                                                {% endif %}
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+{% endfor %}
+
+<div id="update-status-div"></div>

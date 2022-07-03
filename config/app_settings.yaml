@@ -1,0 +1,64 @@
+parameters:
+  app_settings:
+    segments:
+      2: 'åk 2/3'     # the first denotes the default segment in views
+      5: 'åk 5'
+      9: 'åk 9'
+      fri: 'Fritids'
+      fbk: 'FBK'
+
+    addresses:
+      admin: 'info@school.example.org'
+      food: 'the-chef@kitchen.example.org'
+      bus: 'info@buscompany.example.com'
+    admin_summary:
+      # values conform to https://en.wikipedia.org/wiki/ISO_8601#Durations
+
+      # time before a non-confirmed visit shows up in the mail
+      no_confirmation_warning: 'P5D'
+      # time until the last visit before a warning is issued
+      soon_last_visit: 'P60D'
+      # time within which a warning will be issued if a bus is not ordered and confirmed
+      missing_bus_warning: 'P3W'
+      # time to next visit within which a warning is issued if number of
+      # students or food restrictions are changed
+      important_info_changed: 'P3W'
+      # minimum and maximum number of students in a group. If not in this range, a warning is issued
+      allowed_group_size: [5, 35]
+
+    task_frequency:
+      update_calendar: 'PT10M'
+      check_new_pending_users: 'PT1H'
+      check_admin_summary: 'P3D'
+
+    user_reminder:
+      # time after user creation until reminders are sent
+      immunity_time: 'P9D'
+      # interval between reminders
+      annoyance_interval:
+        visit_confirmation: 'P4D'
+        incomplete_profile: 'P14D'
+      # time before a visit when confirmation messages will be sent (until confirmed)
+      visit_confirmation_time: 'P14D'
+      # time before a visit when the confirmation link is available
+      visit_confirmation_visible: 'P5W'
+
+    mail_subjects:
+      visit_confirmation: 'Bekräfta ditt besök!'
+      incomplete_profile: 'Vi behöver mer information från dig!'
+      first_visit: 'Året med Naturskolan börjar!'
+      visits_added: 'Här kommer fler besöksdatum från Naturskolan'
+
+    defaults:
+      visit_start_time: '08:15'
+      visit_end_time: '13:30'
+      visit_duration: 'PT30M'
+      event_duration: 'PT1H'
+
+    snippets:
+      2:
+        when: 'vår- och hösttermin'
+        theme: '"Din omgivning". Vad finns i den omgivande naturen? Vad ser du när du tittar dig omkring?'
+      5:
+        when: 'höst- och vårtermin'
+        theme: '"Processer i naturen". Vilka processer styr naturen? Vad gör att din omgivning förändras med tiden?'
