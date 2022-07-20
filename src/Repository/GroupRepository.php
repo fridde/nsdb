@@ -37,4 +37,15 @@ class GroupRepository extends EntityRepository
             ->getMatching()
             ->sortByFunction($sortFunction);
     }
+
+    /* A group that is equal in school, segment and startyear, swedish "parallellklass" */
+    public function getActiveSiblingGroups(Group $group): Collection
+    {
+        return $this
+            ->hasStartYear($group->getStartYear())
+            ->hasSegment($group->getSegment())
+            ->hasSchool($group->getSchool())
+            ->isActive()
+            ->getMatching();
+    }
 }

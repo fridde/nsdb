@@ -7,6 +7,7 @@ namespace App\Utils;
 use App\Entity\CalendarEvent;
 use App\Entity\Group;
 use App\Entity\Location;
+use App\Entity\Note;
 use App\Entity\Record;
 use App\Entity\School;
 use App\Entity\Topic;
@@ -15,6 +16,7 @@ use App\Entity\Visit;
 use App\Repository\CalendarEventRepository;
 use App\Repository\GroupRepository;
 use App\Repository\LocationRepository;
+use App\Repository\NoteRepository;
 use App\Repository\RecordRepository;
 use App\Repository\SchoolRepository;
 use App\Repository\TopicRepository;
@@ -46,6 +48,11 @@ class RepoContainer
     public function getLocationRepo(): LocationRepository
     {
         return $this->em->getRepository(Location::class);
+    }
+
+    public function getNoteRepo(): NoteRepository
+    {
+        return $this->em->getRepository(Note::class);
     }
 
     public function getGroupRepo(): GroupRepository

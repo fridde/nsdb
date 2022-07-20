@@ -2,6 +2,7 @@ import $ from "jquery";
 
 import './styles/rating.css';
 import 'bootstrap-star-rating/js/star-rating';
+import Ajax from "./Ajax";
 
 
 
@@ -32,8 +33,12 @@ $(document).ready(() => {
             complete: confirmRating
         };
 
-        // TODO: use own ajax library instead
-        $.ajax('/api/visit/'+ id, options);
+        Ajax.createNew()
+            .setUrl('/api/rate-visit/'+ id)
+            .addToData('updates', {'Rating': rating})
+            .setResponseHandler(confirmRating)
+            .send();
+
     });
 
 

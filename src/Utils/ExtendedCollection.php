@@ -61,6 +61,9 @@ class ExtendedCollection extends ArrayCollection
         return $this->attach($this->createFrom($array));
     }
 
+    /* Flattens a collection of collections or arrays into a single collections.
+        Works to the depth of one level
+     * */
     public function collapse(): self
     {
         $results = [];
@@ -90,6 +93,11 @@ class ExtendedCollection extends ArrayCollection
     public function unique(): self
     {
         return $this->createFrom(array_unique($this->toArray(), SORT_REGULAR));
+    }
+
+    public function reverse(): self
+    {
+        return $this->createFrom(array_reverse($this->toArray()));
     }
 
     public function isNotEmpty(): bool

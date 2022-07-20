@@ -11,18 +11,18 @@
 
 
 {% block content %}
+    <div class="m-4">
     {% if not visit %}
         <h1>Idag fanns det inga besök.</h1>
-
-
         {% elseif visit.hasRating %}
             <h1>Detta besök har redan fått en bedömning.</h1>
-            {% else %}
-                <div id="rate-visit-container" data-visit-id="{{ visit.id }}" data-rating-value="-1">
-                    <div id="rate-visit"></div>
-                    <div>
-                        <button id="rate-visit-button">Skicka</button>
-                    </div>
+        {% else %}
+            <div id="rate-visit-container" data-visit-id="{{ visit.id }}" data-rating-value="-1">
+                <div id="rate-visit"></div>
+                <div>
+                    <button id="rate-visit-button">Skicka</button>
                 </div>
+            </div>
     {% endif %}
+    </div>
 {% endblock %}

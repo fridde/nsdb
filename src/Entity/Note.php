@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[RunOnCreation]
 #[ORM\Entity(repositoryClass: NoteRepository::class), ORM\Table(name: "notes")]
@@ -65,7 +66,7 @@ class Note
     }
 
     #[ConvertToEntityFirst]
-     public function setUser(User $User): void
+     public function setUser(UserInterface|User $User): void
     {
         $this->User = $User;
     }

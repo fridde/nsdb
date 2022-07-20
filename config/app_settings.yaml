@@ -11,6 +11,7 @@ parameters:
       admin: 'info@school.example.org'
       food: 'the-chef@kitchen.example.org'
       bus: 'info@buscompany.example.com'
+      food_spreadsheet: '%env(FOOD_SPREADSHEET)%'
     admin_summary:
       # values conform to https://en.wikipedia.org/wiki/ISO_8601#Durations
 

@@ -15,7 +15,6 @@ use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
-use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 
@@ -49,6 +48,8 @@ class AuthKeyAuthenticator extends AbstractAuthenticator implements Authenticati
             throw new AuthenticationException("The provided authentication key was not valid");
         }
 
+
+
         $user = $this->AuthUtil->getUserFromKey($this->key);
         if($user === null){
             throw new UserNotFoundException("This user does not exist");
@@ -67,7 +68,7 @@ class AuthKeyAuthenticator extends AbstractAuthenticator implements Authenticati
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         // TODO: Implement authentication failure
-        return new Response('Not authenticated!');
+        return new Response('The key provided was not valid');
     }
 
     public function start(Request $request, AuthenticationException $authException = null): Response

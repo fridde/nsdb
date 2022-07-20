@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Group;
 use App\Entity\Topic;
 use App\Entity\Visit;
 use App\Utils\Attributes\FilterMethod;
@@ -67,6 +68,26 @@ class VisitRepository extends EntityRepository
             ->afterToday()
             ->getMatching()
             ->sortByFunction($sortFunction);
+    }
+
+    /* All active visits that are in the future, have the same topic and the same school, i.e. from the "parallelklass" */
+    public function getSiblingVisits(Visit $visit): ExtendedCollection
+    {
+        $group = $visit->getGroup();
+
+        if(!($group instanceof Group)){
+            return ExtendedCollection::create();
+        }
+
+        $visits = $this
+            ->isActive()
+            ->hasTopic($visit->getTopic())
+            ->afterToday()
+            ->getMatching();
+
+        return $visits
+            ->filter(fn(Visit $v) => $v->getGroup()?->getSchool() === $group->getSchool());
+
     }
 
 

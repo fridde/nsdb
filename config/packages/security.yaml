@@ -38,7 +38,7 @@ security:
     access_control:
         - { path: '^/admin', roles: ROLE_SUPER_ADMIN }
         - { path: '^/cron', roles: PUBLIC_ACCESS }
-        - { path: '^/api', roles: ROLE_ACTIVE_USER }
+#        - { path: '^/api', roles: ROLE_ACTIVE_USER }
 
     role_hierarchy:
         ROLE_ACTIVE_USER: ROLE_USER

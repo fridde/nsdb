@@ -174,9 +174,9 @@ class Visit
     }
 
 
-    public function getNotes(): Collection
+    public function getNotes(): ExtendedCollection
     {
-        return $this->Notes;
+        return ExtendedCollection::create($this->Notes);
     }
 
 
@@ -251,6 +251,14 @@ class Visit
             return false;
         }
         return $this->getGroup()?->getSchool()->needsBus($this->getTopic()->getLocation());
+    }
+
+    public function needsFood(): bool
+    {
+        if (!$this->hasGroup()) {
+            return false;
+        }
+        return !empty($this->getTopic()->getFood());
     }
 
 

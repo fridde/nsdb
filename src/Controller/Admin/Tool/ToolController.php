@@ -95,7 +95,7 @@ class ToolController extends AbstractController
         $dates = array_filter($dates, fn(Carbon $d) => $d->isWeekday());
         $data['dates'] = $dates;
 
-        $topics = array_filter($this->rc->getTopicRepo()->findAll(), fn(Topic $t) => $t->hasSymbol());
+        $topics = array_filter($this->rc->getTopicRepo()->findAll(), fn(Topic $t) => $t->hasSymbol() && $t->isActive());
         $topics = array_map(fn(Topic $t) => [$t->getSymbol(), $t->getColleaguesPerGroup(), $t->getSegment()], $topics);
         $data['topics'] = array_combine(
             array_column($topics, 0),
@@ -119,8 +119,10 @@ class ToolController extends AbstractController
     #[Template('admin/tools/order_food.html.twig')]
     public function orderFood(): array
     {
-        // TODO: Implement this tool
-        return [];
+        $visits = $this->rc->getVisitRepo()->getActiveVisitsAfterToday();
+        $data['visits'] = $visits->filter(fn(Visit $v) => $v->needsFood())->getValues();
+
+        return $data;
     }
 
     #[Route('/admin/schedule-colleagues', name: 'tools_schedule_colleagues')]

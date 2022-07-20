@@ -4,6 +4,9 @@ namespace App\Controller\Admin;
 
 use App\Entity\Topic;
 use App\Settings;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -41,5 +44,11 @@ class TopicCrudController extends AbstractCrudController
     private function getSegmentLabels(): array
     {
         return array_flip($this->settings->get('segments'));
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions
+            ->remove(Crud::PAGE_INDEX, Action::DELETE);
     }
 }

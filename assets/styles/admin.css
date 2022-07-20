@@ -148,6 +148,10 @@ table#plan-year td.plan-year-active {
     background-color: lightgray;
 }
 
+#topic-counter-container {
+
+}
+
 td.segment-2 {
     font-weight: bold;
     background-color: lightsalmon;

@@ -56,13 +56,13 @@
             </tr>
         {% endfor %}
     </table>
-    <div class="container float-start mt-5">
+    <div id="topic-counter-container" class="container float-start mt-5 position-sticky" style="left: 5em">
         {% for topic_row in topics|batch(3, {'': ['','']}, true) %}
             <div class="row">
                 {% for symbol, cpg in topic_row %}
                     <div class="col-sm-4 p-1 font-monospace fs-4">
                         <span>{{ symbol|upper }}:</span>
-                        <span id="topic-counter-{{ symbol }}" data-value="0">0</span>
+                        <span id="topic-counter-{{ symbol }}" data-value="0">0.0</span>
                     </div>
                 {% endfor %}
             </div>

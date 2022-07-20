@@ -2,7 +2,43 @@
 
 {% block page_title 'Matbeställning' %}
 
+    {% set days_swedish = ['mån', 'tis', 'ons', 'tor', 'fre', 'lör', 'sön'] %}
+    {% set last_week = 0 %}
+    {% set header = ["Veckodag","Datum","Skola","Klass","# elever","Maträtt", "Aktivitet"] %}
+    {% set rows = [header] %}
+
+    {% for visit in visits %}
+        {% set this_week = visit.Date|date('W') %}
+        {% if this_week != last_week %}
+            {% set week_label = "Vecka " ~ this_week %}
+            {% set rows = rows|merge([[week_label, "", "", "", "", "", ""]]) %}
+        {% endif %}
+        {% set day = visit.Date|date('N') %}
+        {% set row = [
+            days_swedish[(day - 1)],
+            visit.DateString,
+            visit.Group.School.Name,
+            visit.Group.Name,
+            visit.Group.NumberStudents,
+            "" ,
+            visit.Topic.ShortName
+        ] %}
+        {% set rows = rows|merge([row]) %}
+        {% set last_week = this_week %}
+    {% endfor %}
+
 {% block page_content %}
+    <div><button id="copy-food-order">Kopiera</button>
+        <a class="mx-4" href="{{ get_setting('addresses', 'food_spreadsheet') }}" target="_blank">Länk till tabellen</a>
+    </div>
+    <div id="order-food" class="mt-4">
+        <textarea id="order-food-textarea" cols="80" rows="30">
+{%- for row in rows %}{{ row|join("	") }}
+{% endfor -%}
+        </textarea>
+    </div>
+    <div class="mt-5">
+
+    </div>
 
 {% endblock %}
-

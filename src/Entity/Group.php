@@ -89,7 +89,7 @@ class Group
         $this->Name = $Name;
     }
 
-     public function getUser(): ?User
+    public function getUser(): ?User
     {
         return $this->User;
     }
@@ -129,7 +129,7 @@ class Group
 
     public function isSegment(string $segment): bool
     {
-       return $this->getSegment() === $segment;
+        return $this->getSegment() === $segment;
     }
 
     public function getStartYear(): ?int
@@ -162,7 +162,7 @@ class Group
         return $this->Info;
     }
 
-     public function setInfo(?string $Info): void
+    public function setInfo(?string $Info): void
     {
         $this->Info = $Info;
     }
@@ -182,9 +182,23 @@ class Group
         $this->Status = $Status;
     }
 
+    public function getLabel(): string
+    {
+        return (string)$this;
+    }
+
     public function getVisits(): ExtendedCollection
     {
         return ExtendedCollection::create($this->Visits);
+    }
+
+    public function getNotes(): ExtendedCollection
+    {
+
+
+        return $this->getVisits()
+            ->map(fn(Visit $v) => $v->getNotes())
+            ->collapse();
     }
 
     public function hasFutureVisit(): bool

@@ -15,6 +15,7 @@ use Google_Client;
 use Google_Service_Calendar;
 use Google_Service_Calendar_Event;
 use Google_Service_Calendar_EventDateTime;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Calendar
 {
@@ -33,7 +34,11 @@ class Calendar
     private string $calendarId;
 
 
-    public function __construct(array $googleSettings, private Settings $settings)
+    public function __construct(
+        array $googleSettings,
+        private Settings $settings,
+        private UrlGeneratorInterface $router
+    )
     {
         $this->client = new Google_Client();
 
@@ -224,7 +229,7 @@ class Calendar
 
         if ($visit->hasGroup()) {
             $rows = [
-                ['Besök %sbekräftat', $visit->isConfirmed() ? '' : 'inte '],
+                ['Besök %s bekräftat', $visit->isConfirmed() ? 'är' : 'inte'],
                 [],
                 ['Lärare: %s', $visit->getGroup()?->getUser()?->getFullName()],
                 ['Årskurs: %s', $visit->getGroup()?->getSegment()],
@@ -233,8 +238,7 @@ class Calendar
                 ['Klass %s med %u elever', $visit->getGroup()?->getName(), $visit->getGroup()?->getNumberStudents()],
                 ['Extra info från läraren: %s', $visit->getGroup()?->getInfo()],
                 [],
-                // TODO: add link to page for extra contact details, add note, add review and confirm visit
-
+                ['Fler val om besöket: %s', $this->router->generate('visit_overview', ['visit' => $visit->getId()])]
             ];
         }
 

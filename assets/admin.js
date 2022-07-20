@@ -27,6 +27,13 @@ $(document).ready(() => {
     $('#confirm-bus-orders td.toggle-label').click(Update.confirmBusOrder);
 
     $('#create-api-key').click(Update.getApiKey);
+
+    $('#note-for-visit-textarea').change(Update.changeNoteForVisit)
+
+    $('#copy-food-order').click((e) => {
+        let text = $('#order-food-textarea').val();
+        navigator.clipboard.writeText(text);
+    });
 });
 
 

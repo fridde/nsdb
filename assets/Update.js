@@ -91,7 +91,7 @@ class Update {
         Edit.transferBetweenModalAndRow(Edit.DIRECTION_MODAL_TO_ROW);
         const data = Edit.getDataFromModal();
 
-        if(data['id'].startsWith('new')){
+        if (data['id'].startsWith('new')) {
             data['School'] = $('#requested-school').data('school');
             this.saveNewUser(data);
         } else {
@@ -121,7 +121,7 @@ class Update {
         const id = $('#modal-user-id-field').val();
 
         Ajax.createNew()
-            .setUrl('/api/delete/user/' +  id)
+            .setUrl('/api/delete/user/' + id)
             .setResponseHandler(Response.darkenRemovedUserRow)
             .send();
     }
@@ -178,6 +178,20 @@ class Update {
             .addToData('updates', data)
             .setResponseHandler(Edit.showUpdateStatus)
             .send();
+    }
+
+    static changeNoteForVisit = (e) => {
+        let text = $(e.target).val();
+        let note = $(e.target).data('note-id');
+        let ajax = Ajax.createNew()
+            .setUrl('/api/note/' + note)
+            .addToData('text', text)
+            .setResponseHandler(Response.updateNoteId);
+
+        if (note === "new") {
+            ajax.addToData('visit', $(e.target).data('visit-id'));
+        }
+        ajax.send();
     }
 
     static createRandomString = () => {

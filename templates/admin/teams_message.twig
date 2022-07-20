@@ -1,0 +1,17 @@
+Hej!
+
+På {{ dates|map(d => d|format_date(pattern="d LLL"))|join(" och ") }} är det dags för nästa temadag med namn {{ topic.shortName }}. Ni hittar all info om dagen på {{ topic.url }}
+
+{% if message_type == "confirmation" %}
+    Vi behöver fortfarande en bekräftelse!
+    Med hjälp av nedanstående länk{% if visits|length > 1 %}ar{% endif %} får vi veta att ni vet om besöket och den inte har hamnat mellan stolarna.
+
+    {% for visit in visits %}
+        {{- url('confirm_visit', {'visit': visit.id}) }}
+    {% endfor %}
+{% endif %}
+
+Om du önskar att vi ringer så säg till!
+
+Hälsningar,
+vi från Naturskolan

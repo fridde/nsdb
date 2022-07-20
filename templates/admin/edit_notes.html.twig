@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block page_title 'Redigera anteckningar om besök' %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('admin') }}
+{% endblock %}
+
+{% block content %}
+    {% if group is empty %}
+        <h1>Detta besök är ett reservtillfälle.</h1>
+    {% else %}
+        <h1>Anteckning för {{ visit.label }}</h1>
+        <p>Datum: {{ visit.DateString }}</p>
+        <textarea id="note-for-visit-textarea" cols="50" rows="5" placeholder="Lägg till en anteckning"
+                  data-visit-id="{{ visit.id }}" data-note-id="{{ user_note.id ?? "new" }}">
+            {{- user_note.Text ?? "" -}}
+        </textarea>
+        {% if notes|length > 0 %}
+            <h1>Tidigare anteckningar om {{ group.label }}</h1>
+            <table>
+                {% for note in notes %}
+                    <tr>
+                        <td>{{ visit.DateString }}</td>
+                        <td colspan="2">{{ visit.label }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ note.User.FullName }}</td>
+                        <td colspan="2">{{ note.Text }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    {% if visits is empty %}
+        {% elseif visits|length == 1 %}
+            {% set visit = visits|first %}
+            <h1>{{ visit.label }}</h1>
+            <p>{{ visit.DateString }}</p>
+            <ul>
+                <li>
+                    <a href="{{ path('create-dm-for-confirmation', {'visit': visit.id}) }}" target="_blank">Be pedagogerna om bekräftelse</a>
+                </li>
+                <li>
+                    <a href="{{ path('create-dm-for-welcome', {'visit': visit.id}) }}" target="_blank">Kontakta pedagogerna om temadagen</a>
+                </li>
+                <li>
+                    <a href="{{ path('confirm_visit', {'visit': visit.id}) }}" target="_blank">
+                        Bekräfta själv
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ path('note_for_visit', {'visit': visit.id}) }}" target="_blank">
+                        Göra anteckning
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ path('rate_visit_view', {'visit': visit.id}) }}" target="_blank">
+                        Ge betyg
+                    </a>
+                </li>
+            </ul>
+        {% else %}
+        <ul>
+            {% for visit in visits %}
+                <li>
+                    {% if visit.hasGroup %}
+                        <a href="{{ path('visit_overview', {'visit': visit.id}) }}">{{ visit.label }}</a>
+                    {% else %}
+                        {{ visit.label }}
+                    {% endif %}
+
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

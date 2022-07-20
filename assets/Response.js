@@ -32,6 +32,13 @@ class Response {
         // TODO: implement this method
     }
 
+    static updateNoteId = (data, jqXHR, textStatus) => {
+        if(data['success']){
+            let noteId = data['note_id'];
+            $('#note-for-visit-textarea').data('note-id', noteId).attr('data-note-id', noteId);
+        }
+    }
+
 }
 
 export default Response;

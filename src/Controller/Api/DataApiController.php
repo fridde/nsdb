@@ -2,14 +2,11 @@
 
 namespace App\Controller\Api;
 
-use App\Controller\SchoolPageController;
 use App\Entity\Group;
 use App\Entity\Note;
-use App\Entity\School;
 use App\Entity\User;
 use App\Entity\Visit;
 use App\Repository\Filterable;
-use App\Security\Key\Key;
 use App\Security\Role;
 use App\Security\Voter\SameSchoolVoter;
 use App\Utils\Attributes\ConvertToEntityFirst;
@@ -18,7 +15,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use ReflectionNamedType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,13 +28,15 @@ use Symfony\Component\Security\Core\Security;
 class DataApiController extends AbstractController
 {
     private ?Request $request;
+    private EntityManagerInterface $em;
 
     public function __construct(
         RequestStack $requestStack,
-        private EntityManagerInterface $em,
+        private RepoContainer $rc,
         private Security $security
     )
     {
+        $this->em = $rc->getEntityManager();
         $this->request = $requestStack->getCurrentRequest();
     }
 
@@ -115,42 +113,57 @@ class DataApiController extends AbstractController
         '/api/visit/{visit}',
         methods: ['POST']
     )]
-    #[IsGranted(Key::TYPE_URL)]
+    #[IsGranted('edit', subject: 'visit')]
     public function updateVisit(Visit $visit): JsonResponse
     {
         $this->updateEntityData($visit);
         return $this->asJson(['success' => true]);
     }
 
-    #[Route('/visit/confirm/{visit}', name: 'confirm_visit')]
+    #[Route(
+        '/api/rate-visit/{visit}',
+        methods: ['POST']
+    )]
     #[IsGranted('confirm', subject: 'visit')]
-//    #[Template('visit_confirmed.html.twig')]
-    public function confirmVisit(Visit $visit): Response
+    public function rateVisit(Visit $visit): JsonResponse
     {
-        $visit->setConfirmed(true);
+        $this->updateEntityData($visit);
+        return $this->asJson(['success' => true]);
+    }
+
+    #[Route(
+        '/api/note/{note}',
+        methods: ['GET', 'POST']
+    )]
+    #[IsGranted(Role::SUPER_ADMIN)]
+    public function updateNoteForVisit(?Note $note): Response
+    {
+        $thisNote = $note;
+        if(!($note instanceof Note)){
+            $visit = $this->rc->getVisitRepo()->find($this->request->get('visit'));
+            $user = $this->getUser();
+            $crit = ['Visit' => $visit, 'User' => $user];
+            /** @noinspection CallableParameterUseCaseInTypeContextInspection */
+            $note = $this->rc->getNoteRepo()->findOneBy($crit);
+            if(!($note instanceof Note) && ($user instanceof User)){
+                $note = new Note();
+                $note->setUser($user);
+                $note->setVisit($visit);
+                $this->em->persist($note);
+            }
+        }
+        $note->setText($this->request->get('text'));
         $this->em->flush();
 
-        $response = $this->forward(SchoolPageController::class . '::schoolOverview', [
-            'school' => $visit->getGroup()?->getSchool()
-        ]);
-
-        $text =  sprintf(
-            "Tack! Besöket på %s med klass %s från %s har blivit bekräftad.",
-            $visit->getDateString(),
-            $visit->getGroup()?->getName(),
-            $visit->getGroup()?->getSchool()->getName()
-        );
-
-        $this->addFlash('success', $text);
-
-        return $response;
+        return $this->json(['success' => true, 'note_id' => $note->getId()]);
     }
+
 
     #[Route(
         '/api/group/{group}',
         methods: ['POST']
     )]
-
+    #[IsGranted(ROLE::SUPER_ADMIN)]  // I have no idea, why?
     public function updateGroup(Group $group): JsonResponse
     {
         $this->updateEntityData($group);
