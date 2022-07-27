@@ -17,13 +17,16 @@ git commit -a -m "More work"
 
 cd $STAGING
 
+archive_project $PROJECT_NAME
+
 git clone $GITHUB --depth=1 && cd $PROJECT_NAME
 
 cp $SCRIPTS$PROJECT_NAME/{.env.prod.local,deployment.php} .
 
 echo 'APP_ENV=prod' > .env.local
 
-composer install --no-dev --no-scripts --optimize-autoloader --classmap-authoritative --ignore-platform-req=ext-\*
+# composer install --no-dev --no-scripts --optimize-autoloader --classmap-authoritative --ignore-platform-req=ext-\*
+composer install --no-dev --optimize-autoloader --classmap-authoritative
 
 cd $SCRIPTS$PROJECT_NAME
 npm run build
