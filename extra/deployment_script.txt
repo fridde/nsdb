@@ -1,0 +1,36 @@
+set PROJECT_NAME nsdb
+set STAGING /mnt/d/staging
+set GITHUB 'https://github.com/fridde/nsdb.git'
+
+
+#./bin/console doctrine:migrations:migrate --no-interaction 
+sf-dmm
+
+composer install --no-scripts
+
+npm run dev
+
+git status
+git commit -a -m "More work"
+
+# winphp ./vendor/bin/phpunit
+
+cd $STAGING
+
+git clone $GITHUB --depth=1 && cd $PROJECT_NAME
+
+cp $SCRIPTS$PROJECT_NAME/{.env.prod.local,deployment.php} .
+
+echo 'APP_ENV=prod' > .env.local
+
+composer install --no-dev --no-scripts --optimize-autoloader --classmap-authoritative --ignore-platform-req=ext-\*
+
+cd $SCRIPTS$PROJECT_NAME
+npm run build
+wincon assets:install
+
+cp -r public/build/ $STAGING/$PROJECT_NAME/public/build/
+
+cd $STAGING/$PROJECT_NAME
+
+./vendor/bin/deployment deployment.php
