@@ -25,12 +25,13 @@ cp $SCRIPTS$PROJECT_NAME/{.env.prod.local,deployment.php} .
 
 echo 'APP_ENV=prod' > .env.local
 
-# composer install --no-dev --no-scripts --optimize-autoloader --classmap-authoritative --ignore-platform-req=ext-\*
-composer install --no-dev --optimize-autoloader --classmap-authoritative
+composer install --no-scripts --no-dev --optimize-autoloader --classmap-authoritative
+# Run until all removed
+composer run-script pre-autoload-dump
 
 cd $SCRIPTS$PROJECT_NAME
 npm run build
-wincon assets:install
+cons assets:install
 
 cp -r public/build/ $STAGING/$PROJECT_NAME/public/build/
 
