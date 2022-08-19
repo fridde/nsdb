@@ -34,8 +34,7 @@ class CronController extends AbstractController
     public function runPostDeploy(): Response
     {
         $commands = [
-            ['doctrine:migrations:migrate', '--no-interaction'],
-            ['cache:clear', '--no-interaction']
+            ['doctrine:migrations:migrate', '--no-interaction']
         ];
 
         foreach ($commands as $args) {

@@ -100,7 +100,7 @@ class TaskManager
     public function updateCalendar(): void
     {
         // the first value will be used for inserts
-        $matchingTypesVisit = ['visit_created', 'visit_colleagues_changed']; // TODO: add more recording-types
+        $matchingTypesVisit = ['visit_created', 'visit_colleagues_changed']; // TODO : add more recording-types
         $matchingTypesCE = ['calendarevent_created'];
 
         $this->updateEntitiesInCalendar($matchingTypesVisit, 'visit');

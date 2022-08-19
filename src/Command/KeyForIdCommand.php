@@ -51,7 +51,7 @@ class KeyForIdCommand extends Command
         }
         $output->writeln($this->akm->createCodeStringForKey($key));
 
-        $io->success('');
+        //$io->success('');
 
         return Command::SUCCESS;
     }

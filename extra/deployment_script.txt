@@ -1,10 +1,11 @@
 set PROJECT_NAME nsdb
 set STAGING /mnt/d/staging
 set GITHUB 'https://github.com/fridde/nsdb.git'
+set WEBPAGE 'https://nsdb.sigtunanaturskola.se'
 
-
-#./bin/console doctrine:migrations:migrate --no-interaction 
 sf-dmm
+
+build_outlook_interactor
 
 composer install --no-scripts
 
@@ -27,7 +28,8 @@ echo 'APP_ENV=prod' > .env.local
 
 composer install --no-scripts --no-dev --optimize-autoloader --classmap-authoritative
 # Run until all removed
-composer run-script pre-autoload-dump
+#composer google-cleanup
+
 
 cd $SCRIPTS$PROJECT_NAME
 npm run build
@@ -38,3 +40,7 @@ cp -r public/build/ $STAGING/$PROJECT_NAME/public/build/
 cd $STAGING/$PROJECT_NAME
 
 ./vendor/bin/deployment deployment.php
+
+set KEY (cons -e prod app:key-for-id t)
+explorer.exe $WEBPAGE/cron/run-tasks?key=$KEY
+cmd.exe /C start $WEBPAGE/cron/run-tasks?key=$KEY

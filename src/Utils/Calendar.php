@@ -228,17 +228,18 @@ class Calendar
         $rows = [];
 
         if ($visit->hasGroup()) {
+            $extraRoute = $this->router->generate('visit_overview', ['visit' => $visit->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
             $rows = [
-                ['Besök %s bekräftat', $visit->isConfirmed() ? 'är' : 'inte'],
+                ['Besök %s bekräftat', $visit->isConfirmed() ? 'är' : '*INTE*'],
                 [],
                 ['Lärare: %s', $visit->getGroup()?->getUser()?->getFullName()],
                 ['Årskurs: %s', $visit->getGroup()?->getSegment()],
                 ['Mobil: %s', $visit->getGroup()?->getUser()?->getMobilInPlusFormat()],
                 ['Mejl: %s', $visit->getGroup()?->getUser()?->getMail()],
                 ['Klass %s med %u elever', $visit->getGroup()?->getName(), $visit->getGroup()?->getNumberStudents()],
-                ['Extra info från läraren: %s', $visit->getGroup()?->getInfo()],
+                ['Extra info från läraren: %s', $visit->getGroup()?->getInfo()  ?? '-inget-'],
                 [],
-                ['Fler val om besöket: %s', $this->router->generate('visit_overview', ['visit' => $visit->getId()])]
+                ['Fler val om besöket: %s', $extraRoute]
             ];
         }
 
