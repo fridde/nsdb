@@ -1,8 +1,8 @@
-set PROJECT_NAME nsdb
-set STAGING /mnt/d/staging
-set GITHUB 'https://github.com/fridde/nsdb.git'
-set WEBPAGE 'https://nsdb.sigtunanaturskola.se'
+## SET VARIABLES
+echo nsdb /mnt/d/staging 'https://github.com/fridde/nsdb.git' | read PROJECT_NAME STAGING GITHUB
+echo 'https://nsdb.sigtunanaturskola.se' /mnt/d/Dropbox/scripts | read WEBPAGE DROPBOX_SCRIPTS
 
+cd $DROPBOX_SCRIPTS/$PROJECT_NAME
 sf-dmm
 
 build_outlook_interactor
@@ -13,6 +13,7 @@ npm run dev
 
 git status
 git commit -a -m "More work"
+git push
 
 # winphp ./vendor/bin/phpunit
 
@@ -28,7 +29,7 @@ echo 'APP_ENV=prod' > .env.local
 
 composer install --no-scripts --no-dev --optimize-autoloader --classmap-authoritative
 # Run until all removed
-#composer google-cleanup
+while true; composer google-cleanup && break; end
 
 
 cd $SCRIPTS$PROJECT_NAME
@@ -41,6 +42,6 @@ cd $STAGING/$PROJECT_NAME
 
 ./vendor/bin/deployment deployment.php
 
+# REPEAT IF EXCEPTION OCCURS
 set KEY (cons -e prod app:key-for-id t)
-explorer.exe $WEBPAGE/cron/run-tasks?key=$KEY
-cmd.exe /C start $WEBPAGE/cron/run-tasks?key=$KEY
+cmd.exe "/C start "$WEBPAGE"/cron/run-tasks?key="$KEY

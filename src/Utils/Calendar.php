@@ -15,6 +15,7 @@ use Google_Client;
 use Google_Service_Calendar;
 use Google_Service_Calendar_Event;
 use Google_Service_Calendar_EventDateTime;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Calendar
@@ -37,7 +38,8 @@ class Calendar
     public function __construct(
         array $googleSettings,
         private Settings $settings,
-        private UrlGeneratorInterface $router
+        private UrlGeneratorInterface $router,
+        private LoggerInterface $logger
     )
     {
         $this->client = new Google_Client();
@@ -132,6 +134,7 @@ class Calendar
     public function insertEventForEntity(CalendarEvent|Visit $entity): void
     {
         $event = $this->createEventForEntity($entity);
+        $this->logger->debug(print_r($event)); // TODO: Remove in production
         try {
             $this->calendar->events->insert($this->calendarId, $event);
         } catch (Exception $e) {
