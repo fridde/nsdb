@@ -15,21 +15,26 @@ class RequestSubscriber implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
-        $testDate = $event->getRequest()->query->get('testdate');
+        $activateLogger = $event->getRequest()->query->get('logger');
+
+        if($activateLogger){
+            $GLOBALS['LOGGER'] = $this->logger;
+        }
 
         if ($_SERVER['APP_DEBUG']) {
-            $GLOBALS['LOGGER'] = $this->logger;
+            $testDate = $event->getRequest()->query->get('testdate');
             if ($testDate !== null) {
                 Carbon::setTestNow($testDate);
             }
         }
     }
 
-    public
-    static function getSubscribedEvents(): array
+    public static function getSubscribedEvents(): array
     {
         return [
             'kernel.request' => 'onKernelRequest',
         ];
     }
 }
+
+

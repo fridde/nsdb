@@ -28,7 +28,7 @@ cp $SCRIPTS$PROJECT_NAME/{.env.prod.local,deployment.php} .
 echo 'APP_ENV=prod' > .env.local
 
 composer install --no-scripts --no-dev --optimize-autoloader --classmap-authoritative
-# Run until all removed
+## Run until all removed
 while true; composer google-cleanup && break; end
 
 
