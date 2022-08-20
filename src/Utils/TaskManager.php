@@ -149,7 +149,9 @@ class TaskManager
         }
     }
 
-    #[TaskMethod('check_new_pending_users')]
+
+    // TODO: Uncomment and implement these methods
+/*    #[TaskMethod('check_new_pending_users')]
     public function checkNewPendingUsers(): void
     {
 
@@ -159,5 +161,5 @@ class TaskManager
     public function checkSummaryAndNotifyAdmin(): void
     {
 
-    }
+    }*/
 }

@@ -6,7 +6,7 @@ require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
 
 function debugLog($variable){
     if(!empty($GLOBALS['LOGGER'])){
-        $GLOBALS['LOGGER']->debug(print_r($variable));
+        $GLOBALS['LOGGER']->debug(var_export($variable, true));
     }
 }
 
