@@ -42,6 +42,6 @@ cd $STAGING/$PROJECT_NAME
 
 ./vendor/bin/deployment deployment.php
 
-# REPEAT IF EXCEPTION OCCURS
-set KEY (cons -e prod app:key-for-id t)
+## REPEAT IF EXCEPTION OCCURS
+while true; set KEY (cons -e prod app:key-for-id t) && break; end
 cmd.exe "/C start "$WEBPAGE"/cron/run-tasks?key="$KEY

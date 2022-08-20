@@ -313,7 +313,7 @@ class Calendar
         return array_map(function (string $part) {
             $part = filter_var($part, FILTER_SANITIZE_NUMBER_INT);
             return [(int)substr($part, 0, -2), (int)substr($part, -2)];  // hours, minutes
-        }, array_filter(explode('-', $timeString), 'strlen'));
+        }, array_filter(explode('-', $timeString ?? ''), 'strlen'));
     }
 
     private function errorReasonIs(Exception $e, string $reason): bool

@@ -4,11 +4,14 @@ use App\Kernel;
 
 require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
 
-function debugLog($variable){
-    if(!empty($GLOBALS['LOGGER'])){
-        $GLOBALS['LOGGER']->debug(var_export($variable, true));
+if(!function_exists('debugLog')){
+    function debugLog($variable){
+        if(!empty($GLOBALS['LOGGER'])){
+            $GLOBALS['LOGGER']->debug(var_export($variable, true));
+        }
     }
 }
+
 
 
 return function (array $context) {
