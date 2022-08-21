@@ -36,7 +36,7 @@ cd $SCRIPTS$PROJECT_NAME
 npm run build
 cons assets:install
 
-cp -r public/build/ $STAGING/$PROJECT_NAME/public/build/
+cp -r public/{build,bundles} $STAGING/$PROJECT_NAME/public
 
 cd $STAGING/$PROJECT_NAME
 
