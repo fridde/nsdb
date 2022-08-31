@@ -36,7 +36,7 @@ class EntityObserver
         $record->addToContent(strtolower($entityName), $entity->getId());
         if ($action === 'changed' && !$isCollection) {
             $oldValue = $args->getOldValue($propertyName);
-            if ($isAssociative && method_exists($oldValue, 'getId')) {
+            if ($isAssociative && $oldValue !== null && method_exists($oldValue, 'getId')) {
                 $oldValue = $oldValue->getId();
             }
             $record->addToContent('old_value', $oldValue);
