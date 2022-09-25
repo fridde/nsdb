@@ -19,4 +19,9 @@ abstract class AbstractRunOn
     {
         return $this->class;
     }
+
+    public function hasClass(): bool
+    {
+        return $this->getClass() !== null;
+    }
 }

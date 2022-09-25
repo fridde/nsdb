@@ -130,6 +130,42 @@ class Calendar
         ];
     }
 
+    public function syncEventWithEntity(CalendarEvent|Visit $entity): void
+    {
+        if(!$entity->getStatus()){
+            $this->deleteEventForEntity($entity);
+            $this->waitDueToQuota();
+            return;
+        }
+        $event = $this->createEventForEntity($entity);
+        try {
+            $result = $this->calendar->events->insert($this->calendarId, $event);
+            $this->waitDueToQuota();
+        } catch (Exception $e) {
+            if ($this->errorReasonIs($e, 'duplicate')) {
+                $this->calendar->events->update($this->calendarId, $event->getId(), $event);
+                $this->waitDueToQuota();
+            } else {
+                throw $e;
+            }
+        }
+    }
+
+
+    public function updateOrInsertEventForEntity(CalendarEvent|Visit $entity): void
+    {
+        $event = $this->createEventForEntity($entity);
+        try {
+            $this->calendar->events->insert($this->calendarId, $event);
+            $this->waitDueToQuota();
+        } catch (Exception $e) {
+            if ($this->errorReasonIs($e, 'duplicate')) {
+                $this->calendar->events->update($this->calendarId, $event->getId(), $event);
+                $this->waitDueToQuota();
+            }
+        }
+    }
+
     public function insertEventForEntity(CalendarEvent|Visit $entity): void
     {
         $event = $this->createEventForEntity($entity);
@@ -150,13 +186,13 @@ class Calendar
         $this->waitDueToQuota();
     }
 
-    public function deleteEventForVisit(Visit $visit): void
+    public function deleteEventForEntity(CalendarEvent|Visit $entity): void
     {
-        $eventId = $this->createEventId($visit);
+        $eventId = $this->createEventId($entity);
         try {
             $this->calendar->events->delete($this->calendarId, $eventId);
         } catch (Exception $e) {
-            if (!$this->errorReasonIs($e, 'deleted')) {
+            if (!($this->errorReasonIs($e, 'deleted') || $this->errorReasonIs($e, 'notFound'))) {
                 throw $e;
             }
         }
@@ -219,7 +255,7 @@ class Calendar
             $visit->getGroup()?->getName(),
             $visit->getGroup()?->getSchool()->getName(),
             $visit->getGroup()?->getUser()?->getFirstName(),
-            substr($visit->getGroup()?->getUser()?->getLastName(), 0, 1),
+            mb_substr($visit->getGroup()?->getUser()?->getLastName(), 0, 1),
         );
 
     }
@@ -312,8 +348,8 @@ class Calendar
     {
         return array_map(function (string $part) {
             $part = filter_var($part, FILTER_SANITIZE_NUMBER_INT);
-            return [(int)substr($part, 0, -2), (int)substr($part, -2)];  // hours, minutes
-        }, array_filter(explode('-', $timeString ?? ''), 'strlen'));
+            return [(int)mb_substr($part, 0, -2), (int)mb_substr($part, -2)];  // hours, minutes
+        }, array_filter(explode('-', $timeString ?? ''), 'mb_strlen'));
     }
 
     private function errorReasonIs(Exception $e, string $reason): bool

@@ -60,7 +60,7 @@ class Group
 
     public function __toString(): string
     {
-        $s = '[' . strtoupper($this->getSchool()->getId()) . ':';
+        $s = '[' . mb_strtoupper($this->getSchool()->getId()) . ':';
         $s .= $this->getSegment() . '] ' . $this->getName();
 
         return $s;

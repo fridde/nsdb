@@ -28,7 +28,7 @@ parameters:
       allowed_group_size: [5, 35]
 
     task_frequency:
-      update_calendar: 'PT10M'
+      update_calendar: 'PT2M'
       check_new_pending_users: 'PT1H'
       check_admin_summary: 'P3D'
 

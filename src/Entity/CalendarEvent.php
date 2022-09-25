@@ -33,6 +33,10 @@ class CalendarEvent
     #[RunOnChange]
     protected string $Title;
 
+    #[ORM\Column]
+    #[RunOnChange]
+    protected bool $Status = true;
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[RunOnChange]
     protected ?string $Description = null;
@@ -60,6 +64,16 @@ class CalendarEvent
     public function setTitle(string $Title): void
     {
         $this->Title = $Title;
+    }
+
+    public function getStatus(): bool
+    {
+        return $this->Status;
+    }
+
+    public function setStatus(bool $Status): void
+    {
+        $this->Status = (bool) $Status;
     }
 
     public function getDescription(): ?string

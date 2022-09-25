@@ -14,10 +14,15 @@ use Doctrine\ORM\PersistentCollection;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Psr\Log\LoggerInterface;
 use ReflectionAttribute;
+use Symfony\Component\Security\Core\Security;
 
 class UpdateSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private EntityObserver $eo, public LoggerInterface $logger)
+    public function __construct(
+        private EntityObserver $eo,
+        private Security $security,
+        public LoggerInterface $logger
+    )
     {
     }
 
@@ -80,32 +85,31 @@ class UpdateSubscriber implements EventSubscriberInterface
             throw new \InvalidArgumentException('parameter $target must be Reflection-class or -property');
         }
 
-        $class = $attribute->getClass();
+        if ($attribute->hasClass()) {
+            $method = $attribute->getMethod();
 
-        if ($class === null && $attribute instanceof AbstractRunOn) {
+            $rClass = new \ReflectionClass($attribute->getClass());
+            $rMethod = $rClass->getMethod($method);
 
-            $recordArgs = [
-                'args' => $args,
-                'entityName' => $entityName,
-            ];
+            $rMethod->invoke($rClass->newInstance(), $args);
 
-            if($attribute instanceof RunOnChange){
-                $recordArgs['propertyName'] = $propertyName ?? null;
-                $recordArgs['isAssociative'] = $attribute->isAssociative;
-                $recordArgs['isCollection'] = $attribute->isCollection;
-            }
-
-            $record = $this->eo->createRecord(...$recordArgs);
-            $this->eo->addRecord($record);
             return;
         }
-        $method = $attribute->getMethod();
 
-        $rClass = new \ReflectionClass($class);
-        $rMethod = $rClass->getMethod($method);
+        $recordArgs = [
+            'args' => $args,
+            'entityName' => $entityName,
+            'user' => $this->security->getUser()
+        ];
 
-        $rMethod->invoke($rClass->newInstance(), $args);
+        if($attribute instanceof RunOnChange){
+            $recordArgs['propertyName'] = $propertyName ?? null;
+            $recordArgs['isAssociative'] = $attribute->isAssociative;
+            $recordArgs['isCollection'] = $attribute->isCollection;
+        }
 
+        $record = $this->eo->createRecord(...$recordArgs);
+        $this->eo->addRecord($record);
     }
 
     public function postRemove(LifecycleEventArgs $args): void

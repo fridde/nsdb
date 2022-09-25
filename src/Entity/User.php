@@ -70,6 +70,9 @@ class User implements UserInterface
     #[ORM\OneToMany(mappedBy: "User", targetEntity: Note::class)]
     protected Collection $Notes;
 
+    #[ORM\OneToMany(mappedBy: "User", targetEntity: Record::class)]
+    protected Collection $Records;
+
     public function __construct()
     {
         $this->setCreated(Carbon::now());
@@ -77,11 +80,12 @@ class User implements UserInterface
         $this->Visits = new ExtendedCollection();
         $this->Groups = new ExtendedCollection();
         $this->Notes = new ExtendedCollection();
+        $this->Records = new ExtendedCollection();
     }
 
     public function __toString(): string
     {
-        return $this->getFullName().' ['. strtoupper($this->getSchoolId()).']';
+        return $this->getFullName().' ['. mb_strtoupper($this->getSchoolId()).']';
     }
 
     public function getId(): int
@@ -151,7 +155,7 @@ class User implements UserInterface
 
     public function setMail(?string $Mail): void
     {
-        $this->Mail = strtolower(trim($Mail));
+        $this->Mail = mb_strtolower(trim($Mail));
     }
 
     public function getSchool(): School
@@ -250,6 +254,11 @@ class User implements UserInterface
     public function getGroups(): ExtendedCollection
     {
         return ExtendedCollection::create($this->Groups);
+    }
+
+    public function getRecords(): ExtendedCollection
+    {
+        return ExtendedCollection::create($this->Records);
     }
 
     public function getSegment(): ?string

@@ -62,9 +62,7 @@ class CronController extends AbstractController
     #[IsGranted(Key::TYPE_CRON)]
     public function runAllTasks(): Response
     {
-        $taskNames = array_keys($this->taskManager->collectAllMethods());
-
-        foreach ($taskNames as $taskName) {
+        foreach ($this->taskManager->getTaskNames() as $taskName) {
             if ($this->taskManager->longEnoughSinceLastExecution($taskName)) {
                 try {
                     $this->taskManager->execute($taskName);

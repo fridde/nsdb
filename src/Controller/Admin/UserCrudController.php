@@ -61,7 +61,7 @@ class UserCrudController extends AbstractCrudController
 //    {
 //        $roles = User::getRoleLabels();
 //        $labels = array_map(
-//            fn($label) => strtolower(str_replace('ROLE_', '', $label)),
+//            fn($label) => mb_strtolower(str_replace('ROLE_', '', $label)),
 //            $roles
 //        );
 //

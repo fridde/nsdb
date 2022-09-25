@@ -79,7 +79,7 @@ class Visit
         $s = $this->getDateString() . ', ';
         $s .= $this->getTopic()->getShortName();
         if ($this->hasGroup()) {
-            $s .= ', ' . strtoupper($this->getGroup()?->getSchool()->getId());
+            $s .= ', ' . mb_strtoupper($this->getGroup()?->getSchool()->getId());
             $s .= ': ' . $this->getGroup()?->getName();
         }
         return $s;
@@ -216,7 +216,7 @@ class Visit
 
     public function getStatus(): bool
     {
-        return $this->Status;
+        return (bool) $this->Status;
     }
 
 

@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 use App\Message\MessageDetails as MD;
+use Symfony\Component\Security\Core\Security;
 
 class MessageRecorder
 {
@@ -23,6 +24,7 @@ class MessageRecorder
         private RepoContainer          $rc,
         private EntityManagerInterface $em,
         private Filesystem             $fs,
+        private Security               $security,
         private MD                     $md
     )
     {
@@ -54,8 +56,11 @@ class MessageRecorder
 
     public function saveTempRecordsToDB(string $token): void
     {
+        /** @var User $user  */
+        $user = $this->security->getUser();
         $records = $this->loadTempRecords($token);
         ExtendedCollection::create($records)
+            ->walk(fn(Record $r) => $r->setUser($user))
             ->walk(fn(Record $r) => $this->em->persist($r));
         $this->em->flush();
     }

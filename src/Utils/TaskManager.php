@@ -5,7 +5,9 @@ namespace App\Utils;
 
 
 use App\Entity\CalendarEvent;
+use App\Entity\Group;
 use App\Entity\Record;
+use App\Entity\User;
 use App\Entity\Visit;
 use App\Repository\Filterable;
 use App\Repository\RecordRepository;
@@ -24,10 +26,38 @@ class TaskManager
     private array $taskToMethods = [];
     private array $lastExecutionTimes = [];
 
+    private const RELEVANT_EVENTS = [
+        Visit::class => [
+            'visit_created',
+            'visit_colleagues_changed',
+            'visit_group_changed',
+            'visit_date_changed',
+            'visit_confirmed_changed',
+            'visit_status_changed'
+        ],
+        CalendarEvent::class => [
+            'calendarevent_created',
+            'calendarevent_title_changed',
+            'calendarevent_status_changed'
+        ],
+        User::class => [
+            'user_mobil_changed',
+            'user_mail_changed'
+        ],
+        Group::class => [
+            'group_info_changed',
+            'group_numberstudents_changed',
+            'group_name_changed',
+            'group_user_changed',
+            'group_status_changed'
+        ]
+    ];
+
+
     public function __construct(
-        private Settings $settings,
+        private Settings      $settings,
         private RepoContainer $rc,
-        private Calendar $calendar
+        private Calendar      $calendar
     )
     {
         $this->recordRepo = $this->rc->getRecordRepo();
@@ -60,11 +90,15 @@ class TaskManager
         $intervalString = $this->settings->get('task_frequency.' . $taskName);
         $interval = CarbonInterval::create($intervalString);
 
-        return $this->getLastExecution($taskName)->add($interval)->lt(Carbon::now());
+        return $this->getLastExecution($taskName)->copy()->add($interval)->lt(Carbon::now());
     }
 
-    public function collectAllMethods(): array
+    public function getTaskToMethods(): array
     {
+        if(!empty($this->taskToMethods)){
+            return $this->taskToMethods;
+        }
+
         $class = new \ReflectionClass($this);
 
         foreach ($class->getMethods() as $method) {
@@ -78,94 +112,136 @@ class TaskManager
             }
         }
         return $this->taskToMethods;
+
     }
 
-    public function execute(string $taskName): bool
+    public function getTaskNames(): array
     {
-        try {
-            /** @var ReflectionMethod $method */
-            $method = $this->taskToMethods[$taskName];
-            $method->invoke($this);
-        } catch (\Exception $e) {
-            return false;
-        }
-        $record = new Record($taskName);
-        $this->rc->getEntityManager()->persist($record);
-        $this->rc->getEntityManager()->flush();
+        return array_keys($this->getTaskToMethods());
+    }
 
-        return true;
+    public function getMethodForTask(string $taskName): ReflectionMethod
+    {
+        return $this->getTaskToMethods()[$taskName];
+    }
+
+    public function execute(string $taskName): void
+    {
+            $method = $this->getMethodForTask($taskName);
+            $result = $method->invoke($this);
+
+            if(is_array($result)){
+                $record = new Record($taskName);
+                $record->setContent($result);
+                $this->rc->getEntityManager()->persist($record);
+                $this->rc->getEntityManager()->flush();
+            }
     }
 
     #[TaskMethod('update_calendar')]
-    public function updateCalendar(): void
+    public function updateCalendar(): ?array
     {
-        // the first value will be used for inserts
-        // TODO : add more recording-types
-        $matchingTypesVisit = [
-            'visit_created',
-            'visit_colleagues_changed',
-            'visit_date_changed',
-            'visit_confirmed_changed'
-            ];
-        $matchingTypesCE = ['calendarevent_created', 'calendarevent_title_changed'];
+        $entityIds = array_fill_keys([Visit::class, CalendarEvent::class], []);
+        foreach(array_keys(self::RELEVANT_EVENTS) as $entityClass){
+            $returnType = $this->getReturnTypeForEnitityClass($entityClass);
+            $entityIds[$returnType] += $this->collectUpdatableEntityIds($entityClass);
+            $entityIds[$returnType] = array_values(array_unique($entityIds[$returnType]));
+        }
+        $entityIds = array_filter($entityIds);
 
-        $this->updateEntitiesInCalendar($matchingTypesVisit, 'visit');
-        $this->updateEntitiesInCalendar($matchingTypesCE, 'calendarevent');
+        $this->updateEntitiesInCalendar($entityIds);
+
+        return empty($entityIds) ? null : $entityIds;
     }
 
-
-    private function updateEntitiesInCalendar(array $matchingTypes, string $idKey): void
+    private function getReturnTypeForEnitityClass(string $entityClass): string
     {
-        $getIdFromValue = fn(Record $r) => $r->getFromContent($idKey);
+        return match ($entityClass){
+          Group::class, User::class => Visit::class,
+          default => $entityClass
+        };
+    }
 
+    public function collectUpdatableEntityIds(string $class): array
+    {
         $lastExecution = $this->getLastExecution('update_calendar');
+        $matchingTypes = self::RELEVANT_EVENTS[$class];
 
         $records = $this->recordRepo
             ->addAndFilter('Type', $matchingTypes, Comparison::IN)
-            ->addAndFilter('Created', $lastExecution,  Comparison::GTE)
+            ->addAndFilter('Created', $lastExecution, Comparison::GTE)
             ->getMatching();
 
-        $splitRecords = $records->partition(fn($k, Record $r) => $r->isType($matchingTypes[0]));
+        return $records
+            ->map(fn(Record $r) => $this->getIdsFromRecord($r, $class))
+            ->collapse()->unique()->toArray();
+    }
 
-        /** @var ExtendedCollection[] $splitRecords */
-        $creations = $splitRecords[0]->map($getIdFromValue);
-        $updates = $splitRecords[1]
-            ->map($getIdFromValue)
-            ->filter(fn($id) => !$creations->contains($id));
 
-        /** @var Filterable $repo  */
-        $repo = match($idKey){
-            'visit' => $this->rc->getVisitRepo(),
-            'calendarevent' => $this->rc->getCalendarEventRepo(),
+    private function updateEntitiesInCalendar(array $entityIds): void
+    {
+        foreach($entityIds as $entityClass => $ids){
+            /** @var Filterable $repo */
+            $repo = match ($entityClass) {
+                Visit::class => $this->rc->getVisitRepo(),
+                CalendarEvent::class => $this->rc->getCalendarEventRepo(),
+            };
+
+            $allEntities = $repo
+                ->addAndFilter('id', array_unique($ids), Comparison::IN)
+                ->getMatching()->toArray();
+
+            foreach ($allEntities as $entity) {
+                $this->calendar->syncEventWithEntity($entity);
+            }
+        }
+    }
+
+    private function getShortClassName(string $class): string
+    {
+        return match ($class) {
+            Visit::class => 'visit',
+            CalendarEvent::class => 'calendarevent'
         };
-        $allEntityIds = array_unique($records->map($getIdFromValue)->toArray());
-        $allEntities = $repo->addAndFilter('id', $allEntityIds, Comparison::IN)
-            ->getMatching()->toArray();
-        $keys = array_map(fn(CalendarEvent|Visit $e)=> $e->getId(), $allEntities);
-        $allEntities = array_combine($keys, $allEntities);
+    }
 
-        foreach($updates as $updatedEntityId){
-            $entity = $allEntities[$updatedEntityId];
-            $this->calendar->updateEventForEntity($entity);
-        }
+    private function getIdsFromRecord(Record $record, string $class): array
+    {
+        return match($class){
+          Visit::class, CalendarEvent::class => [$record->getFromContent($this->getShortClassName($class))],
+          Group::class => $this->getVisitIdsForGroupRecord($record),
+          User::class => $this->getVisitIdsForUserRecord($record)
+        };
+    }
 
-        foreach($creations as $createdEntityId){
-            $entity = $allEntities[$createdEntityId];
-            $this->calendar->insertEventForEntity($entity);
-        }
+    private function getVisitIdsForGroupRecord(Record $record): array
+    {
+        /** @var Group $group  */
+        $group = $this->rc->getGroupRepo()->find($record->getFromContent('group'));
+
+        return $group->getVisits()->map(fn(Visit $v) => $v->getId())->toArray();
+    }
+
+    private function getVisitIdsForUserRecord(Record $record): array
+    {
+        /** @var User $user  */
+        $user = $this->rc->getUserRepo()->find($record->getFromContent('user'));
+
+        return $user->getAllVisits()->map(fn(Visit $v) => $v->getId())->toArray();
     }
 
 
-    // TODO: Uncomment and implement these methods
-/*    #[TaskMethod('check_new_pending_users')]
-    public function checkNewPendingUsers(): void
-    {
 
-    }
 
-    #[TaskMethod('check_admin_summary')]
-    public function checkSummaryAndNotifyAdmin(): void
-    {
+    /*    #[TaskMethod('check_new_pending_users')]
+        public function checkNewPendingUsers(): void
+        {
 
-    }*/
+        }
+
+        #[TaskMethod('check_admin_summary')]
+        public function checkSummaryAndNotifyAdmin(): void
+        {
+
+        }*/
 }

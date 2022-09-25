@@ -23,6 +23,9 @@ class Record
     #[ORM\Column]
     protected DateTime $Created;
 
+    #[ORM\ManyToOne(inversedBy: "Records")]
+    protected ?User $User = null;
+
     public function __construct(string $type = null)
     {
         if(null !== $type){
@@ -108,12 +111,28 @@ class Record
         return $this->getCreated()->gt($date);
     }
 
+    public function setUser(?User $user = null): void
+    {
+        $this->User = $user;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->User;
+    }
+
+    public function hasUser(): bool
+    {
+        return $this->getUser() !== null;
+    }
+
     public function __serialize(): array
     {
         return [
             'Type' => $this->getType(),
             'Content' => $this->getContent(),
-            'Created' => $this->getCreated()->toIso8601String()
+            'Created' => $this->getCreated()->toIso8601String(),
+            'User' => serialize($this->getUser())
         ];
     }
 
@@ -122,6 +141,7 @@ class Record
         $this->setType($data['Type']);
         $this->setContent($data['Content']);
         $this->setCreated(Carbon::create($data['Created']));
+        $this->setUser(unserialize($data['User'], ['allowed_classes' => [User::class]]));
     }
 
 }
