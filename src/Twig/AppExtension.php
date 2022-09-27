@@ -20,7 +20,8 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFunction('snippet', [AppRuntime::class, 'getSnippet']),
-            new TwigFunction('get_setting', [AppRuntime::class, 'getSetting'])
+            new TwigFunction('get_setting', [AppRuntime::class, 'getSetting']),
+            new TwigFunction('gmaps_url', [AppRuntime::class, 'getGoogleMapsUrl']),
         ];
     }
 

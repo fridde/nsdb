@@ -35,6 +35,11 @@ class AppRuntime implements RuntimeExtensionInterface
         return $this->settings->getUsingKeys(...$keys);
     }
 
+    public function getGoogleMapsUrl(string $coordinates): string
+    {
+        return 'https://www.google.com/maps/place/' . rawurlencode($coordinates);
+    }
+
 
 
 }

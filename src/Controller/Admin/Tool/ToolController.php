@@ -111,8 +111,11 @@ class ToolController extends AbstractController
     #[Template('admin/tools/order_bus.html.twig')]
     public function orderBus(): array
     {
-        // TODO: Implement this tool
-        return [];
+        Carbon::setLocale('sv');
+        $visits = $this->rc->getVisitRepo()->getActiveVisitsAfterToday();
+        $data['visits'] = $visits->filter(fn(Visit $v) => $v->needsBus());
+
+        return $data;
     }
 
     #[Route('/admin/order-food', name: 'tools_order_food')]

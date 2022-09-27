@@ -13,3 +13,7 @@
 {% macro school_fragment_link(school_id, fragment) %}
     {{ path('school_overview', {'school': school_id, '_fragment': fragment }) }}
 {% endmacro %}
+
+{% macro bus_date(date) %}
+    {{ date.shortDayName }} {{ date.day}} {{ date.monthName}} {{ date.year }}
+{% endmacro %}

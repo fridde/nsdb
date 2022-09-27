@@ -247,7 +247,7 @@ class Visit
 
     public function needsBus(): bool
     {
-        if (!$this->hasGroup()) {
+        if (!$this->hasGroup() || !$this->isActive()) {
             return false;
         }
         return $this->getGroup()?->getSchool()->needsBus($this->getTopic()->getLocation());

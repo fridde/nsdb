@@ -1,8 +1,39 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
 
+{% import "macros.html.twig" as helper %}
+
 {% block page_title 'Bussbeställning' %}
 
 {% block page_content %}
-
+    <div>
+        <p>
+            Vår referens: Friedrich Hehl, 073-6665275<br>
+            Fakturareferens: JANHAG001<br>
+            Kundnummer: 78582
+        </p>
+        <hr>
+    </div>
+    <div>
+        {% for visit in visits %}
+            <p>
+                {{ visit.Group.NumberStudents }} pax<br>
+                Avgång: {{ helper.bus_date(visit.Date) }} kl 08:15<br>
+                Från: {{ visit.Group.School.Name }}<br>
+                Till: {{ visit.Topic.Location.Name }}<br><br>
+                {{ visit.Group.School.Name }}: {{ gmaps_url(visit.Group.School.Coordinates) }}<br>
+                {{ visit.Topic.Location.Name }}: {{ gmaps_url(visit.Topic.Location.Coordinates) }}<br>
+            </p>
+            <hr>
+            <p>
+                {{ visit.Group.NumberStudents }} pax<br>
+                Avgång: {{ helper.bus_date(visit.Date) }} kl 13:30<br>
+                Från: {{ visit.Topic.Location.Name }}<br>
+                Till: {{ visit.Group.School.Name }}<br><br>
+                {{ visit.Topic.Location.Name }}: {{ gmaps_url(visit.Topic.Location.Coordinates) }}<br>
+                {{ visit.Group.School.Name }}: {{ gmaps_url(visit.Group.School.Coordinates) }}<br>
+            </p>
+            <hr>
+        {% endfor %}
+    </div>
 {% endblock %}
 
