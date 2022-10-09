@@ -27,7 +27,7 @@ cp $SCRIPTS$PROJECT_NAME/{.env.prod.local,deployment.php} .
 
 echo 'APP_ENV=prod' > .env.local
 
-composer install --no-scripts --no-dev --optimize-autoloader --classmap-authoritative
+# composer install --no-scripts --no-dev --optimize-autoloader --classmap-authoritative
 ## Run until all removed
 while true; composer google-cleanup && break; end
 
@@ -41,6 +41,12 @@ cp -r public/{build,bundles} $STAGING/$PROJECT_NAME/public
 cd $STAGING/$PROJECT_NAME
 
 ./vendor/bin/deployment deployment.php
+
+ssh_to nsdb
+cd ~/domains/nsdb.sigtunanaturskola.se/private_html/
+composer install --no-scripts --no-dev --optimize-autoloader --classmap-authoritative
+exit
+
 
 ## REPEAT IF EXCEPTION OCCURS
 for i in (seq 3); set KEY (cons -e prod app:key-for-id t); end
