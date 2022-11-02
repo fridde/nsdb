@@ -243,7 +243,7 @@ class AdminApiController extends AbstractController
 
     #[Route('/api/confirm-sent-mails')]
     #[IsGranted(Key::TYPE_CRON)]
-    public function confirmSentMails(MessageRecorder $mr, MessageDetails $md): JsonResponse
+    public function confirmSentMails(MessageRecorder $mr): JsonResponse
     {
         $status = $this->request->get('status');
         $token = $this->request->get('token');

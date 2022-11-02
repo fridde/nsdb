@@ -1,0 +1,21 @@
+{# available: user #}
+{% extends "mail/base_mail.html.twig" %}
+{% import "mail/mail_macros.html.twig" as NDB %}
+
+{% block body_header %}{% endblock %}
+
+{% block body_text %}
+    <p>Du får detta mejl för att vi på Naturskolan har antecknat dig som administratör eller rektor för {{ user.School.Name }}. </p>
+    <p>Vi behöver din hjälp (igen)!</p>
+    <p>
+        Gå igenom klasserna och personalen i <a href="{{ url('school_overview', {school: user.School.id}) }}">vår besöksportal</a>.
+        Se till att rätt pedagog står vid rätt klass och att antal elever stämmer (ungefär).  </p>
+    <p>
+        Det finns även möjlighet att lägga till pedagoger som saknas. Dessa pedagoger kan därefter också logga in på besöksportalen, se besöksdatum och lägga till information om sin klass.
+    </p>
+    <p>Om du ser att antal klasser inte stämmer eller någon pedagog inte borde ha tillgång till besöksportalen (t ex för att hen har slutat på din skola), hör av dig till oss via mejl.</p>
+{% endblock %}
+
+{% block after_body_text %}
+    <p>Tack på förhand!</p>
+{% endblock %}

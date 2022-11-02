@@ -14,12 +14,14 @@ class MessageDetails
     public const SUBJECT_INCOMPLETE_PROFILE = 'incomplete_profile';
     public const SUBJECT_FIRST_VISIT = 'first_visit';
     public const SUBJECT_VISITS_ADDED = 'visits_added';
+    public const SUBJECT_SCHOOL_ADMIN_REQUEST = 'school_admin_request';
 
     public const TYPES = [
         self::SUBJECT_VISIT_CONFIRMATION,
         self::SUBJECT_INCOMPLETE_PROFILE,
         self::SUBJECT_FIRST_VISIT,
-        self::SUBJECT_VISITS_ADDED
+        self::SUBJECT_VISITS_ADDED,
+        self::SUBJECT_SCHOOL_ADMIN_REQUEST
     ];
 
     public function __construct(
@@ -31,17 +33,7 @@ class MessageDetails
 
     public function getTempRecordsPath(string $name): string
     {
-        return $this->kernel->getProjectDir() . '/data/temp_records/' . $name . '.txt';
-    }
-
-    public function getOrphanedMailsPath(): string
-    {
-        return $this->kernel->getProjectDir() . '/data/orphaned_mails.csv';
-    }
-
-    public function getBadAddressPath(): string
-    {
-        return $this->kernel->getProjectDir() . '/data/bad_addresses.csv';
+        return $this->kernel->getProjectDir() . '/var/temp_records/' . $name . '.txt';
     }
 
     public function getImmunityTresholdDate(): Carbon

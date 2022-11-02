@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\School;
 use App\Entity\User;
+use App\Security\Role;
 use App\Utils\Attributes\FilterMethod;
 use App\Utils\ExtendedCollection;
 use Doctrine\Common\Collections\Collection;
@@ -45,6 +46,12 @@ class UserRepository extends EntityRepository
     {
         return $this->isActive()->getMatching()
             ->filter(fn(User $u) => $u->hasGroupWithFutureVisit());
+    }
+
+    public function getSchoolAdmins(): ExtendedCollection
+    {
+        return $this->isActive()->getMatching()
+            ->filter(fn(User $u) => $u->hasRole(Role::SCHOOL_ADMIN));
     }
 
     public function getClosestMatch(ExtendedCollection $allUsers, string $completeName): ?User

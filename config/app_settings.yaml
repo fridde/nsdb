@@ -49,6 +49,7 @@ parameters:
       incomplete_profile: 'Vi behöver mer information från dig!'
       first_visit: 'Året med Naturskolan börjar!'
       visits_added: 'Här kommer fler besöksdatum från Naturskolan'
+      school_admin_request: 'Naturskolan behöver hjälp med info om din personal'
 
     defaults:
       visit_start_time: '08:15'

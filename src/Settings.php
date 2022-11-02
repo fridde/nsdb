@@ -7,10 +7,12 @@ namespace App;
 class Settings
 {
     private array $settings;
+    private const CHANGEABLES = 'changeables';
 
-    public function __construct(array $appSettings = [])
+    public function __construct(array $appSettings = [], array $changeableSettings = [])
     {
         $this->settings = $appSettings;
+        $this->settings['changeables'] = $changeableSettings;
     }
 
     public function get(string $index): mixed
@@ -28,5 +30,12 @@ class Settings
         }
 
         return $return;
+    }
+
+    public function getChangeable(string $index): mixed
+    {
+        $index = self::CHANGEABLES . '.' . $index;
+
+        return $this->get($index);
     }
 }

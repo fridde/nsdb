@@ -8,6 +8,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -34,10 +36,12 @@ class TopicCrudController extends AbstractCrudController
             IdField::new('id')->hideOnForm(),
             TextField::new('ShortName'),
             TextField::new('LongName'),
+            AssociationField::new('Location'),
             ChoiceField::new('Segment')->setChoices($this->getSegmentLabels()),
             IntegerField::new('VisitOrder'),
             TextField::new('Food'),
-            UrlField::new('Url')
+            UrlField::new('Url'),
+            BooleanField::new('Status')->renderAsSwitch(),
         ];
     }
 

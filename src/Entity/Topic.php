@@ -57,10 +57,7 @@ class Topic
     public function __toString()
     {
         $s = '[' . $this->getSegment();
-        $visitOrder = $this->getVisitOrder();
-        if($visitOrder !== null){
-            $s .= ':' . $visitOrder;
-        }
+        $s .= ':' . $this->getVisitOrder();
         $s .= '] ' . $this->getShortName();
 
         return  $s;
@@ -196,6 +193,11 @@ class Topic
 
 
     public function isActive(): bool
+    {
+        return $this->Status;
+    }
+
+    public function getStatus(): bool
     {
         return $this->Status;
     }

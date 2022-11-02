@@ -36,7 +36,8 @@ class MessageBuilder
         return $this->collectMailsForVisitConfirmation()
             ->attach($this->collectMailsForIncompleteProfile())
             ->attach($this->collectMailsForNewVisitors())
-            ->attach($this->collectMailsForAddedVisits());
+            ->attach($this->collectMailsForAddedVisits())
+            ->attach($this->collectMailsForSchoolAdminRequest());
     }
 
     private function collectMailsForVisitConfirmation(): ExtendedCollection
@@ -109,6 +110,20 @@ class MessageBuilder
         return $users->map(fn(User $u) => $this->createEMail($u, $subject));
     }
 
+    private function collectMailsForSchoolAdminRequest(): ExtendedCollection
+    {
+        $subject = MD::SUBJECT_SCHOOL_ADMIN_REQUEST;
+        $newestTreshold = Carbon::create($this->settings->getChangeable('next_school_admin_mail'));
+        if($newestTreshold->gt(Carbon::today())){
+            return ExtendedCollection::create();
+        }
+
+        $users = $this->rc->getUserRepo()->getSchoolAdmins()
+            ->filter(fn(User $u) => !$this->mr->userGotMessageAfter($u, $subject, $newestTreshold));
+
+        return $users->map(fn(User $u) => $this->createEMail($u, $subject));
+    }
+
 
     private function removeAnnoyedUsers(ExtendedCollection $users, string $subject): ExtendedCollection
     {
@@ -155,4 +170,5 @@ class MessageBuilder
 
         return $this->usersWithFutureVisits;
     }
+
 }

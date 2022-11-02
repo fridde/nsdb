@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7eb04c52a18924e7d582bafeb8e5aa13",
+    "content-hash": "05efe8a7862ba88e3f455e43c0042d5a",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -54,74 +54,6 @@
                 "source": "https://github.com/Behat/Transliterator/tree/v1.5.0"
             },
             "time": "2022-03-30T09:27:43+00:00"
-        },
-        {
-            "name": "dg/ftp-deployment",
-            "version": "v3.5.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/dg/ftp-deployment.git",
-                "reference": "e5ff0d1cd3044c8339a0062811962fc9a40cec91"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/dg/ftp-deployment/zipball/e5ff0d1cd3044c8339a0062811962fc9a40cec91",
-                "reference": "e5ff0d1cd3044c8339a0062811962fc9a40cec91",
-                "shasum": ""
-            },
-            "require": {
-                "ext-zlib": "*",
-                "php": ">=7.4",
-                "phpseclib/phpseclib": "^3.0"
-            },
-            "require-dev": {
-                "nette/tester": "^2.0",
-                "phpstan/phpstan": "^0.12"
-            },
-            "suggest": {
-                "ext-ftp": "to connect to ftp:// server",
-                "ext-json": "to preprocess CSS files via online service",
-                "ext-openssl": "to connect to ftps:// server and preprocess CSS files",
-                "ext-ssh2": "to connect to sftp:// server"
-            },
-            "bin": [
-                "deployment"
-            ],
-            "type": "project",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.5-dev"
-                }
-            },
-            "autoload": {
-                "classmap": [
-                    "src/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause",
-                "GPL-2.0",
-                "GPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "David Grudl",
-                    "homepage": "https://davidgrudl.com"
-                }
-            ],
-            "description": "A tool for automated deployment of web applications to an FTP server.",
-            "homepage": "https://github.com/dg/ftp-deployment",
-            "keywords": [
-                "deployment",
-                "ftp",
-                "ssh"
-            ],
-            "support": {
-                "issues": "https://github.com/dg/ftp-deployment/issues",
-                "source": "https://github.com/dg/ftp-deployment/tree/v3.5.2"
-            },
-            "time": "2022-02-04T16:18:05+00:00"
         },
         {
             "name": "doctrine/annotations",
