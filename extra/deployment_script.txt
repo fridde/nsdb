@@ -12,6 +12,7 @@ composer install --no-scripts
 npm run dev
 
 git status
+git add -A
 git commit -a -m "More work"
 git push
 
@@ -29,7 +30,7 @@ echo 'APP_ENV=prod' > .env.local
 
 # composer install --no-scripts --no-dev --optimize-autoloader --classmap-authoritative
 ## Run until all removed
-while true; composer google-cleanup && break; end
+# while true; composer google-cleanup && break; end
 
 
 cd $SCRIPTS$PROJECT_NAME
