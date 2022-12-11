@@ -113,7 +113,7 @@ class MessageBuilder
     private function collectMailsForSchoolAdminRequest(): ExtendedCollection
     {
         $subject = MD::SUBJECT_SCHOOL_ADMIN_REQUEST;
-        $newestTreshold = Carbon::create($this->settings->getChangeable('next_school_admin_mail'));
+        $newestTreshold = Carbon::create($this->settings->get('next_school_admin_mail'));
         if($newestTreshold->gt(Carbon::today())){
             return ExtendedCollection::create();
         }

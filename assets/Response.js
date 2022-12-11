@@ -19,7 +19,7 @@ class Response {
     }
 
     static showUpdateToast = (data, jqXHR, textStatus) => {
-
+        // TODO: implement this method
     }
 
     static darkenRemovedUserRow = (data, jqXHR, textStatus) => {

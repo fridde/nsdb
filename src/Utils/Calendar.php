@@ -270,7 +270,7 @@ class Calendar
                 ['Besök %s bekräftat', $visit->isConfirmed() ? 'är' : '*INTE*'],
                 [],
                 ['Lärare: %s', $visit->getGroup()?->getUser()?->getFullName()],
-                ['Årskurs: %s', $visit->getGroup()?->getSegment()],
+                ['Årskurs: %s', $visit->getGroup()?->getSegment()->value],
                 ['Mobil: %s', $visit->getGroup()?->getUser()?->getMobilInPlusFormat()],
                 ['Mejl: %s', $visit->getGroup()?->getUser()?->getMail()],
                 ['Klass %s med %u elever', $visit->getGroup()?->getName(), $visit->getGroup()?->getNumberStudents()],

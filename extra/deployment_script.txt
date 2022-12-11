@@ -21,6 +21,7 @@ git push
 cd $STAGING
 
 archive_project $PROJECT_NAME
+test (ls | count) -gt 15 && echo "More than 15 backups. Try to delete at least 10" && explorer.exe (wslpath -w $PWD)
 
 git clone $GITHUB --depth=1 && cd $PROJECT_NAME
 
@@ -45,6 +46,7 @@ deployment deployment.php
 
 ssh_to nsdb
 cd ~/domains/nsdb.sigtunanaturskola.se/private_html/
+./bin/console doctrine:migrations:migrate
 composer install --no-scripts --no-dev --optimize-autoloader --classmap-authoritative
 ./bin/console cache:clear --no-warmup
 composer google-cleanup

@@ -11,7 +11,7 @@ class SchoolRepository extends EntityRepository
 {
     use Filterable;
 
-    public function getActiveSchools(): Collection
+    public function getActiveSchools(): ExtendedCollection
     {
         $this->isActive();
         return $this->getMatching();

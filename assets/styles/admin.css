@@ -1,4 +1,4 @@
-@import "~jqueryui/jquery-ui.css";
+@import "~jquery-ui/dist/themes/base/jquery-ui.css";
 
 :root {
     --kelly-0: #0067A5;

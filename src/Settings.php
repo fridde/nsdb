@@ -1,18 +1,26 @@
-<?php
+<?php /** @noinspection MissingService */
 
 
 namespace App;
 
 
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Yaml\Yaml;
+
 class Settings
 {
     private array $settings;
-    private const CHANGEABLES = 'changeables';
+    private const APP_SETTINGS = 'app_settings';
+    private const EDITABLE_SETTINGS = 'editable_settings';
 
-    public function __construct(array $appSettings = [], array $changeableSettings = [])
+    public function __construct(
+        private ContainerBagInterface $params,
+        private KernelInterface $kernel
+    )
     {
-        $this->settings = $appSettings;
-        $this->settings['changeables'] = $changeableSettings;
+        $this->settings = $this->params->get(self::APP_SETTINGS);
+        $this->settings += $this->params->get(self::EDITABLE_SETTINGS);
     }
 
     public function get(string $index): mixed
@@ -26,16 +34,28 @@ class Settings
     {
         $return = $this->settings;
         foreach($keys as $key){
-            $return = $return[$key];
+            $return = $return[$key] ?? null;
+            if($return === null){
+                return null;
+            }
         }
 
         return $return;
     }
 
-    public function getChangeable(string $index): mixed
+    public function save(string $key, $value): void
     {
-        $index = self::CHANGEABLES . '.' . $index;
+        $this->settings[$key] = $value;
 
-        return $this->get($index);
+        $path = $this->getProjectDir() . '/config/editable_settings.yaml';
+        $values = Yaml::parseFile($path);
+        $values['parameters'][self::EDITABLE_SETTINGS][$key] = $value;
+
+        file_put_contents($path, Yaml::dump($values, 99));
+    }
+
+    public function getProjectDir(): string
+    {
+        return $this->kernel->getProjectDir();
     }
 }

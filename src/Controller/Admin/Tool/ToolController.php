@@ -5,10 +5,14 @@ namespace App\Controller\Admin\Tool;
 
 
 use App\Entity\Group;
+use App\Entity\School;
 use App\Entity\Topic;
+use App\Entity\User;
 use App\Entity\Visit;
+use App\Enums\Segment;
 use App\Message\MessageBuilder;
 use App\Message\MessageRecorder;
+use App\Settings;
 use App\Utils\RepoContainer;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\Collection;
@@ -43,6 +47,7 @@ class ToolController extends AbstractController
         $topics = $this->rc->getTopicRepo()->getActiveTopics();
         if ($topic !== null) {
             $segment = $topic->getSegment();
+            assert($segment instanceof Segment);
             $startYear = Carbon::today()->addDays(60)->year;
 
             $visits = $this->rc->getVisitRepo()->getActiveVisitsWithTopic($topic);
@@ -61,7 +66,6 @@ class ToolController extends AbstractController
             foreach ($groups as $group) {
                 /** @var Group $group */
                 $visit = $visitsForGroups[$group->getId()] ?? null;
-                $visitId = $visit?->getId();
                 $chosenVisits[] = [$group->getId(), $visit?->getId()];
             }
 
@@ -96,7 +100,7 @@ class ToolController extends AbstractController
         $data['dates'] = $dates;
 
         $topics = array_filter($this->rc->getTopicRepo()->findAll(), fn(Topic $t) => $t->hasSymbol() && $t->isActive());
-        $topics = array_map(fn(Topic $t) => [$t->getSymbol(), $t->getColleaguesPerGroup(), $t->getSegment()], $topics);
+        $topics = array_map(fn(Topic $t) => [$t->getSymbol(), $t->getColleaguesPerGroup(), $t->getSegment()->value], $topics);
         $data['topics'] = array_combine(
             array_column($topics, 0),
             array_map(fn($v) => ['cpg' => $v[1], 'segment' => $v[2]], $topics)   // cpg means "colleagues per group"
@@ -180,12 +184,91 @@ class ToolController extends AbstractController
         return [];
     }
 
+    #[Route('/admin/add-groups', name: 'tools_add_groups')]
+    #[Template('admin/tools/add_groups.html.twig')]
+    public function addMultipleGroups(string $entity = null): array
+    {
+        $years = [
+            Segment::AK_2->value => Carbon::today()->year,
+            Segment::AK_5->value => Carbon::today()->subYear()->year
+        ];
+
+        $groups = array_fill_keys(array_keys($years), []);  // '2' => [], '5' => [], etc
+
+        $schools = $this->rc->getSchoolRepo()->getActiveSchools();
+        $data = ['schools' => $schools, 'all_groups' => $groups, 'years' => $years];
+
+        foreach($schools as $school){
+            /** @var School $school  */
+            foreach($years as $segmentValue => $year){
+                $segment = Segment::from($segmentValue);
+                $data['all_groups'][$segmentValue][$school->getId()] = $school->getActiveGroupsBySegmentAndYear($segment, $year)->count();
+            }
+        }
+
+        return $data;
+    }
+
+    #[Route('/admin/batch-edit/{entity}', name: 'tools_batch_edit')]
+    #[Template('admin/tools/batch_edit.html.twig')]
+    public function batchEdit(string $entity = null): array
+    {
+        $data = ['entities' => null, 'type' => null];
+
+        if ($entity === 'group') {
+            $data['type'] = 'group';
+            $data['segments'] = Segment::getLabels();
+
+            $groups = $this->rc->getGroupRepo()->isActive()->getMatching();
+            $entities = $groups->sortByFunction(function (Group $g1, Group $g2){
+                // see elvis-operator and spaceship operator
+                return $g1->getStartYear() <=> $g2->getStartYear()
+                    ?: $g1->getSegment()?->getOrder() <=> $g2->getSegment()?->getOrder()
+                        ?: $g1->getSchool()->getId() <=> $g2->getSchool()->getId()
+                            ?: $g1->getName() <=> $g2->getName();
+            });
+
+
+            $data['years'] = $entities->map(fn(Group $g) => $g->getStartYear())
+                ->unique()
+                ->sortByFunction(fn(int $y1, int $y2) => $y1 <=> $y2)
+                ->toArray();
+            $data['entities'] = $entities->toArray();
+
+            return $data;
+        }
+
+        if ($entity === 'user') {
+            $data['type'] = 'user';
+            $data['entities'] = $this->rc->getUserRepo()->isActive()->getMatching();
+
+            return $data;
+        }
+
+        return $data;
+    }
+
     #[Route('/admin/create-api-keys', name: 'tools_create_api_keys')]
     #[Template('admin/tools/create_api_keys.html.twig')]
     public function createApiKeys(): array
     {
         // Yes, this is all!
         return [];
+    }
+
+    #[Route('/admin/extra-settings', name: 'tools_extra_settings')]
+    #[Template('admin/tools/extra_settings.html.twig')]
+    public function editExtraSettings(Settings $settings): array
+    {
+        $data['next_school_admin_mail'] = $settings->get('next_school_admin_mail');
+
+        $data['users_with_access_to_multiple_schools'] = $settings->get('users_with_access_to_multiple_schools') ?? [];
+        $data['users'] = $this->rc->getUserRepo()
+            ->isActive()->getMatching()
+            ->withKey(fn(User $u) => $u->getId());
+        $data['schools'] = $this->rc->getSchoolRepo()->getActiveSchools();
+
+        return $data;
     }
 
     private function calculateColorIndexForVisits(Collection $visits): array

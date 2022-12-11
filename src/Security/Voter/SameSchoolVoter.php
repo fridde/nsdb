@@ -34,7 +34,6 @@ class SameSchoolVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-
         return in_array($attribute, self::ACTIONS, true) && $this->hasRightClass($subject) !== null;
     }
 

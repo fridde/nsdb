@@ -1,7 +1,7 @@
 'use strict';
 
 import $ from 'jquery';
-import 'jqueryui';
+import 'jquery-ui';
 
 import {Modal} from 'bootstrap';
 

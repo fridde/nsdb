@@ -194,8 +194,74 @@ class Update {
         ajax.send();
     }
 
+    static addMultipleGroups = (e) => {
+        const container = $(e.target).closest('[data-segment]');
+        const data = {
+            groupNumbers: {},
+            segment: container.data('segment'),
+            startYear: container.find('input[name=start-year]').val()
+        };
+
+        container.find('.group-number').each((i, el) => {
+           data.groupNumbers[$(el).data('school')] = $(el).val();
+        });
+
+        const ajax = Ajax.createNew()
+            .setUrl('/api/add-groups')
+            .addToData('data', data)
+            .setResponseHandler(Response.showUpdateToast);
+
+        ajax.send();
+    }
+
+    static saveMultipleGroupNames = (data) => {
+        const ajax = Ajax.createNew()
+            .setUrl('/api/batch-rename-groups')
+            .addToData('data', data)
+            .setResponseHandler(Response.showUpdateToast);
+
+        ajax.send();
+    }
+
+    static saveMultiAccessUserSchools = (e) => {
+        const userId = $(e.target).data('user-id');
+        const schools = $(e.target).find('option:selected').map((i, el) => $(el).val()).get();
+        const ajax = Ajax.createNew()
+            .setUrl('/api/save-multi-access-user/' + userId)
+            .addToData('schools', schools.join())
+            .setResponseHandler(Response.showUpdateToast);
+
+        this.cancelAllTimeOuts();
+        this.addTimeOutId(setTimeout(ajax.send, 3000));
+
+    }
+
+    static changeNextSchoolAdminMailDate = (e) => {
+        const ajax = Ajax.createNew()
+            .setUrl('/api/change-editable-setting')
+            .addToData('setting', 'next_school_admin_mail')
+            .addToData('value', $(e.target).val())
+            .setResponseHandler(Response.showUpdateToast);
+
+        ajax.send();
+    }
+
     static createRandomString = () => {
         return Math.random().toString(36).substring(2, 7);
+    }
+
+    static addTimeOutId = (timeOutId) => {
+        if(!window.hasOwnProperty('timeOutIds')){
+            window.timeOutIds = [];
+        }
+        window.timeOutIds.push(timeOutId);
+    }
+
+    static cancelAllTimeOuts = () => {
+        if(!window.hasOwnProperty('timeOutIds')){
+            return;
+        }
+        window.timeOutIds.forEach(clearTimeout);
     }
 }
 

@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Group;
 use App\Entity\User;
+use App\Enums\Segment;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -13,6 +14,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -35,7 +37,7 @@ class GroupCrudController extends AbstractCrudController
         return [
             IdField::new('id')->hideOnForm(),
             TextField::new('Name'),
-            TextField::new('Segment'),
+            ChoiceField::new('SegmentString', 'Segment')->setChoices(array_flip(Segment::getLabels())),
             IntegerField::new('StartYear'),
             IntegerField::new('NumberStudents'),
             TextareaField::new('Info'),

@@ -1,0 +1,71 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title 'Satsvis redigering' %}
+
+{% set entity_names = {'Grupper': 'group', 'Användare': 'user'} %}
+
+{% block page_content %}
+    {% if entities is empty %}
+        <ul>
+            {% for entity_label, entity_name in entity_names %}
+                <li>
+                    <a href="{{ ea_url().setRoute("tools_batch_edit", {"entity": entity_name}) }}">{{ entity_label }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% elseif type == 'group' %}
+        <div>
+            <button id="reset-action" type="button" class="btn">Reset</button>
+        </div>
+        <div class="btn-toolbar m-3">
+            <div class="btn-group">
+                {% for segment_id, segment_label in segments %}
+                    <input type="radio" class="btn-check" name="segment-selector" id="segment_{{ segment_id }}"
+                           value="{{ segment_id }}">
+                    <label class="btn btn-outline-primary" for="segment_{{ segment_id }}">
+                        {{ segment_label }}
+                    </label>
+                {% endfor %}
+            </div>
+
+            <div class="btn-group ms-4">
+                {% for year in years %}
+                    <input type="radio" class="btn-check" name="start-year-selector" id="startyear_{{ year }}"
+                           value="{{ year }}">
+                    <label class="btn btn-outline-primary" for="startyear_{{ year }}">
+                        {{ year }}
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button id="choose-all-action" type="button" class="btn">Välj alla</button>
+            <button id="choose-none-action" type="button" class="btn">Välj inga</button>
+            <button id="keep-selected-action" type="button" class="btn">Behåll utvalda</button>
+            <button id="original-name-action" type="button" class="btn">Originalnamn</button>
+            <button id="increase-segment-action" type="button" class="btn">Höj ÅK</button>
+            <button id="rename-to-parts-action" type="button" class="btn">--> :orna, del X</button>
+        </div>
+        <div>
+            <button id="save-visible-action" type="button" class="btn">Spara</button>
+        </div>
+
+        <table id="entity-table">
+            {% for group in entities %}
+                <tr data-segment="{{ group.Segment.value }}" data-start-year="{{ group.StartYear }}" data-group="{{ group.id }}">
+                    <td><input class="inclusion-checkbox" type="checkbox"></td>
+                    <td>{{ group.Segment.value }}</td>
+                    <td>{{ group.StartYear }}</td>
+                    <td>{{ group.School.id }}</td>
+                    <td>{{ group.Name }}</td>
+                    <td><input class="new-name" type="text" placeholder="{{ group.Name }}" value="{{ group.Name }}"></td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <div id="save-confirmation" class="invisible" title="Vill du spara ändringarna?">
+            <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Vill du verkligen spara alla ändringar?</p>
+        </div>
+    {% endif %}
+{% endblock %}

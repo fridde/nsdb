@@ -3,7 +3,7 @@
 
 imports:
     - {resource: app_settings.yaml}
-    - {resource: changeable_settings.yaml}
+    - {resource: editable_settings.yaml}
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
@@ -30,10 +30,10 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\Settings:
-        arguments:
-            $appSettings: '%app_settings%'
-            $changeableSettings: '%changeable_settings%'
+#    App\Settings:
+#        arguments:
+#            $appSettings: '%app_settings%'
+#            $changeableSettings: '%changeable_settings%'
 
     App\Utils\Maintenance:
         arguments:
@@ -55,3 +55,8 @@ services:
                 client_x_509_cert_url: '%env(GOOGLE_CLIENT_X_509_CERT_URL)%'
                 project_id: '%env(GOOGLE_PROJECT_ID)%'
                 calendar_id: '%env(GOOGLE_CALENDAR_ID)%'
+    App\Utils\BusBooker:
+        arguments:
+            $baseUrl: '%env(BUS_BOOKING_SERVER)%'
+            $apiKey: '%env(GOOGLE_MAPS_API_KEY)%'
+            $customerNr: '%env(BUS_CUSTOMER_NR)%'

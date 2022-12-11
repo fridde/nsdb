@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Group;
 use App\Entity\School;
+use App\Enums\Segment;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityRepository;
 
@@ -21,12 +22,12 @@ class GroupRepository extends EntityRepository
         return $this->addAndFilter('StartYear', $startYear);
     }
 
-    public function hasSegment(string $segment): self
+    public function hasSegment(Segment $segment): self
     {
-        return $this->addAndFilter('Segment', $segment);
+        return $this->addAndFilter('Segment', $segment->value);
     }
 
-    public function getActiveGroupsFromSegmentWithStartYear(string $segment, int $startYear): Collection
+    public function getActiveGroupsFromSegmentWithStartYear(Segment $segment, int $startYear): Collection
     {
         $sortFunction = fn(Group $g1, Group $g2) => $g1->getSchool()->getVisitOrder() - $g2->getSchool()->getVisitOrder();
 

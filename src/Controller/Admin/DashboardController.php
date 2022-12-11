@@ -28,9 +28,38 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/admin')]
 class DashboardController extends AbstractDashboardController
 {
+    private const MENU = [
+        'tables' => [
+            ['Users', 'users', User::class],
+            ['Groups', 'child', Group::class],
+            ['Visits', 'suitcase', Visit::class],
+            ['Topics', 'question', Topic::class],
+            ['Schools', 'school', School::class],
+            ['Locations', 'map-marker-alt', Location::class],
+            ['Notes', 'sticky-note', Note::class],
+            ['CalendarEvents', 'calendar', CalendarEvent::class],
+        ],
+        'routes' => [
+            ['Arbetsfördelning', 'user-clock', 'tools_schedule_colleagues'],
+            ['Bekräfta buss', 'tasks', 'tools_confirm_bus_orders'],
+            ['Fördela besöksdatum', 'network-wired', 'tools_distribute_visits'],
+            ['Satsvis redigering', 'layer-group', 'tools_batch_edit'],
+            ['Lägg till grupper', 'plus-square', 'tools_add_groups'],
+            ['Planera nästa termin', 'calendar-week', 'tools_plan_year'],
+            ['Bussbeställning', 'bus', 'tools_order_bus'],
+            ['Matbeställning', 'utensils', 'tools_order_food'],
+            ['Mejlutskick', 'envelope', 'tools_send_mail'],
+            ['Bussinställningar', 'bus-alt', 'tools_set_bus_settings'],
+            ['Skolor besöksordning', 'sort-numeric-down', 'tools_order_schools'],
+            ['Skapa API-keys', 'key', 'tools_create_api_keys'],
+            ['Extra inställningar', 'cogs', 'tools_extra_settings'],
+            ['Logg', 'th-list', 'tools_show_log'],
+        ]
+    ];
+
 
     public function __construct(
-        private RepoContainer $rc,
+        private RepoContainer     $rc,
         private AdminUrlGenerator $routeBuilder
     )
     {
@@ -54,34 +83,17 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
+        $extractCrud = fn($v) => MenuItem::linkToCrud($v[0], 'fas fa-' . $v[1], $v[2]);
+        $extractRoute = fn($v) => MenuItem::linkToRoute($v[0], 'fas fa-' . $v[1], $v[2]);
+
         return [
             MenuItem::linkToDashboard('Översikt', 'fa fa-home'),
-
-            MenuItem::subMenu('Tabeller', 'fas fa-table')->setSubItems([
-                MenuItem::linkToCrud('Users', 'fas fa-users', User::class),
-                MenuItem::linkToCrud('Groups', 'fas fa-child', Group::class),
-                MenuItem::linkToCrud('Visits', 'fas fa-suitcase', Visit::class),
-                MenuItem::linkToCrud('Topics', 'fas fa-question', Topic::class),
-                MenuItem::linkToCrud('Schools', 'fas fa-school', School::class),
-                MenuItem::linkToCrud('Locations', 'fas fa-map-marker-alt', Location::class),
-                MenuItem::linkToCrud('Notes', 'fas fa-sticky-note', Note::class),
-                MenuItem::linkToCrud('CalendarEvents', 'fas fa-calendar', CalendarEvent::class),
-
-            ]),
-            MenuItem::subMenu('Verktyg', 'fas fa-tools')->setSubItems([
-                MenuItem::linkToRoute('Arbetsfördelning', 'fas fa-user-clock', 'tools_schedule_colleagues'),
-                MenuItem::linkToRoute('Bekräfta buss', 'fas fa-tasks', 'tools_confirm_bus_orders'),
-                MenuItem::linkToRoute('Fördela besöksdatum', 'fas fa-network-wired', 'tools_distribute_visits'),
-                MenuItem::linkToRoute('Planera nästa termin', 'fas fa-calendar-week', 'tools_plan_year'),
-                MenuItem::linkToRoute('Bussbeställning', 'fas fa-bus', 'tools_order_bus'),
-                MenuItem::linkToRoute('Matbeställning', 'fas fa-utensils', 'tools_order_food'),
-                MenuItem::linkToRoute('Mejlutskick', 'fas fa-envelope', 'tools_send_mail'),
-                MenuItem::linkToRoute('Bussinställningar', 'fas fa-bus-alt', 'tools_set_bus_settings'),
-                MenuItem::linkToRoute('Skolor besöksordning', 'fas fa-sort-numeric-down', 'tools_order_schools'),
-                MenuItem::linkToRoute('Skapa API-keys', 'fas fa-key', 'tools_create_api_keys'),
-                MenuItem::linkToRoute('Logg', 'fas fa-th-list', 'tools_show_log'),
-            ]),
-            MenuItem::subMenu('Skolsidor', 'fas fa-school')->setSubItems($this->getSchoolsAsMenuItems()),
+            MenuItem::subMenu('Tabeller', 'fas fa-table')
+                ->setSubItems(array_map($extractCrud, self::MENU['tables'])),
+            MenuItem::subMenu('Verktyg', 'fas fa-tools')
+                ->setSubItems(array_map($extractRoute, self::MENU['routes'])),
+            MenuItem::subMenu('Skolsidor', 'fas fa-school')
+                ->setSubItems($this->getSchoolsAsMenuItems()),
 
             MenuItem::section(),
             MenuItem::linkToLogout('Logout', 'fas fa-sign-out-alt')
@@ -108,9 +120,8 @@ class DashboardController extends AbstractDashboardController
         $schoolRepo = $this->rc->getSchoolRepo();
 
         return $schoolRepo->getActiveSchools()
-            ->map(fn(School $s) =>
-            MenuItem::linkToRoute($s->getName(), '', 'school_overview', ['school' => $s->getId()]))
-        ->toArray();
+            ->map(fn(School $s) => MenuItem::linkToRoute($s->getName(), '', 'school_overview', ['school' => $s->getId()]))
+            ->toArray();
     }
 
 

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enums\Segment;
 use App\Repository\GroupRepository;
 use App\Utils\Attributes\ConvertToEntityFirst;
 use App\Utils\Attributes\RunOnChange;
@@ -31,8 +32,8 @@ class Group
     #[ORM\ManyToOne(inversedBy: "Groups")]
     protected School $School;
 
-    #[ORM\Column(nullable: true)]
-    protected ?string $Segment;
+    #[ORM\Column(nullable: true, enumType: Segment::class)]
+    protected ?Segment $Segment;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     protected ?int $StartYear;
@@ -61,7 +62,7 @@ class Group
     public function __toString(): string
     {
         $s = '[' . mb_strtoupper($this->getSchool()->getId()) . ':';
-        $s .= $this->getSegment() . '] ' . $this->getName();
+        $s .= $this->getSegment()->value . '] ' . $this->getName();
 
         return $s;
     }
@@ -117,19 +118,29 @@ class Group
         $this->School = $School;
     }
 
-    public function getSegment(): ?string
+    public function getSegment(): ?Segment
     {
         return $this->Segment;
     }
 
-    public function setSegment(?string $Segment): void
+    public function setSegment(?Segment $Segment): void
     {
         $this->Segment = $Segment;
     }
 
-    public function isSegment(string $segment): bool
+    public function isSegment(Segment $segment): bool
     {
         return $this->getSegment() === $segment;
+    }
+
+    public function getSegmentString(): string
+    {
+        return $this->Segment->value;
+    }
+
+    public function setSegmentString(string $SegmentString): void
+    {
+        $this->Segment = Segment::from($SegmentString);
     }
 
     public function getStartYear(): ?int

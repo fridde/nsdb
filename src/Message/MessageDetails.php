@@ -2,11 +2,9 @@
 
 namespace App\Message;
 
-use App\Message\MessageDetails as MD;
 use App\Settings;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 class MessageDetails
 {
@@ -25,15 +23,14 @@ class MessageDetails
     ];
 
     public function __construct(
-        private Settings $settings,
-        private KernelInterface $kernel
+        private Settings $settings
     )
     {
     }
 
     public function getTempRecordsPath(string $name): string
     {
-        return $this->kernel->getProjectDir() . '/var/temp_records/' . $name . '.txt';
+        return $this->settings->getProjectDir() . '/var/temp_records/' . $name . '.txt';
     }
 
     public function getImmunityTresholdDate(): Carbon

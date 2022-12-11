@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enums\Segment;
 use App\Repository\UserRepository;
 use App\Security\Role;
 use App\Utils\Attributes\ConvertToEntityFirst;
@@ -261,7 +262,7 @@ class User implements UserInterface
         return ExtendedCollection::create($this->Records);
     }
 
-    public function getSegment(): ?string
+    public function getSegment(): ?Segment
     {
         /** @var Group $group  */
         $group = $this->getGroups()->first();

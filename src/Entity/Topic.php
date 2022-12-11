@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enums\Segment;
 use App\Repository\TopicRepository;
 use App\Utils\ExtendedCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,8 +16,8 @@ class Topic
     #[ORM\Id, ORM\Column, ORM\GeneratedValue]
     protected int $id;
 
-    #[ORM\Column(nullable: true)]
-    protected ?string $Segment;
+    #[ORM\Column(nullable: true, enumType: Segment::class)]
+    protected ?Segment $Segment;
 
     #[ORM\Column(type: Types::SMALLINT)]
     protected int $VisitOrder = -1;
@@ -56,13 +57,12 @@ class Topic
 
     public function __toString()
     {
-        $s = '[' . $this->getSegment();
+        $s = '[' . $this->getSegment()->value;
         $s .= ':' . $this->getVisitOrder();
         $s .= '] ' . $this->getShortName();
 
-        return  $s;
+        return $s;
     }
-
 
 
     public function getId(): int
@@ -76,15 +76,25 @@ class Topic
         $this->id = $id;
     }
 
-    public function getSegment(): ?string
+    public function getSegment(): ?Segment
     {
         return $this->Segment;
     }
 
 
-    public function setSegment(?string $Segment): void
+    public function setSegment(Segment|string $Segment = null): void
     {
-        $this->Segment = $Segment;
+        $this->Segment = ($Segment instanceof Segment ? $Segment : Segment::tryFrom($Segment));
+    }
+
+    public function getSegmentString(): string
+    {
+        return $this->Segment->value;
+    }
+
+    public function setSegmentString(string $SegmentString): void
+    {
+        $this->Segment = Segment::from($SegmentString);
     }
 
 
@@ -220,11 +230,8 @@ class Topic
 
     public function hasFutureVisits(): bool
     {
-        return ! $this->getFutureVisits()->isEmpty();
+        return !$this->getFutureVisits()->isEmpty();
     }
-
-
-
 
 
 }

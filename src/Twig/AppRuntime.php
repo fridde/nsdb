@@ -4,6 +4,7 @@ namespace App\Twig;
 
 use App\Entity\User;
 use App\Entity\Visit;
+use App\Enums\Segment;
 use App\Security\AuthenticationUtils;
 use App\Settings;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -33,6 +34,11 @@ class AppRuntime implements RuntimeExtensionInterface
     public function getSetting(...$keys): mixed
     {
         return $this->settings->getUsingKeys(...$keys);
+    }
+
+    public function getSegmentLabel(string $segmentValue): string
+    {
+        return Segment::getLabel(Segment::from($segmentValue));
     }
 
     public function getGoogleMapsUrl(string $coordinates): string

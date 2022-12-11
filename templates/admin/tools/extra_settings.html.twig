@@ -1,0 +1,48 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title 'Extra inställningar' %}
+
+{% block page_content %}
+
+    <h2 class="mt-3">Nästa mejl till skoladministratörerna</h2>
+    <div class="container-md">
+        <input class="nsdb-datepicker" id="next_school_admin_mail" value="{{ next_school_admin_mail }}">
+    </div>
+
+
+    <h2 class="mt-3">Användare som har tillgång till flera skolor</h2>
+    <div class="container-md">
+        <ul id="multi-access-user-list">
+            {% for u_id, u_schools in users_with_access_to_multiple_schools %}
+                {% set user = users[u_id] %}
+                <li class="mb-3">
+                    <span class="user-label">[{{ user.School.Id|upper }}] {{ user.FirstName }} {{ user.LastName }}</span><br>
+                    <select class="school-selector" data-user-id="{{ u_id }}" class="form-select" multiple>
+                        {% for school in schools %}
+                            {% set selected = (school.Id in u_schools) ? ' selected' : '' %}
+                            <option value="{{ school.Id }}"{{ selected }}>{{ school.Name }}</option>
+                        {% endfor %}
+                    </select>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div>
+        <select id="add-multi-access-user-selector">
+            {% for user in users %}
+                {% if user.Id not in users_with_access_to_multiple_schools|keys %}
+                    <option value="{{ user.Id }}">
+                        [{{ user.School.Id|upper }}] {{ user.FirstName }} {{ user.LastName }}
+                    </option>
+                {% endif %}
+
+            {% endfor %}
+        </select>
+
+        <button type="button" id="add-multi-access-user-button"><i class="fas fa-user-plus"></i> Lägg till användare
+        </button>
+    </div>
+    <div>
+        <p>För att ta bort en användare, klicka bort samtliga skolor för användaren. Du kan ladda om sidan för att kontrollera att användaren inte längre dyker upp.</p>
+    </div>
+{% endblock %}

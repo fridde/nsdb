@@ -2,6 +2,8 @@
 
 namespace App\Security;
 
+// This can be converted to Enum for >= PHP 8.2
+// See https://stitcher.io/blog/new-in-php-82#fetch-properties-of-enums-in-const-expressions-rfc
 class Role
 {
     public const USER = 'ROLE_USER';

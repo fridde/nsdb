@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Topic;
+use App\Enums\Segment;
 use App\Settings;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -15,11 +16,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class TopicCrudController extends AbstractCrudController
 {
 
-    public function __construct(private Settings $settings)
+    public function __construct()
     {
     }
 
@@ -37,17 +39,12 @@ class TopicCrudController extends AbstractCrudController
             TextField::new('ShortName'),
             TextField::new('LongName'),
             AssociationField::new('Location'),
-            ChoiceField::new('Segment')->setChoices($this->getSegmentLabels()),
+            ChoiceField::new('SegmentString', 'Segment')->setChoices(array_flip(Segment::getLabels())),
             IntegerField::new('VisitOrder'),
             TextField::new('Food'),
             UrlField::new('Url'),
             BooleanField::new('Status')->renderAsSwitch(),
         ];
-    }
-
-    private function getSegmentLabels(): array
-    {
-        return array_flip($this->settings->get('segments'));
     }
 
     public function configureActions(Actions $actions): Actions

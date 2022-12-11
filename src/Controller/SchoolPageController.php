@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Group;
 use App\Entity\School;
 use App\Entity\User;
+use App\Enums\Segment;
 use App\Repository\GroupRepository;
 use App\Repository\UserRepository;
 use App\Security\Role;
@@ -25,7 +26,10 @@ use Symfony\Component\Routing\Annotation\Route;
 class SchoolPageController extends AbstractController
 {
 
-    public function __construct(private Settings $settings, private RepoContainer $rc)
+    public function __construct(
+        private Settings $settings,
+        private RepoContainer $rc
+    )
     {
     }
 
@@ -52,13 +56,13 @@ class SchoolPageController extends AbstractController
             ->hasSchool($school)
             ->addOrder('Name')
             ->getMatching();
-        $segments = array_fill_keys(array_keys($this->settings->get('segments')), []);
+        $segments = array_fill_keys(Segment::getValues(), []);
         foreach ($groups as $group) {
             /** @var Group $group */
-            $segments[$group->getSegment()][] = $group;
+            $segments[$group->getSegment()->value][] = $group;
         }
         $data['segments'] = array_filter($segments);
-        $data['segment_labels'] = $this->settings->get('segments');
+        $data['segment_labels'] = Segment::getLabels();
 
         $ignoreApproval = (array)json_decode($request->cookies->get('ignore_approval', '[]'));
 

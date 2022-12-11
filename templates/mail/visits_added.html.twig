@@ -8,7 +8,7 @@
     <h2>Nu har vi lagt till fler besöksdatum:</h2>
     {{ NDB.list_visits(user, visits) }}
     <p>
-        Som förut så är övergripande temat för besöken {{ snippet(user.Segment, "theme") }}
+        Som förut så är övergripande temat för besöken {{ snippet(user.Segment.value, "theme") }}
         <br>
         Info för varje temadag hittar du när du följer respektive länk. Där ser du också om du och klassen blir hämtade av en buss (som vi beställer) och om du behöver ta med mat eller inte.
     </p>

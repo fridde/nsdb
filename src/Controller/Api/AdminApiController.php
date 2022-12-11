@@ -4,11 +4,13 @@
 namespace App\Controller\Api;
 
 
+use App\Entity\Group;
 use App\Entity\Location;
 use App\Entity\School;
 use App\Entity\Topic;
 use App\Entity\User;
 use App\Entity\Visit;
+use App\Enums\Segment;
 use App\Message\MessageBuilder;
 use App\Message\MessageDetails;
 use App\Message\MessageRecorder;
@@ -39,6 +41,7 @@ class AdminApiController extends AbstractController
         private RepoContainer          $rc,
         private ApiKeyManager          $akm,
         private DataApiController      $dataApiController,
+        private Settings               $settings
     )
     {
         $this->request = $request_stack->getCurrentRequest();
@@ -247,11 +250,94 @@ class AdminApiController extends AbstractController
     {
         $status = $this->request->get('status');
         $token = $this->request->get('token');
-        if($status === 'success'){
+        if ($status === 'success') {
             $mr->saveTempRecordsToDB($token);
         }
         $mr->removeTempRecords($token);
         return new JsonResponse([]);
+    }
+
+    #[Route('/api/add-groups')]
+    #[IsGranted(Role::SUPER_ADMIN)]
+    public function addMultipleGroups(): JsonResponse
+    {
+        $data = $this->request->get('data');
+        $groupNumbers = $data['groupNumbers'];
+        $segment = $data['segment'];
+        $startYear = $data['startYear'];
+        $letters = range('A', 'Z');
+        $namePrefix = match($segment) {
+            Segment::AK_2->value => '2',
+            Segment::AK_5->value => '4'
+        };
+        $total = 0;
+
+        foreach ($groupNumbers as $schoolId => $groupCount) {
+            $groupCount = (int) $groupCount;
+            if ($groupCount <= 0) {
+                continue;
+            }
+            $school = $this->rc->getSchoolRepo()->find($schoolId);
+            foreach (range(0, $groupCount - 1) as $i) {
+                $group = new Group();
+                $name = $namePrefix . ($groupCount === 1 ? ':orna' : $letters[$i]);
+                $group->setName($name);
+                $group->setSchool($school);
+                $group->setSegment(Segment::from($segment));
+                $group->setStartYear($startYear);
+                $this->rc->getEntityManager()->persist($group);
+                $total++;
+            }
+        }
+        $this->rc->getEntityManager()->flush();
+
+        return new JsonResponse(['groups_added' => $total]);
+    }
+
+    #[Route('/api/batch-rename-groups')]
+    #[IsGranted(Role::SUPER_ADMIN)]
+    public function renameMultipleGroups(): JsonResponse
+    {
+        $data = $this->request->get('data');
+
+        foreach($data as $group){
+            $id = $group['group'];
+            $newName = $group['name'];
+
+            $group = $this->rc->getGroupRepo()->find($id);
+            /** @var Group $group  */
+            $group->setName($newName);
+            $this->rc->getEntityManager()->persist($group);
+        }
+        $this->rc->getEntityManager()->flush();
+
+        return new JsonResponse(['groups_names_changed' => count($data)]);
+    }
+
+    #[Route('/api/save-multi-access-user/{user}')]
+    #[IsGranted(Role::SUPER_ADMIN)]
+    public function saveMultiAccessUser(User $user): JsonResponse
+    {
+        $key = 'users_with_access_to_multiple_schools';
+        $schools = array_filter(explode(',', $this->request->get('schools') ?? ''));
+        $users = $this->settings->get($key);
+
+        $users[$user->getId()] = $schools;
+        $this->settings->save($key, array_filter($users));
+
+        return new JsonResponse(['success' => true]);
+    }
+
+    #[Route('/api/change-editable-setting')]
+    #[IsGranted(Role::SUPER_ADMIN)]
+    public function changeEditableSetting(): JsonResponse
+    {
+        $key = $this->request->get('setting'); // can't use "key" due to security controller
+        $value = $this->request->get('value');
+        $this->settings->save($key, $value);
+
+        return new JsonResponse(['success' => true]);
+
     }
 
     private function restructurePlannedVisitArray(array $visits): array

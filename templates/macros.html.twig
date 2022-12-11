@@ -1,12 +1,13 @@
 {% macro segment_link(school_id, segment_key) %}
-    {% set segment_label = attribute(get_setting('segments'), segment_key) %}
     {% set emoji = '&#x002A;&#xFE0F;&#x20E3;' %} {# means bounded asterisk #}
     {% if segment_key matches '/^\\d+$/' %} {# i.e is an integer #}
         {% set emoji = '&#x003' ~ segment_key ~ ';&#xFE0F;&#x20E3;' %}
     {% endif %}
     {% set segment_path = path('school_overview', {'school': school_id, _fragment: "groups-" ~ segment_key }) %}
     <li class="nav-item">
-        <a class="nav-link" href="{{ segment_path }}">{{ emoji|raw }} {{ segment_label }}</a>
+        <a class="nav-link" href="{{ segment_path }}">
+            {{ emoji|raw }} {{ segment_label(segment_key) }}
+        </a>
     </li>
 {% endmacro %}
 

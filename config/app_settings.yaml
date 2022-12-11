@@ -1,11 +1,5 @@
 parameters:
   app_settings:
-    segments:
-      2: 'åk 2/3'     # the first denotes the default segment in views
-      5: 'åk 5'
-      9: 'åk 9'
-      fri: 'Fritids'
-      fbk: 'FBK'
 
     addresses:
       admin: 'info@school.example.org'
@@ -43,6 +37,9 @@ parameters:
       visit_confirmation_time: 'P14D'
       # time before a visit when the confirmation link is available
       visit_confirmation_visible: 'P5W'
+
+    bus_booking:
+      customer_nr: 78582
 
     mail_subjects:
       visit_confirmation: 'Bekräfta ditt besök!'

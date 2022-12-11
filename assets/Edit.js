@@ -153,6 +153,24 @@ class Edit {
         document.cookie = name + "=" + value + ";" + expires + ";path=/;Secure";
     }
 
+    static addMultiAccessUser = () => {
+        const selected = $('#add-multi-access-user-selector :selected');
+        const userId = selected.val();
+        const userLabel = selected.text();
+        const newElement = $('#multi-access-user-list li').last().clone(true);
+        newElement.find('.user-label').text(userLabel);
+        newElement.find('select.school-selector')
+            .data('user-id', userId)
+            .attr('data-user-id', userId)
+            .find('option:selected').each((i, el) => $(el).removeAttr('selected'));
+
+        $('#multi-access-user-list').append(newElement);
+        selected.remove();
+
+    }
+
+
+
 }
 
 export default Edit;

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enums\Segment;
 use App\Repository\SchoolRepository;
 use App\Utils\Attributes\ConvertToEntityFirst;
 use App\Utils\ExtendedCollection;
@@ -161,13 +162,6 @@ class School
         return $this->Groups;
     }
 
-    public function getGroupsByName(): Collection
-    {
-        return $this->getGroups();
-
-    }
-
-
     public function getUsers(): Collection
     {
         return $this->Users;
@@ -182,7 +176,7 @@ class School
     /**
      * @param mixed $startYear If null, the current year is assumed. If false, all years are included
      */
-    public function getActiveGroupsBySegmentAndYear(string $segment, bool|int $startYear = null): Collection
+    public function getActiveGroupsBySegmentAndYear(Segment $segment, bool|int $startYear = null): Collection
     {
         $startYear = $startYear ?? Carbon::today()->year;
 
@@ -207,14 +201,14 @@ class School
             ->unique();
     }
 
-    public function hasSegment(string $segmentId): bool
+    public function hasSegment(Segment $segment): bool
     {
-        return ! $this->getActiveGroupsBySegmentAndYear($segmentId, false)->isEmpty();
+        return ! $this->getActiveGroupsBySegmentAndYear($segment, false)->isEmpty();
     }
 
-    public function getNrActiveGroupsBySegmentAndYear(string $segmentId, $startYear = null): int
+    public function getNrActiveGroupsBySegmentAndYear(Segment $segment, $startYear = null): int
     {
-        return $this->getActiveGroupsBySegmentAndYear($segmentId, $startYear)->count();
+        return $this->getActiveGroupsBySegmentAndYear($segment, $startYear)->count();
     }
 
 //    public function isNaturskolan(): bool

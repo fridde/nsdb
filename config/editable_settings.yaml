@@ -1,0 +1,11 @@
+parameters:
+    editable_settings:
+        next_school_admin_mail: '2022-12-10'
+        users_with_access_to_multiple_schools:
+            1:
+                - gert
+                - gsar
+                - jose
+                - natu
+                - oden
+                - saga
