@@ -5,16 +5,19 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
-    <h1>Hej {{ user.FirstName }}!</h1>
-    <div id="register-user" data-user="{{ user|json_encode }}">
-        <label for="register-school-selector">Vilken skola tillhör du?</label>
-        <select id="register-school-selector">
-            {% for school in schools %}
-                <option value="{{ school.id }}">{{ school.Name }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit">Registrera</button>
-
+    <div class="d-flex justify-content-center">
+        <div class="w-50" id="register-user" data-user="{{ user|json_encode }}">
+            <h1>Hej {{ user.FirstName }}!</h1>
+            <label for="register-school-selector">Vilken skola tillhör du?</label>
+            <select id="register-school-selector">
+                {% for school in schools %}
+                    <option value="{{ school.id }}">{{ school.Name }}</option>
+                {% endfor %}
+            </select>
+            <button id="register-user-button" type="submit">Registrera</button>
+        </div>
     </div>
+
+    <span id="registration-confirmation-url" hidden data-url="{{ url('confirm_registration') }}"></span>
 
 {% endblock %}

@@ -15,8 +15,8 @@ class Settings
     private const EDITABLE_SETTINGS = 'editable_settings';
 
     public function __construct(
-        private ContainerBagInterface $params,
-        private KernelInterface $kernel
+        private readonly ContainerBagInterface $params,
+        private readonly KernelInterface $kernel
     )
     {
         $this->settings = $this->params->get(self::APP_SETTINGS);

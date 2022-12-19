@@ -40,16 +40,6 @@ class DataApiController extends AbstractController
         $this->request = $requestStack->getCurrentRequest();
     }
 
-//    #[Route(
-//        '/api/user/{user}',
-//        methods: ['GET']
-//    )]
-//    #[IsGranted(UserVoter::VIEW, 'user')]
-//    public function getUserData(User $user): JsonResponse
-//    {
-//        return $this->asJson($user);
-//    }
-
     #[Route(
         '/api/user/{user}',
         methods: ['POST']
@@ -163,168 +153,12 @@ class DataApiController extends AbstractController
         '/api/group/{group}',
         methods: ['POST']
     )]
-    #[IsGranted(ROLE::SUPER_ADMIN)]  // I have no idea, why?
+    #[IsGranted(SameSchoolVoter::EDIT, 'group')]
     public function updateGroup(Group $group): JsonResponse
     {
         $this->updateEntityData($group);
         return $this->asJson(['success' => true]);
     }
-
-//    #[Route(
-//        '/api/users',
-//        methods: ['GET']
-//    )]
-//    public function getUsers(): JsonResponse
-//    {
-//        return $this->asJson($this->getFiltered(User::class));
-//    }
-
-//    #[Route(
-//        '/api/users',
-//        methods: ['POST']
-//    )]
-//    public function updateUsers(): JsonResponse
-//    {
-//        $this->updateMultipleEntities(User::class);
-//        return $this->asJson(['success' => true]); // TODO: Implement update
-//    }
-
-
-//    #[Route(
-//        '/api/visit/{visit}',
-//        methods: ['GET']
-//    )]
-//    public function getVisitData(Visit $visit): JsonResponse
-//    {
-//        return $this->asJson($visit);
-//    }
-
-
-
-//    #[Route(
-//        '/api/visits',
-//        methods: ['GET']
-//    )]
-//    public function getVisits(): JsonResponse
-//    {
-//        return $this->asJson($this->getFiltered(Visit::class));
-//    }
-
-//    #[Route(
-//        '/api/visits',
-//        methods: ['POST']
-//    )]
-//    public function updateVisits(): JsonResponse
-//    {
-//        $this->updateMultipleEntities(Visit::class);
-//        return $this->asJson(['success' => true]);
-//    }
-
-//    #[Route(
-//        '/api/note/{note}',
-//        methods: ['GET']
-//    )]
-//    public function getNote(Note $note): JsonResponse
-//    {
-//        return $this->asJson($note);
-//    }
-
-//    #[Route(
-//        '/api/note/{note}',
-//        methods: ['POST']
-//    )]
-//    public function updateNote(Note $note): JsonResponse
-//    {
-//        $this->updateEntityData($note);
-//        return $this->asJson(['success' => true]);
-//    }
-
-//    #[Route(
-//        '/api/notes',
-//        methods: ['GET']
-//    )]
-//    public function getNotes(): JsonResponse
-//    {
-//        return $this->asJson($this->getFiltered(Note::class));
-//    }
-
-//    #[Route(
-//        '/api/notes',
-//        methods: ['POST']
-//    )]
-//    public function updateNotes(): JsonResponse
-//    {
-//        $this->updateMultipleEntities(Note::class);
-//        return $this->asJson(['success' => true]);
-//    }
-
-//    #[Route(
-//        '/api/group/{group}',
-//        methods: ['GET']
-//    )]
-//    public function getGroup(Group $group): JsonResponse
-//    {
-//        return $this->asJson($group);
-//    }
-
-
-
-//    #[Route(
-//        '/api/groups',
-//        methods: ['GET']
-//    )]
-//    public function getGroups(): JsonResponse
-//    {
-//        return $this->asJson($this->getFiltered(Group::class));
-//    }
-
-//    #[Route(
-//        '/api/groups',
-//        methods: ['POST']
-//    )]
-//    public function updateGroups(): JsonResponse
-//    {
-//        $this->updateMultipleEntities(Group::class);
-//        return $this->asJson(['success' => true]);
-//    }
-
-//    #[Route(
-//        '/api/school/{school}',
-//        methods: ['GET']
-//    )]
-//    public function getSchool(School $school): JsonResponse
-//    {
-//        return $this->asJson($school);
-//    }
-
-//    #[Route(
-//        '/api/school/{school}',
-//        methods: ['POST']
-//    )]
-//    public function updateSchool(School $school): JsonResponse
-//    {
-//        $this->updateEntityData($school);
-//        return $this->asJson(['success' => true]);
-//    }
-
-//    #[Route(
-//        '/api/schools',
-//        methods: ['GET']
-//    )]
-//    public function getSchools(): JsonResponse
-//    {
-//        return $this->asJson($this->getFiltered(School::class));
-//    }
-
-//    #[Route(
-//        '/api/schools',
-//        methods: ['POST']
-//    )]
-//    public function updateSchools(): JsonResponse
-//    {
-//        $this->updateMultipleEntities(School::class);
-//        return $this->asJson(['success' => true]);
-//    }
 
     public function updateMultipleEntities(string $className, array $entities = null): void
     {

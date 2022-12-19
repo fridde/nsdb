@@ -36,11 +36,11 @@ class AzureAuthenticator extends AbstractAuthenticator
 
 
     public function __construct(
-        private EntityManagerInterface $em,
-        private RepoContainer $rc,
-        private AuthenticationUtils $auth,
-        private ClientRegistry $clientRegistry,
-        private UrlGeneratorInterface $router,
+        private readonly EntityManagerInterface $em,
+        private readonly RepoContainer          $rc,
+        private readonly AuthenticationUtils    $auth,
+        private readonly ClientRegistry         $clientRegistry,
+        private readonly UrlGeneratorInterface  $router,
     )
     {
     }

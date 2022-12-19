@@ -39,6 +39,12 @@ class Response {
         }
     }
 
+    static redirectToConfirmationPage = (data, jqXHR, textStatus) => {
+        if(data['success']){
+            window.location.href = $('#registration-confirmation-url').data('url');
+        }
+    }
+
 }
 
 export default Response;

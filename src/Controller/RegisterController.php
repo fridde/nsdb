@@ -31,6 +31,15 @@ class RegisterController extends AbstractController
         return $data;
     }
 
+    #[Route('/confirm-registration', name: 'confirm_registration')]
+    #[Template('confirm-registration.html.twig')]
+    public function confirmRegistration(): array
+    {
+        return [];
+    }
+
+
+
     #[Route('/register/pending', name: 'register_pending')]
     #[Template('register_pending.html.twig')]
     public function registerPendingInfo(): array

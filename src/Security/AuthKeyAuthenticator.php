@@ -23,9 +23,9 @@ class AuthKeyAuthenticator extends AbstractAuthenticator implements Authenticati
     private Key $key;
 
     public function __construct(
-        private AuthUtil $AuthUtil,
-        private ApiKeyManager $akm,
-        private UrlGeneratorInterface $router
+        private readonly AuthUtil      $AuthUtil,
+        private readonly ApiKeyManager $akm,
+        private readonly UrlGeneratorInterface $router
     )
     {
     }
@@ -47,8 +47,6 @@ class AuthKeyAuthenticator extends AbstractAuthenticator implements Authenticati
         if(!$this->akm->isValidKey($this->key)){
             throw new AuthenticationException("The provided authentication key was not valid");
         }
-
-
 
         $user = $this->AuthUtil->getUserFromKey($this->key);
         if($user === null){

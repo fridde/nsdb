@@ -156,12 +156,13 @@ class Update {
     }
 
     static registerAsUser = (e) => {
-        const userData = registerUserDiv.data('user');
+        const userData = $('#register-user').data('user');
         userData['school'] = $('#register-user select').val();
 
         Ajax.createNew()
             .setUrl('/api/register')
             .addToData('user', userData)
+            .setResponseHandler(Response.redirectToConfirmationPage)
             .send();
     }
 
