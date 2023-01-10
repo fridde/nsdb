@@ -1,6 +1,6 @@
 {# pending_users, ignore_approval pending_users_ids #}
 
-{% set labels = {'no': 'Nej!', 'yes': 'Ja!', 'unsure': 'Osäker...'} %}
+{% set labels = {'no': 'Nej!', 'yes': 'Ja!', 'unsure': 'Vet inte'} %}
 
 <!-- This is the modal -->
 <div id="approve-user-modal"
@@ -15,10 +15,10 @@
             <div class="modal-body">
                 <ul>
                     {% for p_user in pending_users  %}
-                        <li>{{ p_user.FirstName }} {{ p_user.LastName }}
+                        <li>{{ p_user.FirstName }} {{ p_user.LastName }}:
                             {% for val, label  in labels %}
                                 {% set input_id = "input_" ~ p_user.id ~ "_" ~ val %}
-                                <input id="{{ input_id }}" data-pending-user-id="{{ p_user.id }}" type="radio" name="approval_{{ p_user.id }}" value={{ val }}>
+                                <input class="ms-3" id="{{ input_id }}" data-pending-user-id="{{ p_user.id }}" type="radio" name="approval_{{ p_user.id }}" value={{ val }}>
                                 <label for="{{ input_id }}">{{ label }}</label>
                             {% endfor %}
                         </li>

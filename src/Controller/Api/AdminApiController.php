@@ -22,13 +22,23 @@ use App\Utils\RepoContainer;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\Notifier\Bridge\Slack\Block\SlackDividerBlock;
+use Symfony\Component\Notifier\Bridge\Slack\Block\SlackSectionBlock;
+use Symfony\Component\Notifier\Bridge\Slack\SlackOptions;
+use Symfony\Component\Notifier\ChatterInterface;
+use Symfony\Component\Notifier\Message\ChatMessage;
+use Symfony\Component\Notifier\Notification\Notification;
+use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 
 class AdminApiController extends AbstractController
@@ -36,12 +46,14 @@ class AdminApiController extends AbstractController
     private ?Request $request;
 
     public function __construct(
-        RequestStack                   $request_stack,
-        private EntityManagerInterface $em,
-        private RepoContainer          $rc,
-        private ApiKeyManager          $akm,
-        private DataApiController      $dataApiController,
-        private Settings               $settings
+        RequestStack                            $request_stack,
+        private readonly EntityManagerInterface $em,
+        private readonly RepoContainer          $rc,
+        private readonly ApiKeyManager          $akm,
+        private readonly DataApiController      $dataApiController,
+        private readonly Settings               $settings,
+        private readonly NotifierInterface      $notifier,
+        private readonly ChatterInterface       $chatter
     )
     {
         $this->request = $request_stack->getCurrentRequest();
@@ -58,7 +70,13 @@ class AdminApiController extends AbstractController
 
         $user = new User();
         $this->dataApiController->updateSingleEntity($user, $userData);
+
+        if($this->rc->getUserRepo()->findOneByMail($user->getMail()) instanceof User){
+            throw new AlreadySubmittedException('A user with this mail address already exists.');
+        }
         $this->em->flush();
+
+        $this->sendApprovalMessageForUser($user);
 
         return new JsonResponse(['success' => true]);
     }
@@ -298,7 +316,7 @@ class AdminApiController extends AbstractController
     #[IsGranted(Role::SUPER_ADMIN)]
     public function renameMultipleGroups(): JsonResponse
     {
-        $data = $this->request->get('data');
+        $data = $this->request->get('data', []);
 
         foreach($data as $group){
             $id = $group['group'];
@@ -338,6 +356,29 @@ class AdminApiController extends AbstractController
 
         return new JsonResponse(['success' => true]);
 
+    }
+
+    private function sendApprovalMessageForUser(User $user): void
+    {
+        $approvalUrl = $this->generateUrl(
+            'school_overview',
+            ['school' => $user->getSchool()->getId()],
+            UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $chatMessage = new ChatMessage('User approval');
+
+        $options = (new SlackOptions())
+            ->block((new SlackSectionBlock())
+                ->text($user->getFullName() . ' ('. $user->getMail() . ') ansöker om behörighet för ' . $user->getSchool()->getName())
+            )
+            ->block(new SlackDividerBlock())
+            ->block((new SlackSectionBlock())->text('Kontrollera detta via Outlook eller annat lämpligt verktyg.'))
+            ->block(new SlackDividerBlock())
+            ->block((new SlackSectionBlock())->text('Bekräfta sedan via ' . $approvalUrl));
+
+        $chatMessage->options($options);
+
+        $this->chatter->send($chatMessage);
     }
 
     private function restructurePlannedVisitArray(array $visits): array
