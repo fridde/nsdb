@@ -1,4 +1,4 @@
-{% extends '@EasyAdmin/page/content.html.twig' %}
+{% extends 'admin/admin_base.html.twig' %}
 
 {% block page_title 'Matbeställning' %}
 
@@ -27,7 +27,7 @@
         {% set last_week = this_week %}
     {% endfor %}
 
-{% block page_content %}
+{% block admin_page_content %}
     <div><button id="copy-food-order">Kopiera</button>
         <a class="mx-4" href="{{ get_setting('addresses', 'food_spreadsheet') }}" target="_blank">Länk till tabellen</a>
     </div>

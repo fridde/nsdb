@@ -1,10 +1,10 @@
-{% extends '@EasyAdmin/page/content.html.twig' %}
+{% extends 'admin/admin_base.html.twig' %}
 
 {% block page_title 'Satsvis redigering' %}
 
 {% set entity_names = {'Grupper': 'group', 'Användare': 'user'} %}
 
-{% block page_content %}
+{% block admin_page_content %}
     {% if entities is empty %}
         <ul>
             {% for entity_label, entity_name in entity_names %}

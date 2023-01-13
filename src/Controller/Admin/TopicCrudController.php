@@ -38,6 +38,7 @@ class TopicCrudController extends AbstractCrudController
             IdField::new('id')->hideOnForm(),
             TextField::new('ShortName'),
             TextField::new('LongName'),
+            TextField::new('Symbol'),
             AssociationField::new('Location'),
             ChoiceField::new('SegmentString', 'Segment')->setChoices(array_flip(Segment::getLabels())),
             IntegerField::new('VisitOrder'),

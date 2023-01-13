@@ -36,7 +36,7 @@ $(document).ready(() => {
         Ajax.createNew()
             .setUrl('/api/rate-visit/'+ id)
             .addToData('updates', {'Rating': rating})
-            .setResponseHandler(confirmRating)
+            .setSuccessHandler(confirmRating)
             .send();
 
     });

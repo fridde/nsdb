@@ -103,7 +103,7 @@ class Update {
         Ajax.createNew()
             .setUrl('/api/create/user')
             .addToData('user', data)
-            .setResponseHandler(Response.showNewStaffRow)
+            .setSuccessHandler(Response.showNewStaffRow)
             .send();
     }
 
@@ -122,7 +122,7 @@ class Update {
 
         Ajax.createNew()
             .setUrl('/api/delete/user/' + id)
-            .setResponseHandler(Response.darkenRemovedUserRow)
+            .setSuccessHandler(Response.darkenRemovedUserRow)
             .send();
     }
 
@@ -162,14 +162,14 @@ class Update {
         Ajax.createNew()
             .setUrl('/api/register')
             .addToData('user', userData)
-            .setResponseHandler(Response.redirectToConfirmationPage)
+            .setSuccessHandler(Response.redirectToConfirmationPage)
             .send();
     }
 
     static getApiKey = (e) => {
         Ajax.createNew()
             .setUrl('/api/get-valid-cron-key')
-            .setResponseHandler(Response.insertApiKey)
+            .setSuccessHandler(Response.insertApiKey)
             .send();
     }
 
@@ -177,7 +177,7 @@ class Update {
         Ajax.createNew()
             .setUrl('/api/group/' + groupId)
             .addToData('updates', data)
-            .setResponseHandler(Edit.showUpdateStatus)
+            .setSuccessHandler(Response.showSuccessfulUpdateToast)
             .send();
     }
 
@@ -187,7 +187,7 @@ class Update {
         let ajax = Ajax.createNew()
             .setUrl('/api/note/' + note)
             .addToData('text', text)
-            .setResponseHandler(Response.updateNoteId);
+            .setSuccessHandler(Response.updateNoteId);
 
         if (note === "new") {
             ajax.addToData('visit', $(e.target).data('visit-id'));
@@ -210,7 +210,7 @@ class Update {
         const ajax = Ajax.createNew()
             .setUrl('/api/add-groups')
             .addToData('data', data)
-            .setResponseHandler(Response.showUpdateToast);
+            .setSuccessHandler(Response.showUpdateToast);
 
         ajax.send();
     }
@@ -219,7 +219,7 @@ class Update {
         const ajax = Ajax.createNew()
             .setUrl('/api/batch-rename-groups')
             .addToData('data', data)
-            .setResponseHandler(Response.showUpdateToast);
+            .setSuccessHandler(Response.showUpdateToast);
 
         ajax.send();
     }
@@ -230,7 +230,7 @@ class Update {
         const ajax = Ajax.createNew()
             .setUrl('/api/save-multi-access-user/' + userId)
             .addToData('schools', schools.join())
-            .setResponseHandler(Response.showUpdateToast);
+            .setSuccessHandler(Response.showUpdateToast);
 
         this.cancelAllTimeOuts();
         this.addTimeOutId(setTimeout(ajax.send, 3000));
@@ -242,7 +242,7 @@ class Update {
             .setUrl('/api/change-editable-setting')
             .addToData('setting', 'next_school_admin_mail')
             .addToData('value', $(e.target).val())
-            .setResponseHandler(Response.showUpdateToast);
+            .setSuccessHandler(Response.showUpdateToast);
 
         ajax.send();
     }

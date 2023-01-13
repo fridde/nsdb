@@ -1,8 +1,8 @@
-{% extends '@EasyAdmin/page/content.html.twig' %}
+{% extends 'admin/admin_base.html.twig' %}
 
 {% block page_title 'Lägg till grupper' %}
 
-{% block page_content %}
+{% block admin_page_content %}
     <div class="accordion" id="add-groups-container">
         {% for segment, groups in all_groups %}
             <div class="accordion-item" data-segment="{{ segment }}">

@@ -1,7 +1,7 @@
 'use strict';
 
 import $ from 'jquery';
-
+import Response from "./Response";
 
 class Ajax {
 
@@ -11,6 +11,8 @@ class Ajax {
     genericResponse = (data, jqHXR, textStatus) => {
         console.log("The generic handler was called. The request was a " + textStatus);
     }
+
+
 
     settings = {
         url: '/',
@@ -25,11 +27,17 @@ class Ajax {
         }
     }
 
-    responseHandler = this.genericResponse
+    successHandler = this.genericResponse
 
-    setResponseHandler = (handler) => {
-        //this.settings.complete = handler;
-        this.responseHandler = handler;
+    failureHandler = Response.showError
+
+    setSuccessHandler = (handler) => {
+        this.successHandler = handler;
+        return this;
+    }
+
+    setFailureHandler = (handler) => {
+        this.failureHandler = handler;
         return this;
     }
 
@@ -44,7 +52,10 @@ class Ajax {
     }
 
     send = () => {
-        return $.ajax(this.settings).then(this.responseHandler);
+        return $.ajax(this.settings)
+            // .fail(() => console.log('FAIL!!!'));
+            .fail(this.failureHandler)
+            .done(this.successHandler);
     }
 
     static createNew = () => {

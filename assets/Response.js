@@ -1,6 +1,7 @@
 'use strict';
 
 import $ from 'jquery';
+import {Toast} from "bootstrap";
 
 class Response {
 
@@ -18,8 +19,25 @@ class Response {
         row.removeClass('d-none').addClass('bg-success');
     }
 
-    static showUpdateToast = (data, jqXHR, textStatus) => {
-        // TODO: implement this method
+    static showSuccessfulUpdateToast = (data, jqXHR, textStatus) => {
+        this.showToast('Uppgifterna uppdaterades', true);
+    }
+
+    static showToast = (text, success) => {
+        const toastSelector = '#update-toast-' + (success ? 'success' : 'error') ;
+        const $toast = $(toastSelector);
+        const toastInstance = Toast.getOrCreateInstance(toastSelector);
+
+        const $toastHeader = $(toastSelector + ' .toast-header');
+        const $toastBody = $(toastSelector + ' .toast-body');
+
+        $toastBody.html(text);
+        // const delay = (success ? 5000 : 999999);
+        // $toast.data('bs-delay', delay).attr('data-bs-delay', delay); // weird hack because autohide doesn't overrule bs-delay
+        // $toast.data('bs-autohide', success).attr('data-bs-autohide', success);
+
+        $toast.toggleClass('bg-success', success).toggleClass('bg-danger',!success);
+        toastInstance.show();
     }
 
     static darkenRemovedUserRow = (data, jqXHR, textStatus) => {
@@ -30,6 +48,10 @@ class Response {
             // show data['error']
         }
         // TODO: implement this method
+    }
+
+    static confirmSavedPlannedVisits = (data, jqXHR, textStatus) => {
+        console.log(textStatus);
     }
 
     static updateNoteId = (data, jqXHR, textStatus) => {
@@ -43,6 +65,13 @@ class Response {
         if(data['success']){
             window.location.href = $('#registration-confirmation-url').data('url');
         }
+    }
+
+    static showError = (data, jqXHR, textStatus) => {
+        console.log(data.responseJSON.message);
+        let message = '<div>' + data.responseJSON.message + '</div>';
+
+        this.showToast(message, false);
     }
 
 }

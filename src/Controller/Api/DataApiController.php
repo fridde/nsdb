@@ -156,6 +156,7 @@ class DataApiController extends AbstractController
     #[IsGranted(SameSchoolVoter::EDIT, 'group')]
     public function updateGroup(Group $group): JsonResponse
     {
+        //throw new \Exception('this amazing error message');
         $this->updateEntityData($group);
         return $this->asJson(['success' => true]);
     }

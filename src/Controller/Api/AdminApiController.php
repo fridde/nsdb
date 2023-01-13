@@ -23,6 +23,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
+use Symfony\Component\Form\Exception\LogicException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -171,6 +172,7 @@ class AdminApiController extends AbstractController
     #[IsGranted(Role::SUPER_ADMIN)]
     public function confirmBusOrder(Visit $visit): Response
     {
+        throw new \Exception('Some message!');
         $direction = $this->request->get('direction');
         $confirmed = $direction === 'confirm';
 
@@ -218,12 +220,19 @@ class AdminApiController extends AbstractController
             $cpg = $topic->getColleaguesPerGroup() ?? 1.0;
 
             foreach ($dates as $date => $colleagues) {
-                $nrOfVisitsThisDay = (count($colleagues) / $cpg);
+                [$assignedColleagues, $bystanders] = $colleagues;
+                $nrOfVisitsThisDay = (count($assignedColleagues) / $cpg);
+                if(fmod($nrOfVisitsThisDay,1 ) !== 0.0) {
+                    $msg = sprintf('Aborted! The number of assigned colleagues for topic %s on %s did not match. Correct this mistake and save again.', strtoupper($letter), $date);
+                    throw new LogicException($msg);
+                }
+
+                $combinedColleagues = [...$assignedColleagues, ...$bystanders];
                 foreach (range(1, $nrOfVisitsThisDay) as $i) {
                     $visit = new Visit();
                     $visit->setDateString($date);
                     $visit->setTopic($topic);
-                    foreach ($colleagues as $userId) {
+                    foreach ($combinedColleagues as $userId) {
                         $user = $this->rc->getUserRepo()->find($userId);
                         assert($user instanceof User);
                         $visit->addColleague($user);
@@ -387,10 +396,11 @@ class AdminApiController extends AbstractController
         foreach ($visits as $visit) {
             $l = $visit['letter'];
             $d = $visit['date'];
-            $c = $visit['colleague'];
+            $c = (int) $visit['colleague'];  // = user id
+            $b = (int) $visit['bystander'];
             $dates = $s[$l] ?? [];
-            $colleagues = $dates[$d] ?? [];
-            $colleagues[] = (int)$c;
+            $colleagues = $dates[$d] ?? [[], []];  // 0 => assigned, 1 => bystanders
+            $colleagues[$b][] = $c;
             $s[$l][$d] = $colleagues;
         }
 

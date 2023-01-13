@@ -1,8 +1,18 @@
-<div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
-    <div id="update-toast" class="toast" role="alert">
+<div class="position-fixed top-0 end-0 p-3 mt-5" style="margin-top: 50px; z-index: 11">
+    <div id="update-toast-success" class="toast bg-success hide" data-bs-autohide="true" data-bs-delay="5000" role="alert">
         <div class="toast-header">
             <strong class="me-auto">Uppdatering</strong>
-{#            <small>11 mins ago</small>#}
+            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body">
+            Uppgifterna uppdaterades.
+        </div>
+    </div>
+</div>
+<div class="position-fixed top-0 end-0 p-3 mt-5" style="margin-top: 50px; z-index: 11">
+    <div id="update-toast-error" class="toast bg-danger hide" data-bs-autohide="false" role="alert">
+        <div class="toast-header">
+            <strong class="me-auto">Fel</strong>
             <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
         </div>
         <div id="toast-body" class="toast-body">

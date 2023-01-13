@@ -3,6 +3,7 @@
 import $ from 'jquery';
 
 import Ajax from "./Ajax";
+import Response from "./Response";
 
 class Planyear {
 
@@ -76,7 +77,12 @@ class Planyear {
     }
 
     getSegment = (code) => {
-        return this.topicData[code]['segment']
+        code = this.standardizeCode(code);
+        return this.topicData[code]['segment'];
+    }
+
+    standardizeCode = (code) => {
+        return code.replace(/\W/g, "").toLowerCase(); // to remove brackets etc
     }
 
     isDeleteKey = (code) => {
@@ -88,7 +94,7 @@ class Planyear {
     }
 
     clearCell = () => {
-        const code = this.current.text().toLowerCase();
+        const code = this.current.text();
         this.current.text('');
         this.current.data('letter', '').attr('data-letter', '');
         this.current.removeClass('segment-' + this.getSegment(code)).removeClass('chosen');
@@ -96,13 +102,14 @@ class Planyear {
         this.changeCounter(code, 'down');
     }
 
-    changeCounter = (letter, direction) => {
-        let diff = 1.0 / this.topicData[letter]['cpg'];
+    changeCounter = (code, direction) => {
+        code = this.standardizeCode(code)
+        let diff = 1.0 / this.topicData[code]['cpg'];
         diff = direction === 'up' ? diff : diff * (-1.0);
-        const counter = $('#topic-counter-' + letter);
+        const counter = $('#topic-counter-' + code);
         const currentVal = parseFloat(counter.data('value'));
         const newVal = diff + currentVal;
-        counter.text(newVal.toFixed(1)).data('value', newVal);
+        counter.text(newVal.toFixed(1)).data('value', newVal).attr('data-value', newVal);
     }
 
     toggleCountability = () => {
@@ -112,15 +119,18 @@ class Planyear {
         }
         let code = currentText;
         let direction = 'down';
+        let bystander = 1;
         if (code.startsWith('(')) {
-            code = code.replace('(', '').replace(')', '');
+            code = code.replace(/\W/g, "");
             currentText = code;
             direction = 'up';
+            bystander = 0
         } else {
             currentText = '(' + currentText + ')';
         }
+        this.changeData(this.current, 'bystander', bystander);
         this.current.text(currentText);
-        this.changeCounter(code.toLowerCase(), direction);
+        this.changeCounter(code, direction);
     }
 
     changeCell = () => {
@@ -138,7 +148,8 @@ class Planyear {
                 visits.push({
                     'letter': letter,
                     date:  $(el).data('date'),
-                    colleague: $(el).data('colleague')
+                    colleague: $(el).data('colleague'),
+                    bystander: $(el).data('bystander')
                 });
             }
         });
@@ -146,7 +157,12 @@ class Planyear {
         Ajax.createNew()
             .setUrl('/api/save-planned-visits')
             .addToData('visits', visits)
+            .setSuccessHandler(Response.confirmSavedPlannedVisits)
             .send();
+    }
+
+    changeData = (jqElement, dataKey, value) => {
+        jqElement.data(dataKey, value).attr('data-' + dataKey, value);
     }
 }
 

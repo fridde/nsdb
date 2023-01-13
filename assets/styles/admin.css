@@ -1,6 +1,10 @@
 @import "~jquery-ui/dist/themes/base/jquery-ui.css";
 
 :root {
+    /*
+     * https://www.researchgate.net/figure/Kellys-22-colours-of-maximum-contrast_fig2_237005166
+     * taken from "Kelly's 22 colours of maximum contrast"
+     */
     --kelly-0: #0067A5;
     --kelly-1: #F3C300;
     --kelly-2: #875692;
@@ -143,7 +147,7 @@ table#plan-year td.plan-year-active {
 
 }
 
-#plan-year td[data-week="0"]:not(.chosen)
+#plan-year td[data-week-is-odd="0"]:not(.chosen)
 {
     background-color: lightgray;
 }

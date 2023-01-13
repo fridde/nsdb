@@ -178,6 +178,22 @@ class Group
         $this->Info = $Info;
     }
 
+    /**
+     * Used in GroupCrudController::configureFields()
+    */
+    public function getShortInfo(): ?string
+    {
+        if($this->Info === null){
+            return null;
+        }
+        $length = 50;
+        $return = substr($this->Info, 0, 50);
+        if(strlen($this->Info) > $length){
+            $return .= '[...]';
+        }
+        return $return;
+    }
+
     public function isActive(): bool
     {
         return $this->getStatus();
