@@ -47,6 +47,7 @@ class UserCrudController extends AbstractCrudController
     {
         return $filters
             ->add('FirstName')
+            ->add('School')
             ->add(ArrayFilter::new('Roles'))
             ;
     }

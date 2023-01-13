@@ -40,7 +40,7 @@ class GroupCrudController extends AbstractCrudController
             ChoiceField::new('SegmentString', 'Segment')->setChoices(array_flip(Segment::getLabels())),
             IntegerField::new('StartYear'),
             IntegerField::new('NumberStudents'),
-            TextareaField::new('ShortInfo')->hideOnForm(),
+            TextareaField::new('ShortInfo')->onlyOnIndex(),
             TextareaField::new('Info')->hideOnIndex(),
             BooleanField::new('Status')->renderAsSwitch(),
             AssociationField::new('School'),
