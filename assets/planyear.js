@@ -8,7 +8,8 @@ import Response from "./Response";
 class Planyear {
 
     constructor() {
-        this.current = $('#start-cell');
+        this.current = $('#' + $('#first-cell-id').data('first-cell-id'));
+        this.currentPlan = {};
         this.new = null;
         this.col = 0;
         this.topicData = $('#valid-keys').data('valid-keys');
@@ -25,6 +26,10 @@ class Planyear {
                 return;
             }
             this.changeCell();
+            return;
+        }
+
+        if (this.isProtectedCell()) {
             return;
         }
 
@@ -70,7 +75,7 @@ class Planyear {
 
     writeLetter = (code) => {
         this.current.text(code.toUpperCase());
-        this.current.data('letter', code).attr('data-letter', code);
+        this.currentPlan[this.current.attr('id')] = code + '_1';
 
         this.changeCounter(code, 'up');
         this.current.addClass('segment-' + this.getSegment(code)).addClass('chosen');
@@ -93,11 +98,20 @@ class Planyear {
         return ['shiftleft', 'slash'].includes(code);
     }
 
+    isProtectedCell = () => {
+        return this.current.hasClass('protected-cell');
+    }
+
+    saveToPlan = (cell, value) => {
+        this.currentPlan[cell.attr('id')] = value;
+    }
+
     clearCell = () => {
         const code = this.current.text();
         this.current.text('');
         this.current.data('letter', '').attr('data-letter', '');
         this.current.removeClass('segment-' + this.getSegment(code)).removeClass('chosen');
+        delete this.currentPlan[this.current.attr('id')];
 
         this.changeCounter(code, 'down');
     }
@@ -120,15 +134,18 @@ class Planyear {
         let code = currentText;
         let direction = 'down';
         let bystander = 1;
+        let assigned = 0;
         if (code.startsWith('(')) {
             code = code.replace(/\W/g, "");
             currentText = code;
             direction = 'up';
-            bystander = 0
+            bystander = 1;
+            assigned = 1;
         } else {
             currentText = '(' + currentText + ')';
         }
         this.changeData(this.current, 'bystander', bystander);
+        this.currentPlan[this.current.attr('id')] = code + '_' + assigned;
         this.current.text(currentText);
         this.changeCounter(code, direction);
     }
@@ -139,26 +156,44 @@ class Planyear {
         this.current = this.new;
     }
 
-    savePlannedVisits = () => {
-        const visits = [];
-
-        $('.plan-year-choices').each((i, el) => {
-            const letter = $(el).data('letter');
-            if (letter !== "") {
-                visits.push({
-                    'letter': letter,
-                    date:  $(el).data('date'),
-                    colleague: $(el).data('colleague'),
-                    bystander: $(el).data('bystander')
-                });
-            }
-        });
+    commitPlannedVisits = () => {
 
         Ajax.createNew()
             .setUrl('/api/save-planned-visits')
-            .addToData('visits', visits)
+            .addToData('visits', this.currentPlan)
             .setSuccessHandler(Response.confirmSavedPlannedVisits)
             .send();
+    }
+
+    loadExistingVisits = () => {
+        const existingVisits = $('#existing-visits').data('existing-visits');
+        for (const [key, value] of Object.entries(existingVisits)) {
+            let cell = $('#' + key);
+
+            let [code, assigned] = value.split('_');
+            let classes = [
+                'protected-cell',
+                'text-muted',
+                'small',
+                'chosen',
+                'segment-' + this.getSegment(code),
+            ];
+            cell.addClass(classes);
+
+            let letter = code.toUpperCase();
+            if (parseInt(assigned) === 0) {
+                letter = `(${letter})`;
+            }
+            cell.text(letter);
+        }
+    }
+
+    savePlanToCookie = () => {
+
+    }
+
+    loadPlanfromCookie = () => {
+
     }
 
     changeData = (jqElement, dataKey, value) => {
@@ -173,5 +208,9 @@ $(document).ready(() => {
 
     $(document).keydown(planYear.reactToKey);
 
-    $("#save-planned-year").click(planYear.savePlannedVisits);
+    $("#commit-planned-visits").click(planYear.commitPlannedVisits);
+    $("#save-to-cookie").click(planYear.savePlanToCookie);
+    $("#load-from-cookie").click(planYear.loadPlanfromCookie);
+    $("#load-existing-visits").click(planYear.loadExistingVisits);
+
 });

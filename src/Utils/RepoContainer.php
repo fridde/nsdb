@@ -25,7 +25,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class RepoContainer
 {
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
     }
 

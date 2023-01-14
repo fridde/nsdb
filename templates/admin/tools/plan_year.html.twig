@@ -3,60 +3,67 @@
 {% block page_title 'Planera nästa termin' %}
 
 {% block admin_page_content %}
-    <div id="valid-keys" data-valid-keys="{{ topics|json_encode }}" hidden></div>
+    <template id="valid-keys" data-valid-keys="{{ topics|json_encode }}"></template>
+    <template id="saved-plan" data-saved-plan="{{ saved_plan }}"></template>
+    <template id="existing-visits" data-existing-visits="{{ existing_visits|json_encode }}"></template>
+    <template id="first-cell-id" data-first-cell-id="{{ first_cell_id }}"></template>
+
     <div>
-        <button class="btn btn-primary m-3" id="save-planned-year">Spara permanent</button>
+        <button class="btn btn-primary mb-3 ms-2" id="commit-planned-visits">Spara permanent</button>
+        <button class="btn btn-primary mb-3 ms-2" id="save-to-cookie">Spara temporärt som cookie</button>
+        <button class="btn btn-primary mb-3 ms-2" id="load-from-cookie">Ladda från cookie</button>
+        <button class="btn btn-primary mb-3 ms-2" id="load-existing-visits">Ladda existerande besök</button>
     </div>
     <table id="plan-year">
+        {# ###  WEEK HEADER    ### #}
         <tr>
             <td class="not-choosable"></td>
-
             {% for d in dates %}
-                {% if d|date("N") == 1 %}
-                    {% set week_is_odd = d|date('W') % 2 %}
-                    <td class="not-choosable" data-week-is-odd="{{ week_is_odd }}" colspan="5">
+                {% if is_monday(d) %}
+                    <td class="not-choosable" data-week-is-odd="{{ week_is_odd(d) }}" colspan="5">
                         <span class="plan-year-week">{{ d|date('W') }}</span>
-                        ({{d|date("Y")}})
+                        ({{ d|date("Y") }})
                     </td>
                 {% endif %}
 
             {% endfor %}
         </tr>
+        {# ###  WEEK DAY HEADER    ### #}
         <tr>
             <td></td>
             {% for d in dates %}
-                {% set week_is_odd = d|date('W') % 2 %}
-                <td class="plan-year-date not-choosable" data-week-is-odd="{{ week_is_odd }}">{{ d.minDayName }}</td>
+                <td
+                        class="plan-year-date not-choosable"
+                        data-week-is-odd="{{ week_is_odd(d) }}"
+                >
+                    {{ d.minDayName }}
+                </td>
             {% endfor %}
         </tr>
+        {# ###  DATE HEADER    ### #}
         <tr>
             <td class="not-choosable"></td>
             {% for d in dates %}
-                {% set week_is_odd = d|date('W') % 2 %}
-                <td class="plan-year-date not-choosable" data-week-is-odd="{{ week_is_odd }}"><span>{{ d.day }} {{ d.shortMonthName }}</span></td>
+                <td class="plan-year-date not-choosable" data-week-is-odd="{{ week_is_odd(d) }}">
+                    <span>{{ d.day }} {{ d.shortMonthName }}</span></td>
             {% endfor %}
         </tr>
         {% for colleague in colleagues %}
+            {# ###  ACTUAL ROWS    ### #}
             <tr>
                 <td class="not-choosable fw-bold p-1">{{ colleague.Acronym }}</td>
                 {% for d in dates %}
-                    {% set week_is_odd = d|date('W') % 2 %}
                     <td
-                            {% if dates|first == d and colleagues|first == colleague %}
-                                id="start-cell"
-                            {% endif %}
                             class="plan-year-choices"
-                            data-colleague="{{ colleague.id }}"
-                            data-date="{{ d|date("Y-m-d") }}"
-                            data-letter=""
-                            data-bystander="0"
-                            data-week-is-odd="{{ week_is_odd }}"
+                            id="{{ d|date('Y-m-d') }}_{{ colleague.id }}"
+                            data-week-is-odd="{{ week_is_odd(d) }}"
                     >
                     </td>
                 {% endfor %}
             </tr>
         {% endfor %}
     </table>
+
     <div id="topic-counter-container" class="container float-start mt-5 position-sticky" style="left: 5em">
         {% for topic_row in topics|batch(3, {'': ['','']}, true) %}
             <div class="row">

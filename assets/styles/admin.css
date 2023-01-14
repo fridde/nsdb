@@ -122,6 +122,8 @@ td.fixed-visits {
     cursor: not-allowed;
 }
 
+/* ############      PLAN YEAR PAGE    ############ */
+
 table#plan-year td {
     border: 1px solid black;
     user-select: none;
@@ -166,6 +168,7 @@ td.segment-5 {
     background-color: lightgreen;
 }
 
+/* ############       END OF PLAN YEAR PAGE      ############ */
 
 
 

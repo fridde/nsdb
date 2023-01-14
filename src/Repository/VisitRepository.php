@@ -16,11 +16,15 @@ class VisitRepository extends EntityRepository
 {
     use Filterable;
 
+    public function afterDate(Carbon $date): self
+    {
+        return $this->addAndFilter('Date', $date->toDateString(),  Comparison::GTE);
+    }
+
     #[FilterMethod('after-today')]
     public function afterToday(): self
     {
-        $today = Carbon::today()->toDateString();
-        return $this->addAndFilter('Date', $today,  Comparison::GTE);
+        return $this->afterDate(Carbon::today());
     }
 
     public function hasTopic(Topic $topic = null): self
@@ -56,6 +60,11 @@ class VisitRepository extends EntityRepository
 
     public function getActiveVisitsAfterToday(): ExtendedCollection
     {
+        return $this->getActiveVisitsAfter(Carbon::today());
+    }
+
+    public function getActiveVisitsAfter(Carbon $date): ExtendedCollection
+    {
         $sortFunction = function(Visit $v1, Visit $v2){
             if ($v1->getDateString() === $v2->getDateString()) {
                 return $v1->getTopic()->getId() - $v2->getTopic()->getId();
@@ -65,7 +74,7 @@ class VisitRepository extends EntityRepository
 
         return $this
             ->isActive()
-            ->afterToday()
+            ->afterDate($date)
             ->getMatching()
             ->sortByFunction($sortFunction);
     }

@@ -23,6 +23,8 @@ class AppExtension extends AbstractExtension
             new TwigFunction('get_setting', [AppRuntime::class, 'getSetting']),
             new TwigFunction('gmaps_url', [AppRuntime::class, 'getGoogleMapsUrl']),
             new TwigFunction('segment_label', [AppRuntime::class, 'getSegmentLabel']),
+            new TwigFunction('week_is_odd', [AppRuntime::class, 'weekIsOdd']),
+            new TwigFunction('is_monday', [AppRuntime::class, 'isMonday']),
         ];
     }
 

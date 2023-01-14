@@ -51,6 +51,7 @@ class Response {
     }
 
     static confirmSavedPlannedVisits = (data, jqXHR, textStatus) => {
+        this.showToast('Besöken sparades!', true);
         console.log(textStatus);
     }
 

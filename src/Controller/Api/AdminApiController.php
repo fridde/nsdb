@@ -393,11 +393,12 @@ class AdminApiController extends AbstractController
     private function restructurePlannedVisitArray(array $visits): array
     {
         $s = [];
-        foreach ($visits as $visit) {
-            $l = $visit['letter'];
-            $d = $visit['date'];
-            $c = (int) $visit['colleague'];  // = user id
-            $b = (int) $visit['bystander'];
+        foreach ($visits as $key => $value) {
+            [$d, $c] = explode('_', $key);
+            [$l, $b] = explode('_', $value);
+            $c = (int) $c;
+            $b = ((int) $b === 0 ? 1 : 0); // invert 1 to 0 and vice versa
+
             $dates = $s[$l] ?? [];
             $colleagues = $dates[$d] ?? [[], []];  // 0 => assigned, 1 => bystanders
             $colleagues[$b][] = $c;

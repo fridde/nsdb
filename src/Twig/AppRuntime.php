@@ -7,6 +7,7 @@ use App\Entity\Visit;
 use App\Enums\Segment;
 use App\Security\AuthenticationUtils;
 use App\Settings;
+use Carbon\Carbon;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class AppRuntime implements RuntimeExtensionInterface
@@ -44,6 +45,16 @@ class AppRuntime implements RuntimeExtensionInterface
     public function getGoogleMapsUrl(string $coordinates): string
     {
         return 'https://www.google.com/maps/place/' . rawurlencode($coordinates);
+    }
+
+    public function weekIsOdd(Carbon $date): int
+    {
+        return $date->isoWeek() % 2; // corresponding to 1 (=true) or 0 (=false)
+    }
+
+    public function isMonday(Carbon $date): bool
+    {
+        return $date->isMonday();
     }
 
 

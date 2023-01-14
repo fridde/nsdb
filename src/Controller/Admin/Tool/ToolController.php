@@ -18,11 +18,16 @@ use Carbon\Carbon;
 use Doctrine\Common\Collections\Collection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ToolController extends AbstractController
 {
-    public function __construct(private RepoContainer $rc)
+    public function __construct
+    (
+        private readonly RepoContainer $rc,
+        private readonly RequestStack $request
+    )
     {
     }
 
@@ -99,6 +104,21 @@ class ToolController extends AbstractController
         $dates = array_filter($dates, fn(Carbon $d) => $d->isWeekday());
         $data['dates'] = $dates;
 
+        $data['saved_plan'] = $this->request->getCurrentRequest()->cookies->get('planned_year', '{}');
+        $data['existing_visits'] = [];
+
+        $visits = $this->rc->getVisitRepo()->getActiveVisitsAfter($monday);
+        foreach($visits as $visit){
+            /** @var Visit $visit  */
+            foreach($visit->getColleagues() as $user){
+                /** @var User $user  */
+                $key = $visit->getDateString() . '_' . $user->getId();
+                $data['existing_visits'][$key] = $visit->getTopic()->getSymbol() . '_1';  // we can't know which one of the colleagues will be a bystander
+            }
+        }
+
+
+
         $topics = array_filter($this->rc->getTopicRepo()->findAll(), fn(Topic $t) => $t->hasSymbol() && $t->isActive());
         $topics = array_map(fn(Topic $t) => [$t->getSymbol(), $t->getColleaguesPerGroup(), $t->getSegment()->value], $topics);
         $data['topics'] = array_combine(
@@ -107,6 +127,7 @@ class ToolController extends AbstractController
         );
 
         $data['colleagues'] = $this->rc->getUserRepo()->getColleagues();
+        $data['first_cell_id'] = $monday->toDateString() . '_' . $data['colleagues']->first()->getId();
 
         return $data;
     }
