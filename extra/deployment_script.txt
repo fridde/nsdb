@@ -21,7 +21,7 @@ git push
 cd $STAGING
 
 archive_project $PROJECT_NAME
-test (ls | count) -gt 15 && echo "More than 15 backups. Try to delete at least 10" && explorer.exe (wslpath -w $PWD)
+check_max_nr_of_files 15
 
 git clone $GITHUB --depth=1 && cd $PROJECT_NAME
 

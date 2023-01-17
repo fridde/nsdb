@@ -149,6 +149,11 @@ table#plan-year td.plan-year-active {
 
 }
 
+td.colleague-col {
+    position: sticky;
+    left: 0;
+}
+
 #plan-year td[data-week-is-odd="0"]:not(.chosen)
 {
     background-color: lightgray;

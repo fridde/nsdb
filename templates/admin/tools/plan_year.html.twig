@@ -4,14 +4,13 @@
 
 {% block admin_page_content %}
     <template id="valid-keys" data-valid-keys="{{ topics|json_encode }}"></template>
-    <template id="saved-plan" data-saved-plan="{{ saved_plan }}"></template>
     <template id="existing-visits" data-existing-visits="{{ existing_visits|json_encode }}"></template>
     <template id="first-cell-id" data-first-cell-id="{{ first_cell_id }}"></template>
 
     <div>
         <button class="btn btn-primary mb-3 ms-2" id="commit-planned-visits">Spara permanent</button>
         <button class="btn btn-primary mb-3 ms-2" id="save-to-cookie">Spara temporärt som cookie</button>
-        <button class="btn btn-primary mb-3 ms-2" id="load-from-cookie">Ladda från cookie</button>
+        <button class="btn btn-primary mb-3 ms-2 d-none" id="load-from-cookie">Ladda från cookie</button>
         <button class="btn btn-primary mb-3 ms-2" id="load-existing-visits">Ladda existerande besök</button>
     </div>
     <table id="plan-year">
@@ -51,7 +50,7 @@
         {% for colleague in colleagues %}
             {# ###  ACTUAL ROWS    ### #}
             <tr>
-                <td class="not-choosable fw-bold p-1">{{ colleague.Acronym }}</td>
+                <td class="colleague-col not-choosable fw-bold p-1">{{ colleague.Acronym }}</td>
                 {% for d in dates %}
                     <td
                             class="plan-year-choices"
@@ -75,6 +74,10 @@
                 {% endfor %}
             </div>
         {% endfor %}
+    </div>
+
+    <div class="d-block">
+        <textarea id="saved-plan-textarea" cols="30" rows="10"></textarea>
     </div>
 
     {{ encore_entry_script_tags('planyear') }}

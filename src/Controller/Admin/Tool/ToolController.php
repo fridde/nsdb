@@ -104,7 +104,6 @@ class ToolController extends AbstractController
         $dates = array_filter($dates, fn(Carbon $d) => $d->isWeekday());
         $data['dates'] = $dates;
 
-        $data['saved_plan'] = $this->request->getCurrentRequest()->cookies->get('planned_year', '{}');
         $data['existing_visits'] = [];
 
         $visits = $this->rc->getVisitRepo()->getActiveVisitsAfter($monday);
