@@ -10,13 +10,24 @@ class Response {
     }
 
     static showNewStaffRow = (data, jqXHR, textStatus) => {
-        if(data['success'] !== true){
-            throw 'The request did not succeed.';
-        }
         const row = $('#staff-table tbody tr').filter('[data-id="'+ data['temp_id'] + '"]');
         const newId = data['user_id'];
         row.data('id', newId).attr('data-id', newId);
         row.removeClass('d-none').addClass('bg-success');
+
+        let fullName = row.find('td[data-field="FirstName"]').text();
+        fullName += ' ' + row.find('td[data-field="LastName"]').text();
+        this.addToUserSelector(newId, fullName);
+
+
+    }
+
+    static addToUserSelector = (userId, fullName) => {
+        let option = document.createElement('option');
+        option.text = fullName;
+        option.setAttribute('value', userId);
+        $('.user-selector').append(option);
+
     }
 
     static showSuccessfulUpdateToast = (data, jqXHR, textStatus) => {

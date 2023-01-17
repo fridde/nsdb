@@ -78,7 +78,8 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Ndb Symfony');
+            ->setTitle('Ndb Symfony')
+            ->setFaviconPath('favicon.ico');
     }
 
     public function configureMenuItems(): iterable

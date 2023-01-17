@@ -2,7 +2,7 @@
     {"name": "FirstName", "label": "Förnamn"},
     {"name": "LastName", "label": "Efternamn"},
     {"name": "Mobil", "label": "Mobil"},
-    {"name": "Mail", "label": "Mejl", "required": "true", "type": "email"}
+    {"name": "Mail", "label": "Mejl", "required": true, "type": "email"}
 ] %}
 
 <div id="edit-user-modal" class="modal" tabindex="-1">
@@ -21,8 +21,7 @@
                                 class="form-control"
                                 name="{{ field.name }}"
                                 id="{{ field.name ~ "-id" }}"
-                                required="{{ field.required|default("false") }}"
-                        >
+                                {% if field.required|default(false) %} required{% endif %}                        >
                         <label for="{{ field.name ~ "-id" }}">{{ field.label }}</label>
                     </div>
                 {% endfor %}
