@@ -11,6 +11,7 @@ use App\Security\Role;
 use App\Security\Voter\SameSchoolVoter;
 use App\Utils\Attributes\ConvertToEntityFirst;
 use App\Utils\RepoContainer;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use ReflectionNamedType;
@@ -65,15 +66,22 @@ class DataApiController extends AbstractController
         $tempId = $data['id'];
         unset($data['id']);
         $user = new User();
-        $this->updateEntityData($user, $data);
+        $this->updateSingleEntity($user, $data);
 
         if(!($this->security->isGranted(Role::SUPER_ADMIN) || $requestingUser->hasSameSchoolAs($user))){
             throw new AccessDeniedException();
         }
         $user->addRole(Role::ACTIVE_USER);
-        $this->em->flush();
+        try {
+            $this->em->flush();
+        } catch(UniqueConstraintViolationException $ue){
+            $msg = 'En användare med mejladress "%s" finns redan i databasen. ';
+            $msg .= 'Om du inte kan se hen i listan, så beror det nog på att hen är skriven på en annan skola. ';
+            $msg .= 'Kontakta oss så löser vi det manuellt!';
+            throw new \DomainException(sprintf($msg, $user->getMail()));
+        }
 
-        return $this->asJson(['success' => true, 'temp_id' => $tempId, 'user_id' => $user->getId()]);
+        return $this->asJson(['temp_id' => $tempId, 'user_id' => $user->getId()]);
     }
 
     #[Route(

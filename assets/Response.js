@@ -27,7 +27,6 @@ class Response {
         option.text = fullName;
         option.setAttribute('value', userId);
         $('.user-selector').append(option);
-
     }
 
     static showSuccessfulUpdateToast = (data, jqXHR, textStatus) => {
