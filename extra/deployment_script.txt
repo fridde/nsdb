@@ -9,11 +9,11 @@ build_outlook_interactor
 
 composer install --no-scripts
 
-npm run dev
+start_win_nodejs
+npm run dev && exit
 
 git status
-git add -A
-git commit -a -m "More work"
+git add -A && git commit -m "More work"
 git push
 
 # winphp ./vendor/bin/phpunit
@@ -31,7 +31,8 @@ echo 'APP_ENV=prod' > .env.local
 
 
 cd $SCRIPTS$PROJECT_NAME
-npm run build
+start_win_nodejs
+npm run build && exit
 cons assets:install
 
 cp -r public/{build,bundles} $STAGING/$PROJECT_NAME/public
