@@ -69,16 +69,16 @@ class DataApiController extends AbstractController
         $this->updateSingleEntity($user, $data);
 
         if(!($this->security->isGranted(Role::SUPER_ADMIN) || $requestingUser->hasSameSchoolAs($user))){
-            throw new AccessDeniedException();
+            throw $this->createAccessDeniedException();
         }
         $user->addRole(Role::ACTIVE_USER);
         try {
             $this->em->flush();
         } catch(UniqueConstraintViolationException $ue){
-            $msg = 'En användare med mejladress "%s" finns redan i databasen. ';
-            $msg .= 'Om du inte kan se hen i listan, så beror det nog på att hen är skriven på en annan skola. ';
-            $msg .= 'Kontakta oss så löser vi det manuellt!';
-            throw new \DomainException(sprintf($msg, $user->getMail()));
+            $msg = 'En %s användare med mejladress "%s" finns redan i databasen och tillhör %s. ';
+            $msg .= 'Kontakta oss ifall detta bör ändras!';
+            $active = $user->getStatus() ? 'aktiv' : 'inaktiv';
+            throw new \DomainException(sprintf($msg, $active, $user->getMail(), $user->getSchool()->getName()));
         }
 
         return $this->asJson(['temp_id' => $tempId, 'user_id' => $user->getId()]);

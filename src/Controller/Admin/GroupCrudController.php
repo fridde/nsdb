@@ -22,6 +22,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TelephoneField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ArrayFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 
 class GroupCrudController extends AbstractCrudController
 {
@@ -52,7 +53,7 @@ class GroupCrudController extends AbstractCrudController
     {
         return $filters
             ->add('School')
-            ->add('Segment')
+            ->add(ChoiceFilter::new('Segment')->setChoices(array_flip(Segment::getLabels())))
             ->add('StartYear')
             ;
     }
