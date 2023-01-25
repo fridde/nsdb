@@ -171,6 +171,17 @@ class ToolController extends AbstractController
     {
         $data['messages'] = $mb->collectAllMessages();
 
+        $users = $this->rc->getUserRepo()->getActiveUsersWithFutureVisits();
+        $usersBySegment = [];
+        foreach(Segment::cases() as $segment){
+            $filteredUsers = $users->filter(fn(User $u) => $u->hasActiveGroupInSegment($segment));
+            if($filteredUsers->isNotEmpty()){
+                $usersBySegment[$segment->value] = $filteredUsers->map(fn(User $u) => $u->getMail());
+            }
+        }
+        $data['segment_labels'] = Segment::getLabels();
+        $data['users_by_segment'] = $usersBySegment;
+
         return $data;
     }
 

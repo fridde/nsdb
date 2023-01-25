@@ -277,7 +277,16 @@ class User implements UserInterface
 
     public function hasGroupWithFutureVisit(): bool
     {
-        return $this->getGroups()->filter(fn(Group $g) => $g->hasFutureVisit())->isNotEmpty();
+        return $this->getGroups()
+            ->filter(fn(Group $g) => $g->hasFutureVisit())
+            ->isNotEmpty();
+    }
+
+    public function hasActiveGroupInSegment(Segment $segment): bool
+    {
+        return $this->getGroups()
+            ->filter(fn(Group $g) => $g->isActive() && $g->isSegment($segment))
+            ->isNotEmpty();
     }
 
     public function getNextVisit(): ?Visit

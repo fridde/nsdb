@@ -11,5 +11,14 @@
             </tr>
         {% endfor %}
         </table>
+
+    <h2 class="mt-5">Mejllistor</h2>
+    <p>Dessa pedagoger har minst en klass i respektive årskurs som har minst ett besök kvar.</p>
+    {% for segment, users in users_by_segment %}
+        <h3>{{ segment_labels[segment] }}</h3>
+        <textarea name="" cols="50" rows="10">
+            {{- users|join(' ; ') -}}
+        </textarea>
+    {% endfor %}
 {% endblock %}
 
