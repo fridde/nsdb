@@ -219,10 +219,13 @@ class Group
         return ExtendedCollection::create($this->Visits);
     }
 
+    public function getActiveVisits(): ExtendedCollection
+    {
+        return $this->getVisits()->filter(fn(Visit $v) => $v->isActive());
+    }
+
     public function getNotes(): ExtendedCollection
     {
-
-
         return $this->getVisits()
             ->map(fn(Visit $v) => $v->getNotes())
             ->collapse();

@@ -48,7 +48,7 @@ earliest_confirmable_date
                             </div>
                             {% if group.visits %}
                                 <ul class="list-group list-group-flush">
-                                    {% for visit in group.visits %}
+                                    {% for visit in group.ActiveVisits %}
                                         {% set li_classes = "list-group-item" %}
                                         {% if visit.Date < today %}{% set li_classes = li_classes ~ " text-muted text-decoration-line-through fw-light" %}{% endif %}
                                         <li class="{{ li_classes }}">{{ visit.DateString }}: <a
