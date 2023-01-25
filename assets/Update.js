@@ -128,10 +128,11 @@ class Update {
 
     static approveUsers = (e) => {
         const approveUserModalDiv = $('#approve-user-modal');
-        const approveUserModal = new Modal('#approve-user-modal');
+        const approveUserModal = Modal.getOrCreateInstance('#approve-user-modal');
+        approveUserModal.hide();
         const data = {'yes': [], 'no': [], 'unsure': approveUserModalDiv.data('ignore-approval')};
         let userId, unsureRows;
-        approveUserModal.hide();
+
         approveUserModalDiv.find('input:checked').each((i, el) => {
                 userId = $(el).data('pending-user-id');
                 data[$(el).val()].push(userId);
@@ -139,9 +140,9 @@ class Update {
         );
         const staffTableRows = $('#staff-table tr');
         data['no'].forEach((userId) => staffTableRows.filter('[data-id="' + userId + '"]').remove());
-        data['unsure'].forEach(function (userId) {
+        data['unsure'].forEach((userId) => {
             unsureRows = staffTableRows.filter('[data-id="' + userId + '"]');
-            unsureRows.addClass('.uneditable');
+            unsureRows.addClass('uneditable');
             unsureRows.find('button').hide();
         });
 
@@ -152,7 +153,7 @@ class Update {
             .addToData('approvals', data)
             .send();
 
-        approveUserModal.hide();
+        // approveUserModal.hide();
     }
 
     static registerAsUser = (e) => {

@@ -92,17 +92,13 @@ class DataApiController extends AbstractController
     public function deleteUser(User $user): JsonResponse
     {
         if($user->hasGroupWithFutureVisit()){
-            return $this->asJson([
-                'success' => false,
-                'user_id' => $user->getId(),
-                'error' => 'Användaren har fortfarande besök kvar.' // TODO: Make language agnostic
-            ]);
+            $msg = 'Användaren %s har fortfarande besök kvar och bör inte tas bort. Kontakta oss om det inte verkar stämma.';
+            throw new \RuntimeException(sprintf($msg, $user->getMail()));
         }
         $user->setStatus(false);
         $this->em->flush();
 
         return $this->asJson([
-            'success' => true,
             'user_id' => $user->getId()
         ]);
     }

@@ -26,7 +26,7 @@ earliest_confirmable_date
                                         {% for user in users %}
                                             <option value="{{ user.id }}"{% if user.id == group.user.id %} selected{% endif %}>{{ user.fullname }}</option>
                                         {% endfor %}
-                                        {% if not group.user %}
+                                        {% if (not group.user) or (not group.user.isActive) %}
                                             <option value="" selected>--- Ingen ---</option>
                                         {% endif %}
                                     </select>
