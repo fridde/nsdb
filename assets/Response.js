@@ -73,6 +73,10 @@ class Response {
         }
     }
 
+    static reloadPage = () =>  {
+        window.location.reload();
+    }
+
     static showError = (data, jqXHR, textStatus) => {
         console.log(data.responseJSON.message);
         let message = '<div>' + data.responseJSON.message + '</div>';

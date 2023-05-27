@@ -18,7 +18,6 @@ use Carbon\Carbon;
 use Doctrine\Common\Collections\Collection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ToolController extends AbstractController
@@ -26,23 +25,22 @@ class ToolController extends AbstractController
     public function __construct
     (
         private readonly RepoContainer $rc,
-        private readonly RequestStack $request
     )
     {
     }
 
 
-    #[Route('/admin/confirm-bus-orders', name: 'tools_confirm_bus_orders')]
-    #[Template('admin/tools/confirm_bus_orders.html.twig')]
-    public function confirmBusOrders(): array
-    {
-
-        $visits = $this->rc->getVisitRepo()->getActiveVisitsAfterToday();
-        $data['visits'] = $visits->filter(fn(Visit $v) => $v->needsBus());
-        $data['colors'] = $this->calculateColorIndexForVisits($data['visits']);
-
-        return $data;
-    }
+//    #[Route('/admin/confirm-bus-orders', name: 'tools_confirm_bus_orders')]
+//    #[Template('admin/tools/confirm_bus_orders.html.twig')]
+//    public function confirmBusOrders(): array
+//    {
+//
+//        $visits = $this->rc->getVisitRepo()->getActiveVisitsAfterToday();
+//        $data['visits'] = $visits->filter(fn(Visit $v) => $v->needsBus());
+//        $data['colors'] = $this->calculateColorIndexForVisits($data['visits']);
+//
+//        return $data;
+//    }
 
     #[Route('/admin/distribute-visits/{topic}', name: 'tools_distribute_visits')]
     #[Template('admin/tools/distribute_visits.html.twig')]

@@ -3,7 +3,7 @@
 {% block page_title 'Bekräfta buss' %}
 
 {% block admin_page_content %}
-<div id="confirm-bus-orders">
+    {# <div id="confirm-bus-orders">
     <table>
         {% for visit in visits %}
             {% set color_index = colors[visit.id] %}
@@ -19,6 +19,36 @@
             </tr>
         {% endfor %}
     </table>
-</div>
+</div> #}
+    {% if unknowns|length %}
+        <h2>Okända platser</h2>
+        <table>
+            {% for unknown in unknowns %}
+                <tr>
+                    <td>{{ unknown }}</td>
+                    <td>
+                        <select class="location-translation" data-lookup-name="{{ unknown }}">
+                            {% for key, location in locations_and_schools %}
+                                <option value="{{ key }}">{{ location }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <button type="button" id="save-unknown-locations">Spara platser</button>
+    {% endif %}
+    <ul>
+
+    </ul>
+    <ul>
+
+    </ul>
+    <ul>
+        {% for visit in visits %}
+            <li>{{ visit|json_encode }}</li>
+        {% endfor %}
+    </ul>
+
 {% endblock %}
 

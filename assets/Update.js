@@ -58,6 +58,18 @@ class Update {
         $td.find('.fas').toggleClass('fa-question').toggleClass('fa-check');
     }
 
+    static saveUnknownLocations = (e) => {
+        let locations = {};
+        $('.location-translation').each((i, el) => {
+            locations[$(el).data('lookup-name')] = $(el).val();
+        });
+        Ajax.createNew()
+            .setUrl('/api/save-bus-data')
+            .addToData('locations', locations)
+            .setSuccessHandler(Response.reloadPage)
+            .send();
+    }
+
     static showEditStaffModal = (e) => {
         const row = $(e.target).closest('tr');
         Edit.transferBetweenModalAndRow(Edit.DIRECTION_ROW_TO_MODAL, row);

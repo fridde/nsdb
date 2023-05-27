@@ -4,6 +4,7 @@
 namespace App\Controller\Api;
 
 
+use App\Controller\Admin\Tool\BusController;
 use App\Entity\Group;
 use App\Entity\Location;
 use App\Entity\School;
@@ -19,6 +20,7 @@ use App\Security\Key\Key;
 use App\Security\Role;
 use App\Settings;
 use App\Utils\RepoContainer;
+use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,6 +30,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Notifier\Bridge\Slack\Block\SlackDividerBlock;
@@ -47,14 +50,16 @@ class AdminApiController extends AbstractController
     private ?Request $request;
 
     public function __construct(
-        RequestStack                            $request_stack,
+        private readonly RequestStack                            $request_stack,
         private readonly EntityManagerInterface $em,
         private readonly RepoContainer          $rc,
         private readonly ApiKeyManager          $akm,
         private readonly DataApiController      $dataApiController,
         private readonly Settings               $settings,
         private readonly NotifierInterface      $notifier,
-        private readonly ChatterInterface       $chatter
+        private readonly ChatterInterface       $chatter,
+        private readonly KernelInterface        $kernel,
+        private readonly BusController          $busController
     )
     {
         $this->request = $request_stack->getCurrentRequest();
@@ -172,7 +177,6 @@ class AdminApiController extends AbstractController
     #[IsGranted(Role::SUPER_ADMIN)]
     public function confirmBusOrder(Visit $visit): Response
     {
-        throw new \Exception('Some message!');
         $direction = $this->request->get('direction');
         $confirmed = $direction === 'confirm';
 
@@ -365,6 +369,27 @@ class AdminApiController extends AbstractController
 
         return new JsonResponse(['success' => true]);
 
+    }
+
+    #[Route('/api/save-bus-data')]
+    #[IsGranted(Role::SUPER_ADMIN)]
+    public function updateUnknownLocations(): JsonResponse
+    {
+        $settings = $this->busController->getSettings();
+
+        $locations = $this->request->get('locations');
+        if(!empty($locations)){
+            $settings['locations'] ??= [];
+            $settings['locations'] += $locations;
+        }
+        $url = $this->request->get('url');
+        if(!empty($url)){
+            $today = Carbon::today()->toDateString();
+            $settings['urls'][$today] ??= [];
+            $settings['urls'][$today][] = $this->busController->cleanUrl($url);
+            $settings['urls'][$today] = array_unique($settings['urls'][$today]);
+        }
+        $this->busController->writeToSettings($settings);
     }
 
     private function sendApprovalMessageForUser(User $user): void

@@ -30,6 +30,8 @@ $(document).ready(() => {
 
     $('#bus-settings td.toggle-label').click(Update.changeBusSetting);
 
+    $('#save-unknown-locations').click(Update.saveUnknownLocations);
+
     $('#confirm-bus-orders td.toggle-label').click(Update.confirmBusOrder);
 
     $('#create-api-key').click(Update.getApiKey);
@@ -49,6 +51,8 @@ $(document).ready(() => {
         .change(Update.saveMultiAccessUserSchools);
 
     $('#add-multi-access-user-button').click(Edit.addMultiAccessUser);
+
+
 
     if($('#entity-table').length){  // == exists
         const BE = new BatchEdit();

@@ -12,17 +12,19 @@ use App\Utils\Calendar;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class SandboxController extends AbstractController
 {
 
     public function __construct(
-        LoggerInterface $logger,
-        private Filesystem $fs,
+        LoggerInterface         $logger,
+        private Filesystem      $fs,
         private KernelInterface $kernel
     )
     {
@@ -66,5 +68,10 @@ class SandboxController extends AbstractController
 
         return new Response('');
 
+    }
+
+    #[Route('sandbox/bus')]
+    public function parseBusConfirmationPage(HttpClientInterface $httpClient): Response
+    {
     }
 }
