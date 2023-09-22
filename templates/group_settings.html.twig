@@ -43,7 +43,7 @@ earliest_confirmable_date
                                     {% set info_id = "info_" ~ group.id %}
                                     <label class="form-label" for="{{ info_id }}">Information om gruppen</label>
                                     <textarea class="editable form-control" data-attribute="Info" id="{{ info_id }}"
-                                              rows="4"></textarea>
+                                              rows="4">{{ group.info }}</textarea>
                                 </div>
                             </div>
                             {% if group.visits %}

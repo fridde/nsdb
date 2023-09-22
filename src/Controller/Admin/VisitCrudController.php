@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Group;
 use App\Entity\Visit;
 use Carbon\Carbon;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;

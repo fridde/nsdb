@@ -14,6 +14,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -41,6 +42,7 @@ class TopicCrudController extends AbstractCrudController
             TextField::new('Symbol'),
             AssociationField::new('Location'),
             ChoiceField::new('SegmentString', 'Segment')->setChoices(array_flip(Segment::getLabels())),
+            NumberField::new('ColleaguesPerGroup')->setNumDecimals(2),
             IntegerField::new('VisitOrder'),
             TextField::new('Food'),
             UrlField::new('Url'),

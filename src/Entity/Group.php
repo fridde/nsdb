@@ -63,6 +63,7 @@ class Group
     {
         $s = '[' . mb_strtoupper($this->getSchool()->getId()) . ':';
         $s .= $this->getSegment()->value . '] ' . $this->getName();
+        $s .= $this->isActive() ? '' : ' (inaktiv)';
 
         return $s;
     }
