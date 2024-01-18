@@ -19,6 +19,7 @@
                     {% endfor %}
                 {% endfor %}
             {% endblock %}
+            <h1 class="lead mark display-5 text-center">{{ requested_school.Name }}</h1>
             {% block staff_list %}
                 {% include 'staff_list.html.twig' %}
                 {% include 'edit_user_modal.html.twig' %}
