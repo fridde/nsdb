@@ -42,16 +42,25 @@ class ToolController extends AbstractController
 //        return $data;
 //    }
 
-    #[Route('/admin/distribute-visits/{topic}', name: 'tools_distribute_visits')]
+    #[Route('/admin/distribute-visits/{topic}/{startyear}', name: 'tools_distribute_visits')]
     #[Template('admin/tools/distribute_visits.html.twig')]
-    public function distributeVisits(?Topic $topic = null): array
+    public function distributeVisits(?Topic $topic = null, ?int $startyear = null): array
     {
         // TODO: Allow to filter for start-year. You don't want the current groups to appear here
         $topics = $this->rc->getTopicRepo()->getActiveTopics();
         if ($topic !== null) {
             $segment = $topic->getSegment();
             assert($segment instanceof Segment);
-            $startYear = Carbon::today()->addDays(60)->year;
+
+            if ($startyear !== null) {
+                $startYear = $startyear;
+            } else if ($segment === Segment::AK_2) {
+                $startYear = Carbon::today()->addDays(60)->year;
+            } else if ($segment === Segment::AK_5) {
+                $startYear = Carbon::today()->subDays(60)->year;
+            } else {
+                $startYear = Carbon::today();
+            }
 
             $visits = $this->rc->getVisitRepo()->getActiveVisitsWithTopic($topic);
             $orphanedVisits = $visitsForGroups = [];
@@ -105,15 +114,14 @@ class ToolController extends AbstractController
         $data['existing_visits'] = [];
 
         $visits = $this->rc->getVisitRepo()->getActiveVisitsAfter($monday);
-        foreach($visits as $visit){
-            /** @var Visit $visit  */
-            foreach($visit->getColleagues() as $user){
-                /** @var User $user  */
+        foreach ($visits as $visit) {
+            /** @var Visit $visit */
+            foreach ($visit->getColleagues() as $user) {
+                /** @var User $user */
                 $key = $visit->getDateString() . '_' . $user->getId();
                 $data['existing_visits'][$key] = $visit->getTopic()->getSymbol() . '_1';  // we can't know which one of the colleagues will be a bystander
             }
         }
-
 
 
         $topics = array_filter($this->rc->getTopicRepo()->findAll(), fn(Topic $t) => $t->hasSymbol() && $t->isActive());
@@ -171,9 +179,9 @@ class ToolController extends AbstractController
 
         $users = $this->rc->getUserRepo()->getActiveUsersWithFutureVisits();
         $usersBySegment = [];
-        foreach(Segment::cases() as $segment){
+        foreach (Segment::cases() as $segment) {
             $filteredUsers = $users->filter(fn(User $u) => $u->hasActiveGroupInSegment($segment));
-            if($filteredUsers->isNotEmpty()){
+            if ($filteredUsers->isNotEmpty()) {
                 $usersBySegment[$segment->value] = $filteredUsers->map(fn(User $u) => $u->getMail());
             }
         }
@@ -227,9 +235,9 @@ class ToolController extends AbstractController
         $schools = $this->rc->getSchoolRepo()->getActiveSchools();
         $data = ['schools' => $schools, 'all_groups' => $groups, 'years' => $years];
 
-        foreach($schools as $school){
-            /** @var School $school  */
-            foreach($years as $segmentValue => $year){
+        foreach ($schools as $school) {
+            /** @var School $school */
+            foreach ($years as $segmentValue => $year) {
                 $segment = Segment::from($segmentValue);
                 $data['all_groups'][$segmentValue][$school->getId()] = $school->getActiveGroupsBySegmentAndYear($segment, $year)->count();
             }
@@ -249,7 +257,7 @@ class ToolController extends AbstractController
             $data['segments'] = Segment::getLabels();
 
             $groups = $this->rc->getGroupRepo()->isActive()->getMatching();
-            $entities = $groups->sortByFunction(function (Group $g1, Group $g2){
+            $entities = $groups->sortByFunction(function (Group $g1, Group $g2) {
                 // see elvis-operator and spaceship operator
                 return $g1->getStartYear() <=> $g2->getStartYear()
                     ?: $g1->getSegment()?->getOrder() <=> $g2->getSegment()?->getOrder()

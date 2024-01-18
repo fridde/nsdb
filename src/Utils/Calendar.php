@@ -239,7 +239,7 @@ class Calendar
         $colleagues = $visit->getColleagues()->toArray();
         $colleagueString = (empty($colleagues)
             ? '?'
-            : implode('+', array_map(fn(User $u) => $u->getAcronym(), $colleagues))
+            : implode('+', array_map(fn(User $u) => $u->getFilteredAcronym(), $colleagues))
         );
 
         $titleStart = trim(sprintf('[%s] %s',

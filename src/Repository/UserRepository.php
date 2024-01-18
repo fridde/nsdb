@@ -38,7 +38,7 @@ class UserRepository extends EntityRepository
         return $this
             ->isActive()
             ->hasSchool($this->getEntityManager()->find(School::class, School::NATURSKOLAN))
-            ->orderedBy(['FirstName', 'LastName'])
+            ->orderedBy(['Acronym'])
             ->getMatching();
     }
 

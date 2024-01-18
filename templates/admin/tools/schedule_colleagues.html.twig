@@ -21,7 +21,7 @@
                         {% if c not in visit.Colleagues %}
                             {% set td_class = td_class ~ ' off-duty' %}
                         {% endif %}
-                        <td data-colleague-id="{{ c.id }}" class="{{ td_class }}">{{ c.Acronym }}</td>
+                        <td data-colleague-id="{{ c.id }}" class="{{ td_class }}">{{ c.FilteredAcronym }}</td>
                     {% endfor %}
                 </tr>
             {% endfor %}

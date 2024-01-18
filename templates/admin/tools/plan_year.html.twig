@@ -50,7 +50,7 @@
         {% for colleague in colleagues %}
             {# ###  ACTUAL ROWS    ### #}
             <tr>
-                <td class="colleague-col not-choosable fw-bold p-1">{{ colleague.Acronym }}</td>
+                <td class="colleague-col not-choosable fw-bold p-1">{{ colleague.FilteredAcronym }}</td>
                 {% for d in dates %}
                     <td
                             class="plan-year-choices"

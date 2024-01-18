@@ -232,6 +232,14 @@ class User implements UserInterface
         $this->Acronym = $Acronym;
     }
 
+    public function getFilteredAcronym(): ?string
+    {
+        if(str_contains($this->Acronym, ':')){
+            return explode(':', $this->Acronym)[1];
+        }
+        return $this->Acronym;
+    }
+
     public function getStatus(): bool
     {
         return $this->Status;
