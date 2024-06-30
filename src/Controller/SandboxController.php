@@ -10,7 +10,9 @@ use App\Message\MessageRecorder;
 use App\Security\Role;
 use App\Utils\Calendar;
 use Doctrine\ORM\EntityManagerInterface;
+use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Psr\Log\LoggerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Filesystem\Filesystem;
@@ -52,6 +54,20 @@ class SandboxController extends AbstractController
         return $this->render('base.html.twig');
     }
 
+    #[Route(
+        'sandbox/graph'
+    )]
+    #[IsGranted(Role::ACTIVE_USER)]
+    public function testGraph(ClientRegistry $clientRegistry): Response
+    {
+        $client = $clientRegistry->getClient('azure');
+        /** @var Azure $provider */
+        $provider = $client->getOAuth2Provider();
+        $token = $client->getAccessToken();
+
+        return $this->render('base.html.twig');
+    }
+
     #[Route('sandbox/mail')]
     public function saveSentMail(MessageRecorder $mr): Response
     {
@@ -63,7 +79,7 @@ class SandboxController extends AbstractController
         array_walk($validMails, fn(array &$m) => $m['date'] = '2019-09-02');
         $mails['valid'] = $validMails;
 
-        $mr->saveSentMailRecords($mails['valid']);
+        //$mr->saveSentMailRecords($mails['valid']);
 
 
         return new Response('');
@@ -71,7 +87,7 @@ class SandboxController extends AbstractController
     }
 
     #[Route('sandbox/bus')]
-    public function parseBusConfirmationPage(HttpClientInterface $httpClient): Response
+    public function parseBusConfirmationPage(HttpClientInterface $httpClient): void
     {
     }
 }

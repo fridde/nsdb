@@ -265,6 +265,11 @@ class User implements UserInterface
         return ExtendedCollection::create($this->Groups);
     }
 
+    public function getActiveGroups(): ExtendedCollection
+    {
+        return $this->getGroups()->filter(fn(Group $g) => $g->isActive());
+    }
+
     public function getRecords(): ExtendedCollection
     {
         return ExtendedCollection::create($this->Records);

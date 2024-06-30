@@ -34,7 +34,7 @@ class MessageBuilder
     public function collectAllMessages(): ExtendedCollection
     {
         return $this->collectMailsForVisitConfirmation()
-            ->attach($this->collectMailsForIncompleteProfile())
+            // ->attach($this->collectMailsForIncompleteProfile())   // not necessary anymore
             ->attach($this->collectMailsForNewVisitors())
             ->attach($this->collectMailsForAddedVisits())
             ->attach($this->collectMailsForSchoolAdminRequest());

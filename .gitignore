@@ -68,6 +68,7 @@ yarn-error.log
 ###< symfony/webpack-encore-bundle ###
 
 /.idea/
+/.vscode/
 /public/.htaccess
 /backup/
 !.gitkeep

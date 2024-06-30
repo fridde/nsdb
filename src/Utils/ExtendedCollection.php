@@ -122,7 +122,7 @@ class ExtendedCollection extends ArrayCollection
 
     public function withKey(int|string|callable $keyFunction): self
     {
-        $fn = (is_callable($keyFunction) ? $keyFunction : fn($v) => $v[$keyFunction]);
+        $fn = (is_callable($keyFunction) ? Closure::fromCallable($keyFunction) : fn($v) => $v[$keyFunction]);
         $keys = $this->map($fn)->toArray();
 
         return $this->createFrom(array_combine($keys, $this->toArray()));
