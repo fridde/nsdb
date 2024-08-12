@@ -75,3 +75,4 @@ yarn-error.log
 /data/temp_records/*
 /deployment.php
 /data/bus_routes.json
+data/all_people.txt

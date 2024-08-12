@@ -24,6 +24,7 @@ use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\Form\Exception\LogicException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -48,9 +49,10 @@ use Symfony\Component\Routing\RouterInterface;
 class AdminApiController extends AbstractController
 {
     private ?Request $request;
+    private ?array $allPeople = null;
 
     public function __construct(
-        private readonly RequestStack                            $request_stack,
+        private readonly RequestStack           $request_stack,
         private readonly EntityManagerInterface $em,
         private readonly RepoContainer          $rc,
         private readonly ApiKeyManager          $akm,
@@ -227,7 +229,7 @@ class AdminApiController extends AbstractController
                 [$assignedColleagues, $bystanders] = $colleagues;
                 $nrOfVisitsThisDay = (count($assignedColleagues) / $cpg);
                 if(fmod($nrOfVisitsThisDay,1 ) !== 0.0) {
-                    $msg = sprintf('Aborted! The number of assigned colleagues for topic %s on %s did not match. Correct this mistake and save again.', strtoupper($letter), $date);
+                    $msg = sprintf('Aborted! The number of assigned colleagues for topic %s on %s did not match. Correct this mistake and save again.', mb_strtoupper($letter), $date);
                     throw new LogicException($msg);
                 }
 
@@ -371,6 +373,40 @@ class AdminApiController extends AbstractController
 
     }
 
+
+    #[Route('/api/lookup-profiles')]
+    #[IsGranted(Role::SUPER_ADMIN)]
+    public function lookupUnknownProfiles(): JsonResponse
+    {
+        $profileInfo = $this->request->get('values');
+        $rows = array_map(fn($r) => trim($r), explode("\n", $profileInfo));
+
+        $type = $this->request->get('data-type');
+        $allPeople = unserialize(file_get_contents($this->kernel->getProjectDir() . '/data/all_people.txt'));
+
+        $rows = array_map(function($r) use ($type) {
+            if(strlen($r) === 0) {
+                return "";
+            }
+            $parts = array_map(fn($part) => trim($part), explode(";", $r));
+            foreach($parts as $part){
+                $cM = $this->getClosestMatch($r, $type);           
+                $info = match ($type) {
+                    'mail' => $cM['givenName'] . "\t" . $cM['surname'] . "\t" . $cM['department'] . ", " . $cM['jobTitle'],
+                    'name' => mb_strtolower($cM['mail']) . "\t" . $cM["displayName"] . ", " . $cM['department'] . ", " . $cM['jobTitle']
+                };
+            }
+            
+
+            return $r . "\t" . $info;
+        }, $rows);
+
+
+        $profileInfo = implode("\n", $rows);
+        
+        return new JsonResponse(['updated_profiles' => $profileInfo, 'success' => true]);
+    }
+
     #[Route('/api/save-bus-data')]
     #[IsGranted(Role::SUPER_ADMIN)]
     public function updateUnknownLocations(): JsonResponse
@@ -390,6 +426,8 @@ class AdminApiController extends AbstractController
             $settings['urls'][$today] = array_unique($settings['urls'][$today]);
         }
         $this->busController->writeToSettings($settings);
+
+        return new JsonResponse(['success'=> true]);
     }
 
     private function sendApprovalMessageForUser(User $user): void
@@ -397,7 +435,14 @@ class AdminApiController extends AbstractController
         $approvalUrl = $this->generateUrl(
             'school_overview',
             ['school' => $user->getSchool()->getId()],
-            UrlGeneratorInterface::ABSOLUTE_URL);
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        $checkUrl = $this->generateUrl(
+            'tools_lookup_profile',
+            ['mail' => $user->getMail()],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
 
         $chatMessage = new ChatMessage('User approval');
 
@@ -406,7 +451,7 @@ class AdminApiController extends AbstractController
                 ->text($user->getFullName() . ' ('. $user->getMail() . ') ansöker om behörighet för ' . $user->getSchool()->getName())
             )
             ->block(new SlackDividerBlock())
-            ->block((new SlackSectionBlock())->text('Kontrollera detta via Outlook eller annat lämpligt verktyg.'))
+            ->block((new SlackSectionBlock())->text('Kontrollera detta via' . $checkUrl))
             ->block(new SlackDividerBlock())
             ->block((new SlackSectionBlock())->text('Bekräfta sedan via ' . $approvalUrl));
 
@@ -431,6 +476,41 @@ class AdminApiController extends AbstractController
         }
 
         return $s;
+    }
+
+    public function getClosestMatch(string $lookFor, string $searchType = 'mail'): array
+    {
+        $allPeople = $this->getAllPeople();
+        $bestMatch = $allPeople[0]; // an empty row
+        $shortestDistance = strlen($lookFor) + 1;
+        foreach($allPeople as $person){
+            if($searchType === 'mail' && mb_strtolower($person["mail"]) === $lookFor){
+                return $person;
+            }
+            if($searchType === 'name'){
+                $dist = levenshtein($lookFor, $person['displayName']);
+                if($dist === 0){
+                    return $person;
+                } 
+                if($dist < $shortestDistance){
+                    $bestMatch = $person;
+                    $shortestDistance = $dist;
+                }
+            }
+        }
+        return $bestMatch;        
+        
+    }
+
+    private function getAllPeople(): array
+    {
+        if(empty($this->allPeople)){
+            $this->allPeople = unserialize(file_get_contents($this->kernel->getProjectDir() . '/data/all_people.txt'));
+            array_unshift($this->allPeople, array_fill_keys(array_keys($this->allPeople[0]),'')); // prepend an empty row in the beginning
+        }
+
+        return $this->allPeople;
+
     }
 
 

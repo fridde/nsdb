@@ -1,0 +1,43 @@
+{% extends 'admin/admin_base.html.twig' %}
+
+{% block page_title 'Kolla upp okända användare' %}
+
+{% block admin_page_content %}
+	{% if found_user is defined %}
+		<div class="card bg-info">
+            <h2 class="card-header">Upphittad användare</h2>
+            <div class="card-body">                
+                <div>
+                    {{ found_user.mail }} - {{ found_user.department }} - {{ found_user.jobTitle }}
+                </div>
+            </div>
+        </div>
+        <hr>
+	{% endif %}
+	
+    <form method="post" enctype="multipart/form-data">
+        <a href="https://aad.portal.azure.com/?l=en.en-us#view/Microsoft_AAD_UsersAndTenants/UserManagementMenuBlade/~/AllUsers">Ladda ner tabellen</a><br>
+        <label for="fileToUpload" class="form-label">Förnya databasen med kommunens profiler</label>
+        <div class="input-group">
+        
+            <input class="form-control" type="file" name="fileToUpload" id="fileToUpload">
+            <input class="form-control btn btn-outline-secondary" type="submit" value="Upload CSV" name="submit">
+            <span class="ms-2">Senaste uppdatering: {{ last_update }}</span>
+        </div>
+    </form>
+    <div class="input-group mt-3">        
+        <button class="btn btn-outline-secondary bg-success" id="lookup-profiles">Kolla upp användare</button>
+        <label class="input-group-text" for="given-profile-type-selector">Typ av given info</label>
+        <select class="form-select" id="given-profile-type-selector" name="given-profile-type-selector">
+            <option value="name">Namn</option>
+            <option value="mail">Mejl</option>
+        </select>
+    </div>
+	<div>
+		
+	</div>
+	<div>
+		<textarea id="unknown-profiles" cols="100" rows="100"></textarea>
+	</div>
+
+{% endblock %}

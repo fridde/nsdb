@@ -21,6 +21,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -52,6 +53,7 @@ class DashboardController extends AbstractDashboardController
             ['Bussinställningar', 'bus-alt', 'tools_set_bus_settings'],
             ['Skolor besöksordning', 'sort-numeric-down', 'tools_order_schools'],
             ['Skapa API-keys', 'key', 'tools_create_api_keys'],
+            ['Kolla upp användare', 'magnifying-glass' ,'tools_lookup_profile', ['mail' => '1']],
             ['Extra inställningar', 'cogs', 'tools_extra_settings'],
             ['Logg', 'th-list', 'tools_show_log'],
         ]
@@ -59,8 +61,9 @@ class DashboardController extends AbstractDashboardController
 
 
     public function __construct(
-        private RepoContainer     $rc,
-        private AdminUrlGenerator $routeBuilder
+        protected RepoContainer     $rc,
+        protected AdminUrlGenerator $routeBuilder,
+        protected RequestStack $requestStack
     )
     {
     }
@@ -85,7 +88,7 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         $extractCrud = fn($v) => MenuItem::linkToCrud($v[0], 'fas fa-' . $v[1], $v[2]);
-        $extractRoute = fn($v) => MenuItem::linkToRoute($v[0], 'fas fa-' . $v[1], $v[2]);
+        $extractRoute = fn($v) => MenuItem::linkToRoute($v[0], 'fas fa-' . $v[1], $v[2], $v[3] ?? []);
 
         return [
             MenuItem::linkToDashboard('Översikt', 'fa fa-home'),

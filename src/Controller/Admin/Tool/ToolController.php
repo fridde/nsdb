@@ -4,30 +4,34 @@
 namespace App\Controller\Admin\Tool;
 
 
+use App\Controller\Admin\DashboardController;
+use App\Controller\Api\AdminApiController;
 use App\Entity\Group;
 use App\Entity\School;
 use App\Entity\Topic;
 use App\Entity\User;
 use App\Entity\Visit;
 use App\Enums\Segment;
+use App\Kernel;
 use App\Message\MessageBuilder;
 use App\Message\MessageRecorder;
 use App\Settings;
 use App\Utils\RepoContainer;
 use Carbon\Carbon;
+use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Encoder\CsvEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
-class ToolController extends AbstractController
+class ToolController extends DashboardController
 {
-    public function __construct
-    (
-        private readonly RepoContainer $rc,
-    )
-    {
-    }
 
 
 //    #[Route('/admin/confirm-bus-orders', name: 'tools_confirm_bus_orders')]
@@ -48,7 +52,7 @@ class ToolController extends AbstractController
     {
         // TODO: Allow to filter for start-year. You don't want the current groups to appear here
         $topics = $this->rc->getTopicRepo()->getActiveTopics();
-        if ($topic !== null) {
+        if($topic !== null) {
             $segment = $topic->getSegment();
             assert($segment instanceof Segment);
 
@@ -246,7 +250,10 @@ class ToolController extends AbstractController
         return $data;
     }
 
-    #[Route('/admin/batch-edit/{entity}', name: 'tools_batch_edit')]
+    #[Route(
+        '/admin/batch-edit/{entity}', 
+        name: 'tools_batch_edit')
+        ]
     #[Template('admin/tools/batch_edit.html.twig')]
     public function batchEdit(string $entity = null): array
     {
@@ -307,6 +314,32 @@ class ToolController extends AbstractController
 
         return $data;
     }
+
+    #[Route(path: '/admin/lookup/{mail}', name: 'tools_lookup_profile')]
+    #[Template('admin/tools/lookup_profile.html.twig')]
+    public function lookupProfileInformation(string $mail = null, Kernel $kernel, AdminApiController $aaC): array
+    {
+        $serializer = new Serializer([new ObjectNormalizer()], [new CsvEncoder()]);
+        $fs = new Filesystem();
+        $request = $this->requestStack->getCurrentRequest();
+        $fileBag = $request->files;
+        $allPeoplePath = $kernel->getProjectDir() . '/data/all_people.txt';
+        if(file_exists($allPeoplePath)){
+            $data['last_update'] = (new DateTime())->setTimestamp(filemtime($allPeoplePath))->format("Y-m-d");
+        }
+        if($fileBag->has('fileToUpload')){            
+            $file = $fileBag->get('fileToUpload');
+            /** @var UploadedFile $file */
+            $allPeople = $serializer->decode($file->getContent(), 'csv');
+            $allPeople = array_filter($allPeople, fn($u) => $u['jobTitle'] !== "Elev" && $u['userType'] === 'Member');
+            $fs->dumpFile($allPeoplePath, serialize($allPeople));
+        } elseif(!empty($mail) && strlen($mail) > 1) {
+            $data['found_user'] = $aaC->getClosestMatch(mb_strtolower($mail), 'mail');
+        } 
+        
+        return $data ?? [];
+    }
+
 
     private function calculateColorIndexForVisits(Collection $visits): array
     {
