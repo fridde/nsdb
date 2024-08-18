@@ -28,6 +28,7 @@ class AuthKeyAuthenticator extends AbstractAuthenticator implements Authenticati
         private readonly UrlGeneratorInterface $router
     )
     {
+        $this->key = $this->akm->createKeyFromGivenString($this->akm->getKeyCodeFromRequest());
     }
 
     public function supports(Request $request): ?bool
@@ -36,8 +37,7 @@ class AuthKeyAuthenticator extends AbstractAuthenticator implements Authenticati
             // we don't want to end up in a loop of "bad but existing cookie" ->
             // check microsoft login -> come back and cookie is checked again and rejected
             return false;
-        }
-        $this->key = $this->akm->createKeyFromGivenString($this->akm->getKeyCodeFromRequest());
+        }       
 
         return in_array($this->key->type, [Key::TYPE_URL, Key::TYPE_COOKIE], true);
     }
@@ -64,8 +64,15 @@ class AuthKeyAuthenticator extends AbstractAuthenticator implements Authenticati
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
-    {
-        // TODO: Implement authentication failure
+    {       
+        if($this->key->isType(Key::TYPE_COOKIE)){
+            $redirectResponse = new RedirectResponse($request->getRequestUri());
+            $redirectResponse->headers->clearCookie('key');
+            
+            return $redirectResponse;
+        }
+
+        // is url-code
         return new Response('The key provided was not valid');
     }
 
