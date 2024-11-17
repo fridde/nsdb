@@ -26,7 +26,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-#[Route('/admin')]
 class DashboardController extends AbstractDashboardController
 {
     private const MENU = [
@@ -68,7 +67,7 @@ class DashboardController extends AbstractDashboardController
     {
     }
 
-    #[Route('/', name: 'admin_index')]
+    #[Route('/admin/', name: 'admin_index')]
     public function index(): Response
     {
         $url = $this->routeBuilder

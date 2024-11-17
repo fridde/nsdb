@@ -27,7 +27,8 @@ class IndexController extends AbstractController
                 return $this->render('base.html.twig');
             }
             if($this->isGranted(Role::SUPER_ADMIN)){
-                return $this->forward(DashboardController::class . '::index');
+                return $this->redirectToRoute('admin_index');
+                //forward(DashboardController::class . '::index');
             }
             return $this->forward(SchoolPageController::class . '::schoolOverview',
                 ['school' => $user->getSchool()]
