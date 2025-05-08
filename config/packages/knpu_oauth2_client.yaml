@@ -9,4 +9,5 @@ knpu_oauth2_client:
             scope: [ User.Read ]
             url_api: 'https://graph.microsoft.com/'
             tenant: '%env(OAUTH_AZURE_TENANT_ID)%'
+            default_end_point_version: '2.0'
         # configure your clients as described here: https://github.com/knpuniversity/oauth2-client-bundle#configuration
