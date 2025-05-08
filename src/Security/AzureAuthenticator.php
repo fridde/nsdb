@@ -54,6 +54,8 @@ class AzureAuthenticator extends AbstractAuthenticator
         $client = $this->clientRegistry->getClient('azure');
         /** @var Azure $provider */
         $provider = $client->getOAuth2Provider();
+        $provider->defaultEndPointVersion = Azure::ENDPOINT_VERSION_2_0;
+
 
         try {
             $token = $client->getAccessToken();
