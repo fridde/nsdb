@@ -140,7 +140,8 @@ class AppWindow(QWidget):
             with open(file) as f:
                 self.settings = json.load(f)
 
-    def request_get(self, type) -> requests.Response:
+    def 
+    (self, type) -> requests.Response:
         params = self.get_default_params()
         return requests.get(self.get_url(type), params, verify=self.request_should_be_verified())
 

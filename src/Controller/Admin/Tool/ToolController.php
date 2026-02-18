@@ -141,6 +141,13 @@ class ToolController extends DashboardController
         return $data;
     }
 
+    #[Route('/admin/import-dates', name: 'tools_batch_import_dates')]
+    #[Template('admin/tools/batch_import_dates.html.twig')]
+    public function batchImportCalendarDates()
+    {
+
+    }
+
     #[Route('/admin/order-bus', name: 'tools_order_bus')]
     #[Template('admin/tools/order_bus.html.twig')]
     public function orderBus(): array

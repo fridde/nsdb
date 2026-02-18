@@ -7,6 +7,7 @@
         "fridde/utility": "dev-master",
         "google/apiclient": "^2.12",
         "knpuniversity/oauth2-client-bundle": "^2.10",
+        "league/oauth2-google": "^4.1",
         "nesbot/carbon": "^2.59",
         "sensio/framework-extra-bundle": "^6.2",
         "spatie/db-dumper": "^3.2",
