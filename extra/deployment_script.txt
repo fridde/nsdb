@@ -33,7 +33,7 @@ echo 'APP_ENV=prod' > .env.local
 
 cd ~/projekt/$PROJECT_NAME
 ## start_win_nodejs
-npm run build && exit
+npm run build
 cons assets:install
 
 cp -r public/{build,bundles} $STAGING/$PROJECT_NAME/public
