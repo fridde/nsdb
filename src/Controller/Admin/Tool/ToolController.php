@@ -20,16 +20,18 @@ use App\Utils\RepoContainer;
 use Carbon\Carbon;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Encoder\CsvEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
+#[AdminDashboard(routePath: '/admin/tool', routeName: 'tool_index')]
 class ToolController extends DashboardController
 {
 
@@ -324,7 +326,7 @@ class ToolController extends DashboardController
 
     #[Route(path: '/admin/lookup/{mail}', name: 'tools_lookup_profile')]
     #[Template('admin/tools/lookup_profile.html.twig')]
-    public function lookupProfileInformation(string $mail = null, Kernel $kernel, AdminApiController $aaC): array
+    public function lookupProfileInformation(?string $mail = null, Kernel $kernel, AdminApiController $aaC): array
     {
         $serializer = new Serializer([new ObjectNormalizer()], [new CsvEncoder()]);
         $fs = new Filesystem();
@@ -332,7 +334,7 @@ class ToolController extends DashboardController
         $fileBag = $request->files;
         $allPeoplePath = $kernel->getProjectDir() . '/data/all_people.txt';
         if(file_exists($allPeoplePath)){
-            $data['last_update'] = (new DateTime())->setTimestamp(filemtime($allPeoplePath))->format("Y-m-d");
+            $data['last_update'] = new DateTime()->setTimestamp(filemtime($allPeoplePath))->format("Y-m-d");
         }
         if($fileBag->has('fileToUpload')){            
             $file = $fileBag->get('fileToUpload');

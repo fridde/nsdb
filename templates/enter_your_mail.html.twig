@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div class="d-flex justify-content-center align-items-center vh-100">
+        <div class="card w-50">
+            <div class="card-body">
+                <h5 class="card-title">Vem är du?</h5>
+                <form class="card-text" action="{{ login_endpoint }}" method="get">
+                    <div class="mb-3">
+                        <label for="user" class="form-label">Jobbmejladress</label>
+                        <input type="email" class="form-control" name="user" id="user" placeholder="jag@edu.sigtuna.se">
+                        <div class="form-text">Ange din jobbmejladress</div>
+                    </div>
+                    <input type="hidden" name="redirect" value="{{ redirect }}"/>
+                    <button type="submit" class="btn btn-primary">Skicka</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+{% endblock %}
+

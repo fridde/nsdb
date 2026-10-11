@@ -9,37 +9,38 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class ApiKeyManager
 {
-    public const SEPARATOR = '-';
+    public const string SEPARATOR = '-';
 
-/*    private array $key = [
-        'type' => null,
-        'id' => null,
-        'salt' => null,
-        'version' => null,
-        'hash' => null
-    ];
-*/
+    /*    private array $key = [
+            'type' => null,
+            'id' => null,
+            'salt' => null,
+            'version' => null,
+            'hash' => null
+        ];
+    */
 
     public function __construct(
-        private RequestStack $requestStack,
-        private string $cronKeyVersion,
-        private string $appSecret
+        private readonly RequestStack $requestStack,
+        private readonly string       $cronKeyVersion,
+        private string                $appSecret
     )
     {
     }
 
-    public function createKeyFromGivenString(string $givenString = null): Key
+    public function createKeyFromGivenString(?string $givenString = null): Key
     {
-        $key = new Key();
-        if (!empty($givenString)) {
-            [$key->type, $key->id, $key->salt, $key->hash] = explode(Key::SEPARATOR, $givenString);
-            $key->version = $this->getVersionForKey($key);
+        if (empty($givenString)) {   // null or empty string
+            return new Key();
         }
+
+        $key = new Key(...explode(Key::SEPARATOR, $givenString));
+        $key->version = $this->getVersionForKey($key);
 
         return $key;
     }
 
-    public function createKeyFromValues(string $type, string $id = '', string $version = null, string $salt = null): Key
+    public function createKeyFromValues(string $type, string $id = '', ?string $version = null, ?string $salt = null): Key
     {
         $key = Key::create()->setType($type)->setId($id);
         $key->version = $version ?? $this->getVersionForKey($key);
@@ -59,7 +60,7 @@ class ApiKeyManager
     public function calculateHashForKey(Key $key): string
     {
         $hashables = [$key->type, $key->id, $key->salt, $key->version, $this->appSecret];
-        $hash = self::createHashFromString(implode(Key::SEPARATOR, $hashables), $key->getHashLength());
+
         return self::createHashFromString(implode(Key::SEPARATOR, $hashables), $key->getHashLength());
     }
 
@@ -72,8 +73,8 @@ class ApiKeyManager
     private function getVersionForKey(Key $key): string
     {
         return (string)match ($key->type) {
-            Key::TYPE_ANON => Key::getDayFiveHoursAgo(),
-            Key::TYPE_COOKIE, Key::TYPE_URL => $key->getHalfAYearAgo(),
+            Key::TYPE_ANON, Key::TYPE_LOGIN => Key::getDayFiveHoursAgo(),
+            Key::TYPE_COOKIE, Key::TYPE_URL => Key::getHalfAYearAgo(),
             Key::TYPE_CRON => $this->cronKeyVersion
         };
     }

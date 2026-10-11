@@ -12,7 +12,6 @@ use TheNetworg\OAuth2\Client\Provider\Azure;
 
 class LogoutSubscriber implements EventSubscriberInterface
 {
-    private ClientRegistry $clientRegistry;
     private RequestStack $requestStack;
     private UrlGeneratorInterface $router;
 
@@ -22,7 +21,6 @@ class LogoutSubscriber implements EventSubscriberInterface
         UrlGeneratorInterface $router
     )
     {
-        $this->clientRegistry = $clientRegistry;
         $this->requestStack = $requestStack;
         $this->router = $router;
     }
@@ -36,15 +34,15 @@ class LogoutSubscriber implements EventSubscriberInterface
 
     public function onLogoutEvent(LogoutEvent $event): void
     {
-        /** @var Azure $provider  */
-        $provider = $this->clientRegistry->getClient('azure')->getOAuth2Provider();
+//        /** @var Azure $provider  */
+//        $provider = $this->clientRegistry->getClient('azure')->getOAuth2Provider();
         $url = $this->router->generate('index', [], UrlGeneratorInterface::ABSOLUTE_URL);
-        $logoutUrl = $provider->getLogoutUrl($url);
+//        $logoutUrl = $provider->getLogoutUrl($url);
 
         /** @var RedirectResponse $response  */
         $response = $event->getResponse();
         $response->headers->clearCookie('key');
-        $response->setTargetUrl($logoutUrl);
+        $response->setTargetUrl($url);
         $this->requestStack->getSession()->clear();
     }
 

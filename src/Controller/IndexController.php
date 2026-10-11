@@ -7,10 +7,12 @@ namespace App\Controller;
 use App\Controller\Admin\DashboardController;
 use App\Entity\User;
 use App\Security\Role;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class IndexController extends AbstractController
 {
@@ -41,12 +43,20 @@ class IndexController extends AbstractController
 
     }
 
+    #[Route('/login', name: 'login')]
+    public function login(Request $request): RedirectResponse
+    {
+        $redirect = $request->query->get('redirect');
+
+        return new RedirectResponse($redirect);
+    }
+
 
     #[Route('/logout', name:'app_logout', methods: ['GET'])]
     public function logout(): void
     {
         // Nothing in this method will be executed, it's just there to satisfy the router
-        // ALl logic is executed in LogoutSubscriber
+        // All logic is executed in LogoutSubscriber
     }
 
 

@@ -6,6 +6,7 @@ namespace App\Security\Voter;
 use App\Security\Key\ApiKeyManager;
 use App\Security\Key\Key;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 
@@ -21,7 +22,7 @@ class ApiKeyVoter extends Voter
         return in_array($attribute, Key::getAllTypes(), true);
     }
 
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token, Vote|null $vote = null): bool
     {
         $keyCode = $this->akm->getKeyCodeFromRequest();
         $key = $this->akm->createKeyFromGivenString($keyCode);

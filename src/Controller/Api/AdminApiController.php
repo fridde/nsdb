@@ -22,7 +22,7 @@ use App\Settings;
 use App\Utils\RepoContainer;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
@@ -41,7 +41,7 @@ use Symfony\Component\Notifier\ChatterInterface;
 use Symfony\Component\Notifier\Message\ChatMessage;
 use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\NotifierInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -74,7 +74,7 @@ class AdminApiController extends AbstractController
     #[IsGranted(Key::TYPE_ANON)]
     public function registerUser(): JsonResponse
     {
-        $userData = $this->request->get('user');
+        $userData = $this->request->toArray()['user'];
 
         $user = new User();
         $this->dataApiController->updateSingleEntity($user, $userData);
@@ -97,7 +97,7 @@ class AdminApiController extends AbstractController
         $submittingUser = $this->getUser();
         $isAdmin = $submittingUser->hasRole(Role::SUPER_ADMIN);
         $schoolId = $submittingUser->getSchoolId();
-        $approvals = $this->request->get('approvals', []);
+        $approvals = $this->request->getPayload()->all('approvals', []);
         foreach ($approvals as $value => $userIds) {
             if ($value === 'unsure') {
                 continue;
@@ -130,8 +130,8 @@ class AdminApiController extends AbstractController
     #[IsGranted(Role::SUPER_ADMIN)]
     public function scheduleColleague(User $user): Response
     {
-        $visitId = $this->request->get('visit_id');
-        $direction = $this->request->get('direction');
+        $visitId = $this->request->getPayload()->all('visit_id');
+        $direction = $this->request->getPayload()->all('direction');
 
         /** @var Visit $visit */
         $visit = $this->rc->getVisitRepo()->find($visitId);
@@ -152,7 +152,7 @@ class AdminApiController extends AbstractController
     {
         $schoolRepo = $this->rc->getSchoolRepo();
 
-        $schoolOrder = $this->request->get('school-order');
+        $schoolOrder = $this->request->getPayload()->all('school-order');
         foreach ($schoolOrder as $key => $schoolId) {
             $school = $schoolRepo->find($schoolId);
             $school?->setVisitOrder($key + 1);
@@ -166,7 +166,7 @@ class AdminApiController extends AbstractController
     #[IsGranted(Role::SUPER_ADMIN)]
     public function setBusSetting(School $school, Location $location): Response
     {
-        $direction = $this->request->get('direction');
+        $direction = $this->request->getPayload()->all('direction');
         $needsBus = $direction === 'add';
 
         $school->updateBusRule($location, $needsBus);
@@ -179,7 +179,7 @@ class AdminApiController extends AbstractController
     #[IsGranted(Role::SUPER_ADMIN)]
     public function confirmBusOrder(Visit $visit): Response
     {
-        $direction = $this->request->get('direction');
+        $direction = $this->request->getPayload()->all('direction');
         $confirmed = $direction === 'confirm';
 
         $visit->setBusStatus($confirmed);
@@ -192,7 +192,7 @@ class AdminApiController extends AbstractController
     #[IsGranted(Role::SUPER_ADMIN)]
     public function distributeVisits(): Response
     {
-        $visits = $this->request->get('visits');
+        $visits = $this->request->getPayload()->all('visits');
         $updates = [];
         foreach ($visits as $v) {
             $updates[$v['visit']] = ['Group' => $v['group']];
@@ -217,7 +217,7 @@ class AdminApiController extends AbstractController
     #[IsGranted(Role::SUPER_ADMIN)]
     public function savePlannedVisits(): Response
     {
-        $visits = $this->request->get('visits', []);
+        $visits = $this->request->getPayload()->all('visits', []);
         $visits = $this->restructurePlannedVisitArray($visits);
 
         foreach ($visits as $letter => $dates) {
@@ -281,8 +281,8 @@ class AdminApiController extends AbstractController
     #[IsGranted(Key::TYPE_CRON)]
     public function confirmSentMails(MessageRecorder $mr): JsonResponse
     {
-        $status = $this->request->get('status');
-        $token = $this->request->get('token');
+        $status = $this->request->getPayload()->all('status');
+        $token = $this->request->getPayload()->all('token');
         if ($status === 'success') {
             $mr->saveTempRecordsToDB($token);
         }
@@ -294,7 +294,7 @@ class AdminApiController extends AbstractController
     #[IsGranted(Role::SUPER_ADMIN)]
     public function addMultipleGroups(): JsonResponse
     {
-        $data = $this->request->get('data');
+        $data = $this->request->getPayload()->all('data');
         $groupNumbers = $data['groupNumbers'];
         $segment = $data['segment'];
         $startYear = $data['startYear'];
@@ -331,7 +331,7 @@ class AdminApiController extends AbstractController
     #[IsGranted(Role::SUPER_ADMIN)]
     public function renameMultipleGroups(): JsonResponse
     {
-        $data = $this->request->get('data', []);
+        $data = $this->request->getPayload()->all('data', []);
 
         foreach($data as $group){
             $id = $group['group'];
@@ -352,7 +352,7 @@ class AdminApiController extends AbstractController
     public function saveMultiAccessUser(User $user): JsonResponse
     {
         $key = 'users_with_access_to_multiple_schools';
-        $schools = array_filter(explode(',', $this->request->get('schools') ?? ''));
+        $schools = array_filter(explode(',', $this->request->getPayload()->all('schools') ?? ''));
         $users = $this->settings->get($key);
 
         $users[$user->getId()] = $schools;
@@ -365,8 +365,8 @@ class AdminApiController extends AbstractController
     #[IsGranted(Role::SUPER_ADMIN)]
     public function changeEditableSetting(): JsonResponse
     {
-        $key = $this->request->get('setting'); // can't use "key" due to security controller
-        $value = $this->request->get('value');
+        $key = $this->request->getPayload()->all('setting'); // can't use "key" due to security controller
+        $value = $this->request->getPayload()->all('value');
         $this->settings->save($key, $value);
 
         return new JsonResponse(['success' => true]);
@@ -378,10 +378,10 @@ class AdminApiController extends AbstractController
     #[IsGranted(Role::SUPER_ADMIN)]
     public function lookupUnknownProfiles(): JsonResponse
     {
-        $profileInfo = $this->request->get('values');
+        $profileInfo = $this->request->getPayload()->all('values');
         $rows = array_map(fn($r) => trim($r), explode("\n", $profileInfo));
 
-        $type = $this->request->get('data-type');
+        $type = $this->request->getPayload()->all('data-type');
         $allPeople = unserialize(file_get_contents($this->kernel->getProjectDir() . '/data/all_people.txt'));
 
         $rows = array_map(function($r) use ($type) {
@@ -413,12 +413,12 @@ class AdminApiController extends AbstractController
     {
         $settings = $this->busController->getSettings();
 
-        $locations = $this->request->get('locations');
+        $locations = $this->request->getPayload()->all('locations');
         if(!empty($locations)){
             $settings['locations'] ??= [];
             $settings['locations'] += $locations;
         }
-        $url = $this->request->get('url');
+        $url = $this->request->getPayload()->all('url');
         if(!empty($url)){
             $today = Carbon::today()->toDateString();
             $settings['urls'][$today] ??= [];

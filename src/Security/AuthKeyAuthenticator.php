@@ -2,16 +2,19 @@
 
 namespace App\Security;
 
+use App\Entity\User;
 use App\Security\AuthenticationUtils as AuthUtil;
 use App\Security\Key\ApiKeyManager;
 use App\Security\Key\Key;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
@@ -25,7 +28,7 @@ class AuthKeyAuthenticator extends AbstractAuthenticator implements Authenticati
     public function __construct(
         private readonly AuthUtil      $AuthUtil,
         private readonly ApiKeyManager $akm,
-        private readonly UrlGeneratorInterface $router
+        private readonly UrlGeneratorInterface $router,
     )
     {
         $this->key = $this->akm->createKeyFromGivenString($this->akm->getKeyCodeFromRequest());
@@ -33,13 +36,7 @@ class AuthKeyAuthenticator extends AbstractAuthenticator implements Authenticati
 
     public function supports(Request $request): ?bool
     {
-        if ($request->attributes->get('_route') === 'connect_azure_check') {
-            // we don't want to end up in a loop of "bad but existing cookie" ->
-            // check microsoft login -> come back and cookie is checked again and rejected
-            return false;
-        }       
-
-        return in_array($this->key->type, [Key::TYPE_URL, Key::TYPE_COOKIE], true);
+        return $this->key->isValidType();
     }
 
     public function authenticate(Request $request): Passport
@@ -60,6 +57,22 @@ class AuthKeyAuthenticator extends AbstractAuthenticator implements Authenticati
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        /** @var User $user */
+        $user = $token->getUser();
+        if($this->key->isType(Key::TYPE_LOGIN)){
+            $params = $request->query->all();
+            unset($params['key']);
+
+            $newUrl = $request->getPathInfo();
+            if (!empty($params)) {
+                $newUrl .= '?' . http_build_query($params);
+            }
+
+            $response = new RedirectResponse($newUrl);
+            $cookie = $this->AuthUtil->createCookieWithAuthKey($user);
+            $response->headers->setCookie($cookie);
+            return $response;
+        }
         return null;
     }
 
@@ -71,15 +84,18 @@ class AuthKeyAuthenticator extends AbstractAuthenticator implements Authenticati
             
             return $redirectResponse;
         }
+        if($this->key->isType(Key::TYPE_LOGIN)){
+            return new RedirectResponse($this->router->generate('outdated login link')); // TODO: create this page
+        }
 
-        // is url-code
         return new Response('The key provided was not valid');
     }
 
-    public function start(Request $request, AuthenticationException $authException = null): Response
+    public function start(Request $request, ?AuthenticationException $authException = null): Response
     {
-        $request->getSession()->set('request_url', $request->getUri());
-        $url = $this->router->generate('connect_via_azure');
+        $params = array_merge($request->query->all(), ['redirect' => $request->getUri()]) ;
+
+        $url = $this->router->generate('enter_mail', $params);
 
         return new RedirectResponse($url, Response::HTTP_TEMPORARY_REDIRECT);
     }

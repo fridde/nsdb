@@ -7,7 +7,7 @@
 {% block content %}
     <div class="d-flex justify-content-center">
         <div class="w-50" id="register-user" data-user="{{ user|json_encode }}">
-            <h1>Hej {{ user.FirstName }}!</h1>
+            <h1>Hej!</h1>
             <label for="register-school-selector">Vilken skola tillhör du?</label>
             <select id="register-school-selector">
                 {% for school in schools %}

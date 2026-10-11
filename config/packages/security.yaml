@@ -20,20 +20,13 @@ security:
 
             custom_authenticators:
                 - App\Security\AuthKeyAuthenticator
-                - App\Security\AzureAuthenticator
-            entry_point: App\Security\AuthKeyAuthenticator
+            #    - App\Security\AzureAuthenticator
+            #    - App\Security\GoogleAuthenticator
+            # entry_point: App\Security\AuthKeyAuthenticator
 
             # https://symfony.com/doc/current/security/impersonating_user.html
             switch_user: { role: ROLE_ADMIN }
 
-
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#the-firewall
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-
-    hide_user_not_found: false
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used

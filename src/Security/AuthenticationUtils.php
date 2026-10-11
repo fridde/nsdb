@@ -27,21 +27,26 @@ class AuthenticationUtils
         return $this->em->find(User::class, $key->id);
     }
 
-    public function createCookieWithAuthKey(User $user, Carbon $expDate = null): Cookie
+    public function createCookieWithAuthKey(User $user, ?Carbon $expDate = null): Cookie
     {
         $key = $this->akm->createKeyFromValues(Key::TYPE_COOKIE, $user->getId());
 
         return Cookie::create('key')
             ->withValue($this->akm->createCodeStringForKey($key))
-            ->withExpires($expDate ?? Carbon::today()->addDays(90))
+            ->withExpires($expDate ?? Carbon::today()->addDays(360))
             ->withHttpOnly(false)
             ->withSecure(true);
     }
 
-    public function createUrlKeyStringForUser(User $user): string
+    public function createKeyStringForUser(User $user, string $type = Key::TYPE_URL): string
     {
-        $key = $this->akm->createKeyFromValues(Key::TYPE_URL, $user->getId());
+        $key = $this->akm->createKeyFromValues($type, $user->getId());
 
         return $this->akm->createCodeStringForKey($key);
+    }
+
+    public function createUrlKeyStringForUser(User $user): string
+    {
+        return $this->createKeyStringForUser($user);
     }
 }

@@ -8,36 +8,40 @@ use App\Entity\User;
 use App\Entity\Visit;
 use App\Security\Role;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class SameSchoolVoter extends Voter
 {
-    public const VIEW = 'view';
-    public const EDIT = 'edit';
-    public const CREATE = 'create';
-    public const DELETE = 'delete';
-    public const CONFIRM = 'confirm';
+    public const string VIEW = 'view';
+    public const string EDIT = 'edit';
+    public const string CREATE = 'create';
+    public const string DELETE = 'delete';
+    public const string CONFIRM = 'confirm';
 
-    private const ACTIONS = [self::VIEW, self::EDIT, self::CREATE, self::DELETE, self::CONFIRM];
+    private const array ACTIONS = [self::VIEW, self::EDIT, self::CREATE, self::DELETE, self::CONFIRM];
 
-    private const ENTITIES = [
+    private const array ENTITIES = [
         School::class,
         User::class,
         Visit::class,
         Group::class
     ];
 
-    public function __construct(private Security $security)
+    public function __construct(
+        private readonly Security $security
+    )
     {
     }
+
 
     protected function supports(string $attribute, $subject): bool
     {
         return in_array($attribute, self::ACTIONS, true) && $this->hasRightClass($subject) !== null;
     }
 
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token, Vote|null $vote = null): bool
     {
         if($this->security->isGranted(Role::SUPER_ADMIN)){
             return true;
@@ -46,6 +50,10 @@ class SameSchoolVoter extends Voter
         $user = $token->getUser();
         // if the user is anonymous, do not grant access
         if (!$user instanceof User) {
+            return false;
+        }
+
+        if(!$user->isActive()){
             return false;
         }
 

@@ -7,8 +7,9 @@ knpu_oauth2_client:
             redirect_route: connect_azure_check
             redirect_params: { }
             scope: [ User.Read ]
-            url_api: 'https://graph.microsoft.com/'
-            tenant: '%env(OAUTH_AZURE_TENANT_ID)%'
+            api_version: 'v1.6'
+            url_api: 'https://graph.microsoft.com/v1.0/'
+            resource: 'https://graph.microsoft.com'
             default_end_point_version: 'v1.0'
         # configure your clients as described here: https://github.com/knpuniversity/oauth2-client-bundle#configuration
 

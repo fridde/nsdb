@@ -1,0 +1,19 @@
+{# available: user, url #}
+{% extends "mail/base_mail.html.twig" %}
+{% import "mail/mail_macros.html.twig" as NDB %}
+
+{% block body_header %}Logga in på Sigtuna Naturskolas besöksportal{% endblock %}
+
+{% block body_text %}
+    <p>Du får detta mejl för att du (eller någon annan) vill komma åt Naturskolans besöksportal.</p>
+    <p><a href="{{ url }}" target="_blank">Följ denna länk</a>.</p>
+    <p> Eller kopiera denna länk i din webbläsare: {{ url }}
+    </p>
+    <p>Om du besöker besöksportalen med samma webbläsare igen så behöver du inte upprepa processen.</p>
+{% endblock %}
+
+{% block links %} {% endblock%}
+
+{% block after_body_text %}
+    <p>Tack på förhand!</p>
+{% endblock %}

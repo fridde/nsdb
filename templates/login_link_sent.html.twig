@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <div class="d-flex justify-content-center align-items-center vh-100">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Länk skickat!</h5>
+                <p class="card-text">Vi har skickat en inloggningslänk till {{ user.mail }}. Kontrollera både inkorg och
+                    spamkorg.</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

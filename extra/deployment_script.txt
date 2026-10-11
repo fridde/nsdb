@@ -1,17 +1,18 @@
 ## SET VARIABLES
-echo nsdb /mnt/d/staging 'https://github.com/fridde/nsdb.git' | read PROJECT_NAME STAGING GITHUB
-echo 'https://nsdb.sigtunanaturskola.se' /mnt/d/Dropbox/scripts | read WEBPAGE DROPBOX_SCRIPTS
+echo nsdb /tmp/staging 'https://github.com/fridde/nsdb.git' | read PROJECT_NAME STAGING GITHUB
+echo 'https://nsdb.sigtunanaturskola.se' | read WEBPAGE
 
-cd $DROPBOX_SCRIPTS/$PROJECT_NAME
+cd ~/projekt/$PROJECT_NAME
 sf-dmm
 
 build_outlook_interactor
 
 composer install --no-scripts
 
-start_win_nodejs
-npm run dev && exit
+## start_win_nodejs
+npm run dev
 
+git pull
 git status
 git add -A && git commit -m "More work"
 git push
@@ -25,13 +26,13 @@ check_max_nr_of_files 15
 
 git clone $GITHUB --depth=1 && cd $PROJECT_NAME
 
-cp $SCRIPTS$PROJECT_NAME/{.env.prod.local,deployment.php} .
+cp ~/projekt/$PROJECT_NAME/{.env.prod.local,deployment.php} .
 
 echo 'APP_ENV=prod' > .env.local
 
 
-cd $SCRIPTS$PROJECT_NAME
-start_win_nodejs
+cd ~/projekt/$PROJECT_NAME
+## start_win_nodejs
 npm run build && exit
 cons assets:install
 
@@ -51,9 +52,3 @@ composer dump-env prod
 exit
 
 # Script finished! Bye!
-
-
-## archived for later purposes
-## REPEAT IF EXCEPTION OCCURS
-## for i in (seq 3); set KEY (cons -e prod app:key-for-id t); end
-## cmd.exe "/C start "$WEBPAGE"/cron/run-tasks?key="$KEY

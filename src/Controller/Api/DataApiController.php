@@ -15,15 +15,14 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use ReflectionNamedType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\SecurityBundle\Security;
 
 
 class DataApiController extends AbstractController
@@ -32,9 +31,9 @@ class DataApiController extends AbstractController
     private EntityManagerInterface $em;
 
     public function __construct(
-        RequestStack $requestStack,
-        private RepoContainer $rc,
-        private Security $security
+        RequestStack                   $requestStack,
+        private readonly RepoContainer $rc,
+        private readonly Security      $security
     )
     {
         $this->em = $rc->getEntityManager();
@@ -62,7 +61,7 @@ class DataApiController extends AbstractController
         /** @var User $requestingUser  */
         $requestingUser = $this->security->getUser();
 
-        $data = $this->request->get('user');
+        $data = $this->request->getPayload()->all('user');
         $tempId = $data['id'];
         unset($data['id']);
         $user = new User();
@@ -134,7 +133,8 @@ class DataApiController extends AbstractController
     {
         $thisNote = $note;
         if(!($note instanceof Note)){
-            $visit = $this->rc->getVisitRepo()->find($this->request->get('visit'));
+            /** @var Visit $visit */
+            $visit = $this->rc->getVisitRepo()->find($this->request->getPayload()->all('visit'));
             $user = $this->getUser();
             $crit = ['Visit' => $visit, 'User' => $user];
             /** @noinspection CallableParameterUseCaseInTypeContextInspection */
@@ -146,7 +146,7 @@ class DataApiController extends AbstractController
                 $this->em->persist($note);
             }
         }
-        $note->setText($this->request->get('text'));
+        $note->setText($this->request->getPayload()->getString('text'));
         $this->em->flush();
 
         return $this->json(['success' => true, 'note_id' => $note->getId()]);
@@ -165,9 +165,9 @@ class DataApiController extends AbstractController
         return $this->asJson(['success' => true]);
     }
 
-    public function updateMultipleEntities(string $className, array $entities = null): void
+    public function updateMultipleEntities(string $className, ?array $entities = null): void
     {
-        $entities ??= $this->request->get('updates', []);
+        $entities ??= $this->request->getPayload()->all('updates');
         $repo = $this->em->getRepository($className);
 
         foreach ($entities as $id => $entityData) {
@@ -187,9 +187,9 @@ class DataApiController extends AbstractController
         $this->em->persist($e);
     }
 
-    private function updateEntityData($e, array $data = null): void
+    private function updateEntityData($e, ?array $data = null): void
     {
-        $data ??= $this->request->get('updates', []);
+        $data ??= $this->request->getPayload()->all('updates');
         $this->updateSingleEntity($e, $data);
         $this->em->flush();
     }

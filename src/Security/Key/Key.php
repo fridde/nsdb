@@ -8,23 +8,31 @@ use Carbon\Carbon;
 
 class Key
 {
-
-    public ?string $type;
-    public ?string $id = null;
-    public ?string $salt = null;
     public ?string $version = null;
-    public ?string $hash = null;
 
-    public const TYPE_ANON = 'a';
-    public const TYPE_COOKIE = 'c';
-    public const TYPE_CRON = 't';
-    public const TYPE_URL = 'u';
+    public const string TYPE_ANON = 'a';
+    public const string TYPE_COOKIE = 'c';
+    public const string TYPE_LOGIN = 'l';
+    public const string TYPE_CRON = 't';
+    public const string TYPE_URL = 'u';
 
-    public const SEPARATOR = '-';
+    private const array VALID_TYPES = [
+        self::TYPE_ANON,
+        self::TYPE_COOKIE,
+        self::TYPE_LOGIN,
+        self::TYPE_CRON,
+        self::TYPE_URL
+    ];
 
-    public function __construct(string $type = null)
+    public const string SEPARATOR = '-';
+
+    public function __construct(
+        public ?string $type = null,
+        public ?string $id = null,
+        public ?string $salt = null,
+        public ?string $hash = null
+    )
     {
-        $this->type = $type;
     }
 
     public static function create(): self
@@ -48,6 +56,11 @@ class Key
     public function isType(string $type): bool
     {
         return $this->getType() === $type;
+    }
+
+    public function isValidType(): bool
+    {
+        return in_array($this->type, self::VALID_TYPES ,true);
     }
 
 
@@ -76,7 +89,7 @@ class Key
         return match ($this->type) {
             self::TYPE_ANON, self::TYPE_COOKIE => 64,
             self::TYPE_CRON => 16,
-            self::TYPE_URL => 8
+            self::TYPE_URL, self::TYPE_LOGIN => 8
         };
     }
 
@@ -86,27 +99,27 @@ class Key
     }
 
     /*
-     * This hack helps invalidating all codes during
+     * This hack helps to invalidate all codes during
      * the summer weeks and not at the end of the year
     */
-    public function getHalfAYearAgo(): int
+    public static function getHalfAYearAgo(): int
     {
-        $this->setTestDateIfNecessary();
+        self::setTestDateIfNecessary();
         return Carbon::today()->subDays(180)->year;
     }
 
     /*
-     * This hack helps invalidating the code at about 05:00 and not at midnight
+     * This hack helps to invalidate the code at about 05:00 and not at midnight
     */
     public static function getDayFiveHoursAgo(): int
     {
         return Carbon::now()->subHours(5)->dayOfYear();
     }
 
-    private function setTestDateIfNecessary(): void
+    private static function setTestDateIfNecessary(): void
     {
         $testdate = $_REQUEST['testdate'] ?? null;
-        if ($testdate !== null &&  (int)$_ENV['APP_DEBUG'] && $this->isType(self::TYPE_URL)) {
+        if ($testdate !== null &&  (int)$_ENV['APP_DEBUG']) {
             Carbon::setTestNow($testdate);
         }
     }

@@ -344,9 +344,9 @@ class Calendar
  * some other strings:
  * ' 2 -3' => [[0,3],[0,3]]   (whitespace is ignored, single digits are parsed as minutes
  * */
-    public function parseTime(string $timeString = null): array
+    public function parseTime(?string $timeString = null): array
     {
-        return array_map(function (string $part) {
+        return array_map(static function (string $part) {
             $part = filter_var($part, FILTER_SANITIZE_NUMBER_INT);
             return [(int)mb_substr($part, 0, -2), (int)mb_substr($part, -2)];  // hours, minutes
         }, array_filter(explode('-', $timeString ?? ''), 'mb_strlen'));

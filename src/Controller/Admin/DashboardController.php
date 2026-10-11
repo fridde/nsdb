@@ -13,6 +13,7 @@ use App\Entity\Visit;
 use App\Repository\SchoolRepository;
 use App\Utils\RepoContainer;
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
@@ -23,25 +24,26 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 
+#[AdminDashboard(routePath: '/admin', routeName: 'admin_index')]
 class DashboardController extends AbstractDashboardController
 {
-    private const MENU = [
+    private const array MENU = [
         'tables' => [
-            ['Users', 'users', User::class],
-            ['Groups', 'child', Group::class],
-            ['Visits', 'suitcase', Visit::class],
-            ['Topics', 'question', Topic::class],
-            ['Schools', 'school', School::class],
-            ['Locations', 'map-marker-alt', Location::class],
-            ['Notes', 'sticky-note', Note::class],
-            ['CalendarEvents', 'calendar', CalendarEvent::class],
+            [UserCrudController::class, 'Users',  'users'],
+            [GroupCrudController::class, 'Groups', 'child'],
+            [VisitCrudController::class, 'Visits', 'suitcase'],
+            [TopicCrudController::class, 'Topics', 'question'],
+            [SchoolCrudController::class,  'Schools', 'school'],
+            [LocationCrudController::class, 'Locations', 'map-marker-alt'],
+            [NoteCrudController::class, 'Notes', 'sticky-note'],
+            [CalendarEventCrudController::class, 'CalendarEvents', 'calendar'],
         ],
         'routes' => [
             ['Arbetsfördelning', 'user-clock', 'tools_schedule_colleagues'],
-            ['Bekräfta buss', 'tasks', 'tools_confirm_bus_orders'],
+//            ['Bekräfta buss', 'tasks', 'tools_confirm_bus_orders'],
             ['Fördela besöksdatum', 'network-wired', 'tools_distribute_visits'],
             ['Satsvis redigering', 'layer-group', 'tools_batch_edit'],
             ['Lägg till grupper', 'plus-square', 'tools_add_groups'],
@@ -67,7 +69,6 @@ class DashboardController extends AbstractDashboardController
     {
     }
 
-    #[Route('/admin/', name: 'admin_index')]
     public function index(): Response
     {
         $url = $this->routeBuilder
@@ -80,13 +81,13 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Ndb Symfony')
+            ->setTitle('Nsdb Symfony')
             ->setFaviconPath('favicon.ico');
     }
 
     public function configureMenuItems(): iterable
     {
-        $extractCrud = fn($v) => MenuItem::linkToCrud($v[0], 'fas fa-' . $v[1], $v[2]);
+        $extractCrud = fn($v) => MenuItem::linkTo($v[0], $v[1],'fas fa-' . $v[2]);
         $extractRoute = fn($v) => MenuItem::linkToRoute($v[0], 'fas fa-' . $v[1], $v[2], $v[3] ?? []);
 
         return [

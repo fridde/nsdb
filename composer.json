@@ -1,38 +1,31 @@
 {
     "require": {
-        "doctrine/doctrine-bundle": "^2.7",
-        "doctrine/doctrine-migrations-bundle": "^3.2",
-        "doctrine/orm": "^2.12",
-        "easycorp/easyadmin-bundle": "^4.3",
-        "fridde/utility": "dev-master",
-        "google/apiclient": "^2.12",
-        "knpuniversity/oauth2-client-bundle": "^2.10",
+        "doctrine/doctrine-bundle": "^3.2",
+        "doctrine/doctrine-migrations-bundle": "^4.0",
+        "doctrine/orm": "^3.6",
+        "easycorp/easyadmin-bundle": "5.0.*",
+        "google/apiclient": "*",
+        "knpuniversity/oauth2-client-bundle": "*",
         "league/oauth2-google": "^4.1",
-        "nesbot/carbon": "^2.59",
-        "sensio/framework-extra-bundle": "^6.2",
-        "spatie/db-dumper": "^3.2",
-        "stof/doctrine-extensions-bundle": "^1.7",
-        "symfony/all-my-sms-notifier": "^6.0",
-        "symfony/apache-pack": "^1.0",
-        "symfony/console": "^6.0",
-        "symfony/css-selector": "^6.0",
-        "symfony/dom-crawler": "^6.0",
-        "symfony/dotenv": "^6.0",
-        "symfony/flex": "^2.2",
-        "symfony/framework-bundle": "^6.0",
-        "symfony/mailer": "^6.0",
-        "symfony/monolog-bundle": "^3.8",
-        "symfony/runtime": "^6.0",
-        "symfony/security-bundle": "^6.0",
-        "symfony/serializer": "^6.0",
-        "symfony/slack-notifier": "^6.0",
-        "symfony/twig-bundle": "^6.0",
-        "symfony/webpack-encore-bundle": "^1.14",
-        "symfony/yaml": "^6.0",
-        "thenetworg/oauth2-azure": "^2.1",
-        "twig/extra-bundle": "^3.4",
-        "twig/intl-extra": "^3.4",
-        "twig/twig": "^3.4"
+        "nesbot/carbon": "^3.11",
+        "stof/doctrine-extensions-bundle": "*",
+        "symfony/all-my-sms-notifier": "*",
+        "symfony/apache-pack": "*",
+        "symfony/console": "*",
+        "symfony/dotenv": "8.0.*",
+        "symfony/flex": "*",
+        "symfony/framework-bundle": "8.0.*",
+        "symfony/mailer": "*",
+        "symfony/monolog-bundle": "^4.0",
+        "symfony/runtime": "*",
+        "symfony/security-bundle": "*",
+        "symfony/serializer": "8.0.*",
+        "symfony/slack-notifier": "*",
+        "symfony/twig-bundle": "*",
+        "symfony/webpack-encore-bundle": "*",
+        "symfony/yaml": "*",
+        "thenetworg/oauth2-azure": "*",
+        "twig/extra-bundle": "^3.23"
     },
     "config": {
 		"optimize-autoloader": false,
@@ -54,20 +47,13 @@
     },
     "scripts": {
         "auto-scripts": {
-            "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
-        "post-install-cmd": [
-            "@auto-scripts"
-        ],
-        "post-update-cmd": [
-            "@auto-scripts"
-        ],
         "google-cleanup": "Google\\Task\\Composer::cleanup",
         "pre-autoload-dump": "@google-cleanup"
     },
     "extra": {
         "symfony": {
+            "require": "8.0.*",
             "docker": false,
             "allow-contrib": true
         },
@@ -76,11 +62,10 @@
         ]
     },
     "require-dev": {
-        "symfony/debug-bundle": "^6.0",
-        "symfony/maker-bundle": "^1.43",
-        "doctrine/doctrine-fixtures-bundle": "^3.4",
-        "phpoffice/phpspreadsheet": "^1.23",
-        "symfony/web-profiler-bundle": "^6.0",
-        "roave/security-advisories": "dev-master"
+        "doctrine/doctrine-fixtures-bundle": "^4.3",
+        "phpoffice/phpspreadsheet": "^5.4",
+        "symfony/debug-bundle": "8.0.*",
+        "symfony/maker-bundle": "^1.66",
+        "symfony/web-profiler-bundle": "8.0.*"
     }
 }

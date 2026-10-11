@@ -25,6 +25,8 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
 class AzureAuthenticator extends AbstractAuthenticator
 {
 
+    use MailAddressAnalyzer;
+
     private array $userData;
 
     private array $azureKeyTranslator = [
@@ -46,6 +48,12 @@ class AzureAuthenticator extends AbstractAuthenticator
 
     public function supports(Request $request): ?bool
     {
+        $user = $request->query->get('user');
+
+        if($user !== null && $this->determineOAuthScheme($user) === self::MICROSOFT) {
+            return true;
+        }
+
         return $request->attributes->get('_route') === 'connect_azure_check';
     }
 

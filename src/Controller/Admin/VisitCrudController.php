@@ -33,7 +33,7 @@ class VisitCrudController extends AbstractCrudController
             IdField::new('id')->hideOnForm(),
             TextField::new('Date')
                 ->formatValue(function ($v) {
-                    return (new Carbon($v))->toDateString();
+                    return new Carbon($v)->toDateString();
                 })
                 ->setFormTypeOptions(['block_name' => 'date_picker']),
             AssociationField::new('Topic'),

@@ -17,10 +17,8 @@ use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\Persistence\ObjectManager;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Reader\Exception;
 use ReflectionClass;
 
 class AppFixtures extends Fixture
@@ -65,14 +63,14 @@ class AppFixtures extends Fixture
 
         /** @var EntityManagerInterface $em */
         $em = $this->om;
-        $conn = $em->getConnection();
-        $conn->setAutoCommit(false);
-
-        try {
-            @$conn->executeQuery('TRUNCATE recordings;');
-        } catch (\Exception $e) {
-
-        }
+//        $conn = $em->getConnection();
+//        $conn->setAutoCommit(false);
+//
+//        try {
+//            @$conn->executeQuery('TRUNCATE recordings;');
+//        } catch (\Exception $e) {
+//
+//        }
 
         foreach ($sheets as $sheet) {
             $title = $sheet->getTitle();
@@ -99,7 +97,7 @@ class AppFixtures extends Fixture
                 $this->om->persist($entity);
 
                 $metadata = $this->om->getClassMetaData(get_class($entity));
-                $metadata->setIdGeneratorType(ClassMetadataInfo::GENERATOR_TYPE_NONE);
+                $metadata->setIdGeneratorType(ClassMetadata::GENERATOR_TYPE_NONE);
             }
             $this->om->flush();
         }
@@ -184,7 +182,8 @@ class AppFixtures extends Fixture
         $shortNames = array_keys($this->shortToLong);
 
         foreach ($row as $header => $value) {
-            if (self::isIgnored($header) || in_array($header, $exceptions, true)) {
+//            echo $header;
+            if (strlen($header) === 0 || self::isIgnored($header) || in_array($header, $exceptions, true)) {
                 continue;
             }
             if (in_array($header, $shortNames, true)) {
@@ -212,7 +211,7 @@ class AppFixtures extends Fixture
             return;
         }
         foreach (self::$convertToEntity as $val) {
-            $key = (new ReflectionClass($val))->getShortName();
+            $key = new ReflectionClass($val)->getShortName();
             $this->shortToLong[$key] = $val;
         }
     }

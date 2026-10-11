@@ -7,14 +7,14 @@ use App\Entity\School;
 use App\Utils\ExtendedCollection;
 use App\Utils\RepoContainer;
 use Carbon\Carbon;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class BusController extends AbstractController
@@ -36,7 +36,7 @@ class BusController extends AbstractController
     #[Template('admin/tools/confirm_bus_orders.html.twig')]
     public function confirmBusOrders(): array
     {
-        if ((int)$this->request->get('update') === 1){
+        if ((int)$this->request->getPayload()->all('update') === 1){
             $this->updateBookedTripsFromUrls();
         }
 
