@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "62bae6667f1681dfcdfbef703a210b4e",
+    "content-hash": "1db6377671e52b720d1efe8ac8a0b194",
     "packages": [
         {
             "name": "carbonphp/carbon-doctrine-types",
@@ -74,6 +74,79 @@
                 }
             ],
             "time": "2024-02-09T16:56:22+00:00"
+        },
+        {
+            "name": "dg/ftp-deployment",
+            "version": "v3.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dg/ftp-deployment.git",
+                "reference": "6dd7d9354c50d581318be7cd9d4137cff857dc1a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dg/ftp-deployment/zipball/6dd7d9354c50d581318be7cd9d4137cff857dc1a",
+                "reference": "6dd7d9354c50d581318be7cd9d4137cff857dc1a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-zlib": "*",
+                "nette/command-line": "^2.0",
+                "php": ">=8.2",
+                "phpseclib/phpseclib": "^3.0"
+            },
+            "require-dev": {
+                "nette/phpstan-rules": "^1.0",
+                "nette/tester": "^2.0",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan": "^2.1"
+            },
+            "suggest": {
+                "ext-ftp": "to connect to ftp:// server",
+                "ext-json": "to preprocess CSS files via online service",
+                "ext-openssl": "to connect to ftps:// server and preprocess CSS files",
+                "ext-ssh2": "to connect to sftp:// server"
+            },
+            "bin": [
+                "deployment"
+            ],
+            "type": "project",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.7-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause",
+                "GPL-2.0-only",
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "David Grudl",
+                    "homepage": "https://davidgrudl.com"
+                }
+            ],
+            "description": "🚚 FTP Deployment: deploys web applications to FTP or SFTP, uploading only the files that changed and switching them in at the end, so the site is never half-updated.",
+            "homepage": "https://github.com/dg/ftp-deployment",
+            "keywords": [
+                "deploy",
+                "deployment",
+                "ftp",
+                "ftps",
+                "sftp"
+            ],
+            "support": {
+                "issues": "https://github.com/dg/ftp-deployment/issues",
+                "source": "https://github.com/dg/ftp-deployment/tree/v3.8.0"
+            },
+            "time": "2026-10-29T01:14:39+00:00"
         },
         {
             "name": "doctrine/collections",
@@ -2443,6 +2516,73 @@
                 }
             ],
             "time": "2026-01-29T09:26:29+00:00"
+        },
+        {
+            "name": "nette/command-line",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nette/command-line.git",
+                "reference": "429068c2b64cae4260b1d07556b8c6460777cebb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nette/command-line/zipball/429068c2b64cae4260b1d07556b8c6460777cebb",
+                "reference": "429068c2b64cae4260b1d07556b8c6460777cebb",
+                "shasum": ""
+            },
+            "require": {
+                "php": "8.2 - 8.6"
+            },
+            "require-dev": {
+                "nette/phpstan-rules": "^1.0",
+                "nette/tester": "^2.5",
+                "phpstan/extension-installer": "^1.4@stable",
+                "phpstan/phpstan": "^2.1@stable",
+                "tracy/tracy": "^2.9"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Nette\\": "src"
+                },
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause",
+                "GPL-2.0-only",
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "David Grudl",
+                    "homepage": "https://davidgrudl.com"
+                },
+                {
+                    "name": "Nette Community",
+                    "homepage": "https://nette.org/contributors"
+                }
+            ],
+            "description": "Nette Command Line: options and arguments parser.",
+            "homepage": "https://nette.org",
+            "keywords": [
+                "cmd",
+                "cmd-line",
+                "nette"
+            ],
+            "support": {
+                "issues": "https://github.com/nette/command-line/issues",
+                "source": "https://github.com/nette/command-line/tree/v2.0.0"
+            },
+            "time": "2026-10-21T03:24:41+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",

@@ -1,5 +1,6 @@
 {
     "require": {
+        "dg/ftp-deployment": "^3.8",
         "doctrine/doctrine-bundle": "^3.2",
         "doctrine/doctrine-migrations-bundle": "^4.0",
         "doctrine/orm": "^3.6",

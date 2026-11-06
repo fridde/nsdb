@@ -19,7 +19,7 @@ git push
 
 # winphp ./vendor/bin/phpunit
 
-cd $STAGING
+mkdir -p $STAGING && cd $STAGING
 
 archive_project $PROJECT_NAME
 check_max_nr_of_files 15
