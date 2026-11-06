@@ -2,20 +2,9 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\CalendarEvent;
-use App\Entity\Group;
-use App\Entity\Location;
-use App\Entity\Note;
 use App\Entity\School;
-use App\Entity\Topic;
-use App\Entity\User;
-use App\Entity\Visit;
-use App\Repository\SchoolRepository;
 use App\Utils\RepoContainer;
-use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -24,7 +13,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin_index')]

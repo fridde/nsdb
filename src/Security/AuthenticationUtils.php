@@ -34,8 +34,8 @@ class AuthenticationUtils
         return Cookie::create('key')
             ->withValue($this->akm->createCodeStringForKey($key))
             ->withExpires($expDate ?? Carbon::today()->addDays(360))
-            ->withHttpOnly(false)
-            ->withSecure(true);
+            ->withHttpOnly()
+            ->withSecure();
     }
 
     public function createKeyStringForUser(User $user, string $type = Key::TYPE_URL): string
