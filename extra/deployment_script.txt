@@ -1,6 +1,7 @@
 ## SET VARIABLES
-echo nsdb /tmp/staging 'https://github.com/fridde/nsdb.git' | read PROJECT_NAME STAGING GITHUB
-echo 'https://nsdb.sigtunanaturskola.se' | read WEBPAGE
+
+set PROJECT_NAME nsdb
+loadini ~/projekt/$PROJECT_NAME/.env.local
 
 cd ~/projekt/$PROJECT_NAME
 sf-dmm
@@ -44,8 +45,8 @@ deployment deployment.php
 
 ssh_to nsdb
 cd ~/domains/nsdb.sigtunanaturskola.se/private_html/
-./bin/console doctrine:migrations:migrate -n
 composer install --no-scripts --no-dev --optimize-autoloader --classmap-authoritative
+./bin/console doctrine:migrations:migrate -n
 ./bin/console cache:clear --no-warmup
 composer google-cleanup
 composer dump-env prod

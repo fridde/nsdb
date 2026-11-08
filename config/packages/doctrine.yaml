@@ -1,11 +1,11 @@
 doctrine:
     dbal:
-       # url: '%env(resolve:DATABASE_URL)%'
-        dbname: '%env(DATABASE_NAME)%'
-        host: '%env(DATABASE_HOST)%'
-        port: '%env(DATABASE_PORT)%'
-        user: '%env(DATABASE_USER)%'
-        password: '%env(DATABASE_PASSWORD)%'
+        url: '%env(resolve:DATABASE_URL)%'
+        #dbname: '%env(DATABASE_NAME)%'
+        #host: '%env(DATABASE_HOST)%'
+        #port: '%env(DATABASE_PORT)%'
+        #user: '%env(DATABASE_USER)%'
+        #password: '%env(DATABASE_PASSWORD)%'
 
         types:
             datetime_immutable: \Carbon\Doctrine\DateTimeImmutableType
