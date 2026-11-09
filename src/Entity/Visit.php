@@ -296,7 +296,7 @@ class Visit
     /**
      * @return int Returns 0 if dates are equal, +1 if argument is later than this visit, otherwise -1
      */
-    public function compareDateWithVisit(Visit $visit): int
+    public function compareDateWithVisit(self $visit): int
     {
         $d1 = $this->getDate();
         $d2 = $visit->getDate();

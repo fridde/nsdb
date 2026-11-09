@@ -36,7 +36,7 @@ class BusController extends AbstractController
     #[Template('admin/tools/confirm_bus_orders.html.twig')]
     public function confirmBusOrders(): array
     {
-        if ((int)$this->request->getPayload()->all('update') === 1){
+        if ((int)$this->request->getPayload()->getInt('update') === 1){
             $this->updateBookedTripsFromUrls();
         }
 

@@ -130,8 +130,8 @@ class AdminApiController extends AbstractController
     #[IsGranted(Role::SUPER_ADMIN)]
     public function scheduleColleague(User $user): Response
     {
-        $visitId = $this->request->getPayload()->all('visit_id');
-        $direction = $this->request->getPayload()->all('direction');
+        $visitId = $this->request->getPayload()->getInt('visit_id');
+        $direction = $this->request->getPayload()->getString('direction');
 
         /** @var Visit $visit */
         $visit = $this->rc->getVisitRepo()->find($visitId);
@@ -166,7 +166,7 @@ class AdminApiController extends AbstractController
     #[IsGranted(Role::SUPER_ADMIN)]
     public function setBusSetting(School $school, Location $location): Response
     {
-        $direction = $this->request->getPayload()->all('direction');
+        $direction = $this->request->getPayload()->getString('direction');
         $needsBus = $direction === 'add';
 
         $school->updateBusRule($location, $needsBus);
@@ -179,7 +179,7 @@ class AdminApiController extends AbstractController
     #[IsGranted(Role::SUPER_ADMIN)]
     public function confirmBusOrder(Visit $visit): Response
     {
-        $direction = $this->request->getPayload()->all('direction');
+        $direction = $this->request->getPayload()->getString('direction');
         $confirmed = $direction === 'confirm';
 
         $visit->setBusStatus($confirmed);
@@ -281,8 +281,8 @@ class AdminApiController extends AbstractController
     #[IsGranted(Key::TYPE_CRON)]
     public function confirmSentMails(MessageRecorder $mr): JsonResponse
     {
-        $status = $this->request->getPayload()->all('status');
-        $token = $this->request->getPayload()->all('token');
+        $status = $this->request->getPayload()->getString('status');
+        $token = $this->request->getPayload()->getString('token');
         if ($status === 'success') {
             $mr->saveTempRecordsToDB($token);
         }
@@ -365,8 +365,8 @@ class AdminApiController extends AbstractController
     #[IsGranted(Role::SUPER_ADMIN)]
     public function changeEditableSetting(): JsonResponse
     {
-        $key = $this->request->getPayload()->all('setting'); // can't use "key" due to security controller
-        $value = $this->request->getPayload()->all('value');
+        $key = $this->request->getPayload()->getString('setting'); // can't use "key" due to security controller
+        $value = $this->request->getPayload()->get('value');
         $this->settings->save($key, $value);
 
         return new JsonResponse(['success' => true]);
@@ -381,11 +381,11 @@ class AdminApiController extends AbstractController
         $profileInfo = $this->request->getPayload()->all('values');
         $rows = array_map(fn($r) => trim($r), explode("\n", $profileInfo));
 
-        $type = $this->request->getPayload()->all('data-type');
+        $type = $this->request->getPayload()->getString('data-type');
         $allPeople = unserialize(file_get_contents($this->kernel->getProjectDir() . '/data/all_people.txt'));
 
         $rows = array_map(function($r) use ($type) {
-            if(strlen($r) === 0) {
+            if((string)$r === '') {
                 return "";
             }
             $parts = array_map(fn($part) => trim($part), explode(";", $r));
@@ -393,7 +393,8 @@ class AdminApiController extends AbstractController
                 $cM = $this->getClosestMatch($r, $type);           
                 $info = match ($type) {
                     'mail' => $cM['givenName'] . "\t" . $cM['surname'] . "\t" . $cM['department'] . ", " . $cM['jobTitle'],
-                    'name' => mb_strtolower($cM['mail']) . "\t" . $cM["displayName"] . ", " . $cM['department'] . ", " . $cM['jobTitle']
+                    'name' => mb_strtolower($cM['mail']) . "\t" . $cM["displayName"] . ", " . $cM['department'] . ", " . $cM['jobTitle'],
+                    default => throw new \Exception('Unexpected match value')
                 };
             }
             
@@ -418,7 +419,7 @@ class AdminApiController extends AbstractController
             $settings['locations'] ??= [];
             $settings['locations'] += $locations;
         }
-        $url = $this->request->getPayload()->all('url');
+        $url = $this->request->getPayload()->getString('url');
         if(!empty($url)){
             $today = Carbon::today()->toDateString();
             $settings['urls'][$today] ??= [];

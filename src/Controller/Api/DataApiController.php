@@ -134,7 +134,7 @@ class DataApiController extends AbstractController
         $thisNote = $note;
         if(!($note instanceof Note)){
             /** @var Visit $visit */
-            $visit = $this->rc->getVisitRepo()->find($this->request->getPayload()->all('visit'));
+            $visit = $this->rc->getVisitRepo()->find($this->request->getPayload()->getInt('visit'));
             $user = $this->getUser();
             $crit = ['Visit' => $visit, 'User' => $user];
             /** @noinspection CallableParameterUseCaseInTypeContextInspection */
