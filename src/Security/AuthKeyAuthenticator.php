@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
+use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
@@ -26,8 +27,8 @@ class AuthKeyAuthenticator extends AbstractAuthenticator implements Authenticati
     private Key $key;
 
     public function __construct(
-        private readonly AuthUtil      $AuthUtil,
-        private readonly ApiKeyManager $akm,
+        private readonly AuthUtil              $AuthUtil,
+        private readonly ApiKeyManager         $akm,
         private readonly UrlGeneratorInterface $router,
     )
     {
@@ -41,12 +42,18 @@ class AuthKeyAuthenticator extends AbstractAuthenticator implements Authenticati
 
     public function authenticate(Request $request): Passport
     {
-        if(!$this->akm->isValidKey($this->key)){
+        if (!$this->akm->isValidKey($this->key)) {
             throw new AuthenticationException("The provided authentication key was not valid");
         }
 
+        if ($this->key->isType(Key::TYPE_CRON)) {
+            return new SelfValidatingPassport(
+                new UserBadge('cron', fn() => new InMemoryUser('cron', null, [Role::SUPER_ADMIN]))
+            );
+        }
+
         $user = $this->AuthUtil->getUserFromKey($this->key);
-        if($user === null){
+        if ($user === null) {
             throw new UserNotFoundException("This user does not exist");
         }
 
@@ -59,7 +66,7 @@ class AuthKeyAuthenticator extends AbstractAuthenticator implements Authenticati
     {
         /** @var User $user */
         $user = $token->getUser();
-        if($this->key->isType(Key::TYPE_LOGIN)){
+        if ($this->key->isType(Key::TYPE_LOGIN)) {
             $params = $request->query->all();
             unset($params['key']);
 
@@ -77,14 +84,14 @@ class AuthKeyAuthenticator extends AbstractAuthenticator implements Authenticati
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
-    {       
-        if($this->key->isType(Key::TYPE_COOKIE)){
+    {
+        if ($this->key->isType(Key::TYPE_COOKIE)) {
             $redirectResponse = new RedirectResponse($request->getRequestUri());
             $redirectResponse->headers->clearCookie('key');
-            
+
             return $redirectResponse;
         }
-        if($this->key->isType(Key::TYPE_LOGIN)){
+        if ($this->key->isType(Key::TYPE_LOGIN)) {
             return new RedirectResponse($this->router->generate('outdated login link')); // TODO: create this page
         }
 
@@ -93,7 +100,7 @@ class AuthKeyAuthenticator extends AbstractAuthenticator implements Authenticati
 
     public function start(Request $request, ?AuthenticationException $authException = null): Response
     {
-        $params = array_merge($request->query->all(), ['redirect' => $request->getUri()]) ;
+        $params = array_merge($request->query->all(), ['redirect' => $request->getUri()]);
 
         $url = $this->router->generate('enter_mail', $params);
 

@@ -16,8 +16,8 @@ class AuthenticationUtils
 {
 
     public function __construct(
-        private EntityManagerInterface $em,
-        private ApiKeyManager          $akm
+        private readonly EntityManagerInterface $em,
+        private readonly ApiKeyManager $akm
     )
     {
     }
