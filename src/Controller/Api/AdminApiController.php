@@ -388,6 +388,7 @@ class AdminApiController extends AbstractController
             if((string)$r === '') {
                 return "";
             }
+            $info = "";
             $parts = array_map(fn($part) => trim($part), explode(";", $r));
             foreach($parts as $part){
                 $cM = $this->getClosestMatch($r, $type);           

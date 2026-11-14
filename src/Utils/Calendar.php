@@ -53,13 +53,13 @@ class Calendar
     }
 
     public function createEvent(
-        string $id,
-        string $title,
-        Carbon $start,
-        Carbon $end = null,
-        string $duration = null,
-        array $description = [],
-        bool $isAllDay = false,
+        string  $id,
+        string  $title,
+        Carbon  $start,
+        ?Carbon $end = null,
+        ?string $duration = null,
+        array   $description = [],
+        bool    $isAllDay = false,
     ): Google_Service_Calendar_Event
     {
         if ($isAllDay === false && $end === null && empty($duration)) {
