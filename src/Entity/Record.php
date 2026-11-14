@@ -26,7 +26,7 @@ class Record
     #[ORM\ManyToOne(inversedBy: "Records")]
     protected ?User $User = null;
 
-    public function __construct(string $type = null)
+    public function __construct(?string $type = null)
     {
         if(null !== $type){
             $this->setType($type);

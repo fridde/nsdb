@@ -167,7 +167,7 @@ class DataApiController extends AbstractController
 
     public function updateMultipleEntities(string $className, ?array $entities = null): void
     {
-        $entities ??= $this->request->getPayload()->all('updates');
+        $entities ??= $this->request?->getPayload()->all('updates');
         $repo = $this->em->getRepository($className);
 
         foreach ($entities as $id => $entityData) {

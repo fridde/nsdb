@@ -8,7 +8,7 @@ class FilterMethod
 {
     private string $methodName;
 
-    public function __construct(private ?string $jsonKey = null)
+    public function __construct(private readonly ?string $jsonKey = null)
     {
     }
 

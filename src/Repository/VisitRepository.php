@@ -27,7 +27,7 @@ class VisitRepository extends EntityRepository
         return $this->afterDate(Carbon::today());
     }
 
-    public function hasTopic(Topic $topic = null): self
+    public function hasTopic(?Topic $topic = null): self
     {
         if($topic !== null){
             return $this->addAndFilter('Topic', $topic);
@@ -41,7 +41,7 @@ class VisitRepository extends EntityRepository
         return $this->addOrder('Date');
     }
 
-    public function getActiveVisitsWithTopic(Topic $topic = null): ExtendedCollection
+    public function getActiveVisitsWithTopic(?Topic $topic = null): ExtendedCollection
     {
         return $this
             ->isActive()

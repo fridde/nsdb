@@ -115,7 +115,7 @@ class MessageRecorder
             ->map(fn(Record $r) => $r->getFromContent('user'));
     }
 
-    private function getLatestRecordForSentMessage(string $subject, User $user, Carbon $after = null): ?Record
+    private function getLatestRecordForSentMessage(string $subject, User $user, ?Carbon $after = null): ?Record
     {
         $after ??= Carbon::create('1900-01-01');
 

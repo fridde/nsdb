@@ -236,7 +236,7 @@ class ToolController extends DashboardController
 
     #[Route('/admin/add-groups', name: 'tools_add_groups')]
     #[Template('admin/tools/add_groups.html.twig')]
-    public function addMultipleGroups(string $entity = null): array
+    public function addMultipleGroups(?string $entity = null): array
     {
         $years = [
             Segment::AK_2->value => Carbon::today()->year,
@@ -264,7 +264,7 @@ class ToolController extends DashboardController
         name: 'tools_batch_edit')
         ]
     #[Template('admin/tools/batch_edit.html.twig')]
-    public function batchEdit(string $entity = null): array
+    public function batchEdit(?string $entity = null): array
     {
         $data = ['entities' => null, 'type' => null];
 

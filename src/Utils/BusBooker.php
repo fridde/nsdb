@@ -30,6 +30,8 @@ class BusBooker
         ];
 
         $response = $this->client->request('GET', $this->baseUrl . '/api/syncRequest', ['query' => $query]);
+
+        return [];
     }
 
 

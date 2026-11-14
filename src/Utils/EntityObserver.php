@@ -20,11 +20,11 @@ class EntityObserver
 
     public function createRecord(
         LifecycleEventArgs $args,
-        string $entityName,
-        ?UserInterface $user = null,
-        string $propertyName = null,
-        bool $isAssociative = null,
-        bool $isCollection = null
+        string             $entityName,
+        ?UserInterface     $user = null,
+        ?string            $propertyName = null,
+        ?bool              $isAssociative = null,
+        ?bool              $isCollection = null
     ): Record
     {
         $entity = $args->getObject();
@@ -44,7 +44,7 @@ class EntityObserver
             }
             $record->addToContent('old_value', $oldValue);
         }
-        if($user instanceof User){
+        if ($user instanceof User) {
             $record->setUser($user);
         }
         return $record;

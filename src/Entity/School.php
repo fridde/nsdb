@@ -137,7 +137,7 @@ class School
         }
     }
 
-    public function needsBus(Location $location = null): bool
+    public function needsBus(?Location $location = null): bool
     {
         if ($location === null) {
             return false;
@@ -174,9 +174,9 @@ class School
     }
 
     /**
-     * @param mixed $startYear If null, the current year is assumed. If false, all years are included
+     * @param bool|int|null $startYear If null, the current year is assumed. If false, all years are included
      */
-    public function getActiveGroupsBySegmentAndYear(Segment $segment, bool|int $startYear = null): Collection
+    public function getActiveGroupsBySegmentAndYear(Segment $segment, bool|int|null $startYear = null): Collection
     {
         $startYear = $startYear ?? Carbon::today()->year;
 
@@ -206,7 +206,7 @@ class School
         return ! $this->getActiveGroupsBySegmentAndYear($segment, false)->isEmpty();
     }
 
-    public function getNrActiveGroupsBySegmentAndYear(Segment $segment, $startYear = null): int
+    public function getNrActiveGroupsBySegmentAndYear(Segment $segment, int|null $startYear = null): int
     {
         return $this->getActiveGroupsBySegmentAndYear($segment, $startYear)->count();
     }

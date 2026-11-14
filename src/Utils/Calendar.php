@@ -322,7 +322,7 @@ class Calendar
         return [$start, $end, $changeCount];
     }
 
-    private function setStartAndEndTimes(Carbon $startDate, Carbon $endDate, string $timeString = null): array
+    private function setStartAndEndTimes(Carbon $startDate, Carbon $endDate, ?string $timeString = null): array
     {
         $parsedTime = $this->parseTime($timeString);
         $count = count($parsedTime);

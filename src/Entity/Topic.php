@@ -82,7 +82,7 @@ class Topic
     }
 
 
-    public function setSegment(Segment|string $Segment = null): void
+    public function setSegment(Segment|string|null $Segment = null): void
     {
         $this->Segment = ($Segment instanceof Segment ? $Segment : Segment::tryFrom($Segment));
     }
@@ -160,7 +160,7 @@ class Topic
     }
 
 
-    public function setColleaguesPerGroup(float $ColleaguesPerGroup = null): void
+    public function setColleaguesPerGroup(?float $ColleaguesPerGroup = null): void
     {
 
         $this->ColleaguesPerGroup = $ColleaguesPerGroup;

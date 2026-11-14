@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Collection;
 class ExtendedCollection extends ArrayCollection
 {
 
-    public function __construct(array|Collection $elements = null)
+    public function __construct(array|Collection|null $elements = null)
     {
         if ($elements === null) {
             $elements = [];
@@ -20,7 +20,7 @@ class ExtendedCollection extends ArrayCollection
         parent::__construct($elements);
     }
 
-    public static function create(array|Collection $elements = null): self
+    public static function create(array|Collection|null $elements = null): self
     {
         return new self($elements);
     }
@@ -38,7 +38,7 @@ class ExtendedCollection extends ArrayCollection
         return $this->createFrom($elements);
     }
 
-    public function attach(ExtendedCollection $collection): self
+    public function attach(self $collection): self
     {
         return $this->createFrom(array_merge($this->toArray(), $collection->toArray()));
     }
@@ -54,7 +54,7 @@ class ExtendedCollection extends ArrayCollection
         return $this;
     }
 
-    public function attachArray(array $array = null): self
+    public function attachArray(?array $array = null): self
     {
         $array ??= [];
 

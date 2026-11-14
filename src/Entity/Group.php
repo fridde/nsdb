@@ -97,7 +97,7 @@ class Group
     }
 
     #[ConvertToEntityFirst]
-    public function setUser(User $User = null): void
+    public function setUser(?User $User = null): void
     {
         $this->User = $User;
     }

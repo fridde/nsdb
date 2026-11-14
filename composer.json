@@ -67,6 +67,7 @@
         "phpoffice/phpspreadsheet": "^5.4",
         "symfony/debug-bundle": "8.0.*",
         "symfony/maker-bundle": "^1.66",
-        "symfony/web-profiler-bundle": "8.0.*"
+        "symfony/web-profiler-bundle": "8.0.*",
+        "vimeo/psalm": "^6.20"
     }
 }
