@@ -1,30 +1,30 @@
 {
     "require": {
         "dg/ftp-deployment": "^3.8",
-        "doctrine/doctrine-bundle": "^3.2",
+        "doctrine/doctrine-bundle": "3.4.*",
         "doctrine/doctrine-migrations-bundle": "^4.0",
-        "doctrine/orm": "^3.6",
-        "easycorp/easyadmin-bundle": "5.0.*",
+        "doctrine/orm": "3.8.*",
+        "easycorp/easyadmin-bundle": "5.10.*",
         "google/apiclient": "*",
         "knpuniversity/oauth2-client-bundle": "*",
         "league/oauth2-google": "^4.1",
         "nesbot/carbon": "^3.11",
         "stof/doctrine-extensions-bundle": "*",
-        "symfony/all-my-sms-notifier": "*",
+        "symfony/all-my-sms-notifier": "8.1.*",
         "symfony/apache-pack": "*",
         "symfony/console": "*",
-        "symfony/dotenv": "8.0.*",
+        "symfony/dotenv": "8.1.*",
         "symfony/flex": "*",
-        "symfony/framework-bundle": "8.0.*",
-        "symfony/mailer": "*",
+        "symfony/framework-bundle": "8.1.*",
+        "symfony/mailer": "8.1.*",
         "symfony/monolog-bundle": "^4.0",
-        "symfony/runtime": "*",
+        "symfony/runtime": "8.1.*",
         "symfony/security-bundle": "*",
-        "symfony/serializer": "8.0.*",
+        "symfony/serializer": "8.1.*",
         "symfony/slack-notifier": "*",
-        "symfony/twig-bundle": "*",
+        "symfony/twig-bundle": "8.1.*",
         "symfony/webpack-encore-bundle": "*",
-        "symfony/yaml": "*",
+        "symfony/yaml": "8.1.*",
         "thenetworg/oauth2-azure": "*",
         "twig/extra-bundle": "^3.23"
     },
@@ -54,7 +54,7 @@
     },
     "extra": {
         "symfony": {
-            "require": "8.0.*",
+            "require": "8.1.*",
             "docker": false,
             "allow-contrib": true
         },
@@ -65,9 +65,9 @@
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^4.3",
         "phpoffice/phpspreadsheet": "^5.4",
-        "symfony/debug-bundle": "8.0.*",
+        "symfony/debug-bundle": "8.1.*",
         "symfony/maker-bundle": "^1.66",
-        "symfony/web-profiler-bundle": "8.0.*",
+        "symfony/web-profiler-bundle": "8.1.*",
         "vimeo/psalm": "^6.20"
     }
 }

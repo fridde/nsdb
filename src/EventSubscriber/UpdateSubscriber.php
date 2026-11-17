@@ -6,34 +6,28 @@ use App\Utils\Attributes\AbstractRunOn;
 use App\Utils\Attributes\RunOnChange;
 use App\Utils\Attributes\RunOnCreation;
 use App\Utils\EntityObserver;
-use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Psr\Log\LoggerInterface;
-use ReflectionAttribute;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
-class UpdateSubscriber implements EventSubscriberInterface
+
+#[AsDoctrineListener(event: Events::postPersist)]
+#[AsDoctrineListener(event: Events::preUpdate)]
+#[AsDoctrineListener(event: Events::postRemove)]
+#[AsDoctrineListener(event: Events::postFlush)]
+class UpdateSubscriber
 {
     public function __construct(
-        private EntityObserver $eo,
-        private Security $security,
-        public LoggerInterface $logger
+        private readonly EntityObserver $eo,
+        private readonly Security       $security,
+        public LoggerInterface          $logger
     )
     {
-    }
-
-    public function getSubscribedEvents(): array
-    {
-        return [
-            Events::postPersist,
-            Events::preUpdate,
-            Events::postRemove,
-            Events::postFlush
-        ];
     }
 
     public function postFlush(PostFlushEventArgs $args): void
@@ -56,7 +50,7 @@ class UpdateSubscriber implements EventSubscriberInterface
     {
         $updatedCollectionNames = array_map(function (PersistentCollection $update) {
             return $update->getMapping()['fieldName'];
-        }, $args->getEntityManager()->getUnitOfWork()->getScheduledCollectionUpdates());
+        }, $args->getObjectManager()->getUnitOfWork()->getScheduledCollectionUpdates());
 
         $rClass = new \ReflectionClass($args->getObject());
 

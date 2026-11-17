@@ -19,12 +19,12 @@ class Ajax {
         method: 'POST',
         dataType: 'json',
         data: {},
-        beforeSend: function (jqXHR, settings) {
-            const $apiKey = $('#api-key');
-            if($apiKey.length){
-                settings.data += '&key=' + $apiKey.data('api-key');
-            }
-        }
+        // beforeSend: function (jqXHR, settings) {
+        //     const $apiKey = $('#api-key');
+        //     if($apiKey.length){
+        //         settings.data += '&key=' + $apiKey.data('api-key');
+        //     }
+        // }
     }
 
     successHandler = this.genericResponse

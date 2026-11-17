@@ -8,6 +8,7 @@ use App\Utils\Attributes\FilterMethod;
 use App\Utils\ExtendedCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\Comparison;
+use Doctrine\Common\Collections\Order;
 use Symfony\Component\HttpFoundation\Request;
 
 trait Filterable
@@ -27,12 +28,12 @@ trait Filterable
 
     public function setCriteriaIfNotSet(): void
     {
-        $this->criteria ??= Criteria::create();
+        $this->criteria ??= Criteria::create(true);
     }
 
     public function resetCriteria(): void
     {
-        $this->criteria = Criteria::create();
+        $this->criteria = Criteria::create(true);
     }
 
     public function applyFilterFunctions(array $filter = []): Criteria
@@ -93,7 +94,7 @@ trait Filterable
         return new Comparison($fieldName, $operator, $value);
     }
 
-    public function addOrder(string $fieldName, string $direction = Criteria::ASC): self
+    public function addOrder(string $fieldName, string $direction =  Order::Ascending->value): self
     {
         return $this->addMultipleOrders([$fieldName => $direction]);
     }
@@ -102,10 +103,10 @@ trait Filterable
     {
         $sortedOrders = [];
         foreach($orders as $field => $direction){
-            if(in_array($direction, [Criteria::ASC, Criteria::DESC], true)) {
+            if(in_array($direction, [Order::Ascending->value, Order::Descending->value], true)) {
                 $sortedOrders[$field] = $direction;
             } else {
-                $sortedOrders[$direction] = Criteria::ASC; // default value
+                $sortedOrders[$direction] = Order::Ascending->value; // default value
             }
         }
 

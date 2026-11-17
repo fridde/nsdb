@@ -12,8 +12,9 @@
     {% else %}
         <h1>Anteckning för {{ visit.label }}</h1>
         <p>Datum: {{ visit.DateString }}</p>
+        <label for="note-for-visit-textarea">Anteckning</label>
         <textarea id="note-for-visit-textarea" cols="50" rows="5" placeholder="Lägg till en anteckning"
-                  data-visit-id="{{ visit.id }}" data-note-id="{{ user_note.id ?? "new" }}">
+                                                               data-visit-id="{{ visit.id }}" data-note-id="{{ user_note.id ?? "new" }}">
             {{- user_note.Text ?? "" -}}
         </textarea>
         {% if notes|length > 0 %}
